@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">TrintedApp</string>
+    <string name="home">Home</string>
+    <string name="search">Cerca</string>
+    <string name="sell">Vendi</string>
+    <string name="inbox">Inbox</string>
+    <string name="profile">Profilo</string>
+</resources>
