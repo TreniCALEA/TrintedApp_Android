@@ -11,6 +11,9 @@
  */
 package com.trenicalea.trintedapp.models
 
+import android.graphics.Bitmap
+import com.trenicalea.trintedapp.apis.UtenteControllerApi
+
 
 /**
  * 
@@ -21,9 +24,18 @@ package com.trenicalea.trintedapp.models
  */
 data class UtenteBasicDto (
 
-    val id: Long? = null,
-    val immagine: String? = null,
+    val id: Long,
+    val immagine: Bitmap? = null,
     val credenzialiUsername: String,
     val ratingGenerale: Float? = null
 ) {
+
+    companion object {
+
+        private val _userApi: UtenteControllerApi = UtenteControllerApi()
+        fun validateUsername(username: String): Boolean {
+            return _userApi.all().find { it.credenzialiUsername == username } != null
+        }
+    }
+
 }

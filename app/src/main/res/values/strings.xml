@@ -7,4 +7,6 @@
     <string name="profile">Profilo</string>
     <string name="back">Indietro</string>
     <string name="settings">Impostazioni</string>
+    <string name="defaultImage">Default Image</string>
+    <string name="accountImage">Account Image</string>
 </resources>
