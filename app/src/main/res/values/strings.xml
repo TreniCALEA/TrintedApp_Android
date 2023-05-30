@@ -5,4 +5,6 @@
     <string name="sell">Vendi</string>
     <string name="inbox">Inbox</string>
     <string name="profile">Profilo</string>
+    <string name="back">Indietro</string>
+    <string name="settings">Impostazioni</string>
 </resources>
