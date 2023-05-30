@@ -44,6 +44,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.trenicalea.trintedapp.appwrite.account
 import com.trenicalea.trintedapp.ui.theme.TrintedAppTheme
 import com.trenicalea.trintedapp.viewmodels.UtenteRegistrationViewModel
 
@@ -137,14 +138,13 @@ fun TrintedTopBar(navHostController: NavHostController) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomePage(utenteRegistrationViewModel: UtenteRegistrationViewModel) {
-//    val (shownBottomSheet, setBottomSheet)  = remember { mutableStateOf(false) }
-//    val navHostController = rememberNavController()
-//    val selectedIndex = remember { mutableStateOf(0) }
-//    Scaffold(topBar = { TrintedTopBar(navHostController) }, bottomBar = { TrintedBottomBar(selectedIndex)} ) {
-//        Box(modifier = Modifier.padding(it)) {
-//
-//        }
-//    }
-     RegistrationFormActivity()
+    val (shownBottomSheet, setBottomSheet)  = remember { mutableStateOf(false) }
+    val navHostController = rememberNavController()
+    val selectedIndex = remember { mutableStateOf(0) }
+    Scaffold(topBar = { TrintedTopBar(navHostController) }, bottomBar = { TrintedBottomBar(selectedIndex)} ) {
+        Box(modifier = Modifier.padding(it)) {
+            RegistrationFormActivity(utenteRegistrationViewModel)
+        }
+    }
 }
 

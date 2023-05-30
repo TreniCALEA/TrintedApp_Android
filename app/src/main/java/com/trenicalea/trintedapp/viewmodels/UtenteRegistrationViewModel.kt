@@ -10,7 +10,6 @@ data class UserForm (
     val username: String = "",
     val email: String = "",
     val password: String = "",
-    val validUsername: Boolean = !UtenteBasicDto.validateUsername(username = username),
     val validPassword: Boolean = password.length >= 8,
 )
 
@@ -20,10 +19,8 @@ class UtenteRegistrationViewModel {
     val userState: StateFlow<UserForm> = _userState.asStateFlow()
 
     fun updateUsername(username: String) {
-        val hasError: Boolean = !UtenteBasicDto.validateUsername(username = username)
         _userState.value = _userState.value.copy(
             username = username,
-            validUsername = hasError,
         )
     }
 

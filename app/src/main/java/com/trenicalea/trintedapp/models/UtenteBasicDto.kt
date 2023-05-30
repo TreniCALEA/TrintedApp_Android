@@ -29,13 +29,4 @@ data class UtenteBasicDto (
     val credenzialiUsername: String,
     val ratingGenerale: Float? = null
 ) {
-
-    companion object {
-
-        private val _userApi: UtenteControllerApi = UtenteControllerApi()
-        fun validateUsername(username: String): Boolean {
-            return _userApi.all().find { it.credenzialiUsername == username } != null
-        }
-    }
-
 }
