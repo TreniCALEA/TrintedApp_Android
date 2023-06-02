@@ -3,10 +3,8 @@ package com.trenicalea.trintedapp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -44,9 +42,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.trenicalea.trintedapp.appwrite.account
 import com.trenicalea.trintedapp.ui.theme.TrintedAppTheme
-import com.trenicalea.trintedapp.viewmodels.UtenteRegistrationViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,7 +53,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    HomePage(UtenteRegistrationViewModel())
+                    HomePage()
                 }
             }
         }
@@ -137,13 +133,15 @@ fun TrintedTopBar(navHostController: NavHostController) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomePage(utenteRegistrationViewModel: UtenteRegistrationViewModel) {
+fun HomePage() {
     val (shownBottomSheet, setBottomSheet)  = remember { mutableStateOf(false) }
     val navHostController = rememberNavController()
     val selectedIndex = remember { mutableStateOf(0) }
     Scaffold(topBar = { TrintedTopBar(navHostController) }, bottomBar = { TrintedBottomBar(selectedIndex)} ) {
         Box(modifier = Modifier.padding(it)) {
-            RegistrationFormActivity(utenteRegistrationViewModel)
+            when(selectedIndex.value) {
+                4 -> RegistrationFormActivity()
+            }
         }
     }
 }

@@ -9,4 +9,10 @@
     <string name="settings">Impostazioni</string>
     <string name="defaultImage">Default Image</string>
     <string name="accountImage">Account Image</string>
+    <string name="usernameLabel">Username</string>
+    <string name="personIcon">Person icon</string>
+    <string name="emailLabel">E-mail</string>
+    <string name="emailIcon">Email icon</string>
+    <string name="passwordLabel">Password</string>
+    <string name="passwordIcon">Password icon</string>
 </resources>

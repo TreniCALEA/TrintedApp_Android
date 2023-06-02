@@ -16,6 +16,8 @@ package com.trenicalea.trintedapp.models
  * 
  */
 class UtenteRegistrationDto (
-
+    username: String,
+    email: String,
+    password: String
 ) {
 }
