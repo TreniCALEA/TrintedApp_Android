@@ -15,4 +15,6 @@
     <string name="emailIcon">Email icon</string>
     <string name="passwordLabel">Password</string>
     <string name="passwordIcon">Password icon</string>
+    <string name="googleLogin">Login con Google</string>
+    <string name="facebookLogin">Login con Facebook</string>
 </resources>

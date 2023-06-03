@@ -1,5 +1,6 @@
 package com.trenicalea.trintedapp
 
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,11 +35,15 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.trenicalea.trintedapp.appwrite.AppwriteConfig
 import com.trenicalea.trintedapp.viewmodels.UtenteViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 @Composable
-fun RegistrationFormActivity() {
+fun RegistrationFormActivity(activity: ComponentActivity, appwrite: AppwriteConfig) {
     Card(elevation = CardDefaults.cardElevation(defaultElevation = 5.dp), modifier = Modifier
         .padding(12.dp)
         .fillMaxWidth(),
@@ -48,9 +53,7 @@ fun RegistrationFormActivity() {
         var email by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
         var passwordVisible by remember { mutableStateOf(false) }
-        
 
-        
         Column {
 
             Row(
@@ -107,13 +110,35 @@ fun RegistrationFormActivity() {
             }
             Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
                 Button(onClick = {
-                    val user = UtenteViewModel()
+                    var user = UtenteViewModel()
                     user.register(username, email, password)
                 }) {
                     Text(text = "Registrati")
                 }
             }
+            Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+                Text("Oppure accedi con:")
+            }
+            Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+                Button(onClick = {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        appwrite.account.createOAuth2Session(activity, "facebook", "appwrite-callback-645d4c2c39e030c6f6ba://cloud.appwrite.io/auth/oauth2/success",
+                            "appwrite-callback-645d4c2c39e030c6f6ba://cloud.appwrite.io/auth/oauth2/failure")
+                    }
+                }) {
+                    Text(stringResource(id = R.string.facebookLogin))
+                }
+            }
+            Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+                Button(onClick = {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        appwrite.account.createOAuth2Session(activity, "google", "appwrite-callback-645d4c2c39e030c6f6ba://cloud.appwrite.io/auth/oauth2/success",
+                            "appwrite-callback-645d4c2c39e030c6f6ba://cloud.appwrite.io/auth/oauth2/failure")
+                    }
+                }) {
+                    Text(stringResource(id = R.string.googleLogin))
+                }
+            }
         }
-
     }
 }

@@ -1,5 +1,7 @@
 package com.trenicalea.trintedapp
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -33,6 +35,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -42,7 +45,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.trenicalea.trintedapp.appwrite.AppwriteConfig
 import com.trenicalea.trintedapp.ui.theme.TrintedAppTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,7 +60,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    HomePage()
+                    HomePage(AppwriteConfig(this.applicationContext))
                 }
             }
         }
@@ -69,8 +76,8 @@ fun NavigationView(navHostController: NavHostController) {
 
 @Composable
 fun TrintedBottomBar(selectedIndex: MutableState<Int>) {
-    BottomAppBar() {
-        NavigationBar() {
+    BottomAppBar {
+        NavigationBar {
             NavigationBarItem(selected = selectedIndex.value == 0, onClick = { selectedIndex.value = 0 }, icon = {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Icon(Icons.Filled.Home, contentDescription = stringResource(R.string.home))
@@ -124,23 +131,25 @@ fun TrintedTopBar(navHostController: NavHostController) {
                 shape = CutCornerShape(10),
             ) {
                 Icon(Icons.Filled.Search, contentDescription = stringResource(R.string.search), modifier = Modifier.padding(end = 5.dp), tint = Color.Black)
-                Text(text = "Cerca tra i vari articoli", color = Color.DarkGray);
+                Text(text = "Cerca tra i vari articoli", color = Color.DarkGray)
             }
         }
     )
 }
 
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomePage() {
+fun HomePage(appwrite: AppwriteConfig) {
     val (shownBottomSheet, setBottomSheet)  = remember { mutableStateOf(false) }
     val navHostController = rememberNavController()
+    var isLogged by remember { mutableStateOf(false) }
     val selectedIndex = remember { mutableStateOf(0) }
     Scaffold(topBar = { TrintedTopBar(navHostController) }, bottomBar = { TrintedBottomBar(selectedIndex)} ) {
         Box(modifier = Modifier.padding(it)) {
-            when(selectedIndex.value) {
-                4 -> RegistrationFormActivity()
+            if (!isLogged && selectedIndex.value == 4) {
+                RegistrationFormActivity(activity = MainActivity(), appwrite = appwrite)
             }
         }
     }
