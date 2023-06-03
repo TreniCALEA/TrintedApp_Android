@@ -1,6 +1,7 @@
 package com.trenicalea.trintedapp
 
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,6 +15,8 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -27,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
@@ -120,23 +124,35 @@ fun RegistrationFormActivity(activity: ComponentActivity, appwrite: AppwriteConf
                 Text("Oppure accedi con:")
             }
             Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
-                Button(onClick = {
+                Button(
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(59, 89, 152)),
+                    onClick = {
                     CoroutineScope(Dispatchers.IO).launch {
-                        appwrite.account.createOAuth2Session(activity, "facebook", "appwrite-callback-645d4c2c39e030c6f6ba://cloud.appwrite.io/auth/oauth2/success",
-                            "appwrite-callback-645d4c2c39e030c6f6ba://cloud.appwrite.io/auth/oauth2/failure")
+                        try {
+                            appwrite.account.createOAuth2Session(activity, "facebook", "appwrite-callback-645d4c2c39e030c6f6ba://cloud.appwrite.io/auth/oauth2/success",
+                                "appwrite-callback-645d4c2c39e030c6f6ba://cloud.appwrite.io/auth/oauth2/failure")
+                        } catch(e: Exception) {
+                            println("[i] Login with facebook cancelled.")
+                        }
                     }
                 }) {
                     Text(stringResource(id = R.string.facebookLogin))
                 }
             }
             Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
-                Button(onClick = {
+                Button(
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(219, 68, 55)),
+                    onClick = {
                     CoroutineScope(Dispatchers.IO).launch {
-                        appwrite.account.createOAuth2Session(activity, "google", "appwrite-callback-645d4c2c39e030c6f6ba://cloud.appwrite.io/auth/oauth2/success",
-                            "appwrite-callback-645d4c2c39e030c6f6ba://cloud.appwrite.io/auth/oauth2/failure")
+                        try {
+                            appwrite.account.createOAuth2Session(activity, "google", "appwrite-callback-645d4c2c39e030c6f6ba://cloud.appwrite.io/auth/oauth2/success",
+                                "appwrite-callback-645d4c2c39e030c6f6ba://cloud.appwrite.io/auth/oauth2/failure")
+                        } catch(e: Exception) {
+                            println("[i] Login with google cancelled.")
+                        }
                     }
                 }) {
-                    Text(stringResource(id = R.string.googleLogin))
+                    Text(stringResource(id = R.string.googleLogin), modifier = Modifier.padding(horizontal = 7.dp))
                 }
             }
         }

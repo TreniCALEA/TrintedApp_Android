@@ -145,11 +145,14 @@ fun HomePage(appwrite: AppwriteConfig, activity: ComponentActivity) {
     val (shownBottomSheet, setBottomSheet)  = remember { mutableStateOf(false) }
     val navHostController = rememberNavController()
     var isLogged by remember { mutableStateOf(false) }
+
     val selectedIndex = remember { mutableStateOf(0) }
     Scaffold(topBar = { TrintedTopBar(navHostController) }, bottomBar = { TrintedBottomBar(selectedIndex)} ) {
         Box(modifier = Modifier.padding(it)) {
-            if (!isLogged && selectedIndex.value == 4) {
-                RegistrationFormActivity(activity = activity, appwrite = appwrite)
+            if(selectedIndex.value == 4) {
+                if(!isLogged) {
+                    RegistrationFormActivity(activity = activity, appwrite = appwrite)
+                }
             }
         }
     }
