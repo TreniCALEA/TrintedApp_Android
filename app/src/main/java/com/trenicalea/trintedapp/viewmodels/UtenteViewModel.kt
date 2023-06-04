@@ -11,6 +11,7 @@ import com.trenicalea.trintedapp.models.UtenteRegistrationDto
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class UtenteViewModel : ViewModel() {
 
@@ -26,7 +27,7 @@ class UtenteViewModel : ViewModel() {
         return _userApi.getById(id)
     }
 
-    fun getUserByUsernameLikePaged(prefix: String, page: Int): PageUtenteBasicDto? {
+    fun getUserByUsernameLikePaged(prefix: String, page: Int): PageUtenteBasicDto {
         return _userApi.getAllByUsernameLikePaged(prefix, page)
     }
 

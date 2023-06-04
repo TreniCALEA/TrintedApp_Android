@@ -13,8 +13,10 @@ package com.trenicalea.trintedapp.apis
 
 import com.trenicalea.trintedapp.models.*
 import com.trenicalea.trintedapp.infrastructure.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 
-class UtenteControllerApi(basePath: String = "http://localhost:8080") : ApiClient(basePath) {
+class UtenteControllerApi(basePath: String = "https://192.168.1.9:8443") : ApiClient(basePath) {
 
     /**
      * 
@@ -23,7 +25,7 @@ class UtenteControllerApi(basePath: String = "http://localhost:8080") : ApiClien
      * @return UtenteRegistrationDto
      */
     @Suppress("UNCHECKED_CAST")
-    fun add(body: UtenteRegistrationDto): UtenteRegistrationDto {
+    fun add(body: UtenteRegistrationDto): UtenteRegistrationDto = runBlocking(Dispatchers.IO) {
         val localVariableBody: Any? = body
         val localVariableConfig = RequestConfig(
                 RequestMethod.POST,
@@ -33,7 +35,7 @@ class UtenteControllerApi(basePath: String = "http://localhost:8080") : ApiClien
                 localVariableConfig, localVariableBody
         )
 
-        return when (response.responseType) {
+        return@runBlocking when (response.responseType) {
             ResponseType.Success -> (response as Success<*>).data as UtenteRegistrationDto
             ResponseType.Informational -> TODO()
             ResponseType.Redirection -> TODO()
@@ -47,7 +49,7 @@ class UtenteControllerApi(basePath: String = "http://localhost:8080") : ApiClien
      * @return kotlin.Array<UtenteBasicDto>
      */
     @Suppress("UNCHECKED_CAST")
-    fun all(): Array<UtenteBasicDto> {
+    fun all(): Array<UtenteBasicDto> = runBlocking(Dispatchers.IO) {
         val localVariableConfig = RequestConfig(
                 RequestMethod.GET,
                 "/user-api/users"
@@ -56,7 +58,7 @@ class UtenteControllerApi(basePath: String = "http://localhost:8080") : ApiClien
                 localVariableConfig
         )
 
-        return when (response.responseType) {
+        return@runBlocking when (response.responseType) {
             ResponseType.Success -> (response as Success<*>).data as Array<UtenteBasicDto>
             ResponseType.Informational -> TODO()
             ResponseType.Redirection -> TODO()
@@ -71,7 +73,7 @@ class UtenteControllerApi(basePath: String = "http://localhost:8080") : ApiClien
      * @return kotlin.String
      */
     @Suppress("UNCHECKED_CAST")
-    fun delete(idUser: Long): String {
+    fun delete(idUser: Long): String = runBlocking(Dispatchers.IO) {
         val localVariableConfig = RequestConfig(
                 RequestMethod.DELETE,
                 "/user-api/users/{idUser}".replace("{" + "idUser" + "}", "$idUser")
@@ -80,7 +82,7 @@ class UtenteControllerApi(basePath: String = "http://localhost:8080") : ApiClien
                 localVariableConfig
         )
 
-        return when (response.responseType) {
+        return@runBlocking when (response.responseType) {
             ResponseType.Success -> (response as Success<*>).data as String
             ResponseType.Informational -> TODO()
             ResponseType.Redirection -> TODO()
@@ -96,7 +98,7 @@ class UtenteControllerApi(basePath: String = "http://localhost:8080") : ApiClien
      * @return PageUtenteBasicDto
      */
     @Suppress("UNCHECKED_CAST")
-    fun getAllByUsernameLikePaged(prefix: String, page: Int): PageUtenteBasicDto {
+    fun getAllByUsernameLikePaged(prefix: String, page: Int): PageUtenteBasicDto = runBlocking(Dispatchers.IO) {
         val localVariableConfig = RequestConfig(
                 RequestMethod.GET,
                 "/user-api/users/{prefix}/{page}".replace("{" + "prefix" + "}", "$prefix").replace("{" + "page" + "}", "$page")
@@ -105,7 +107,7 @@ class UtenteControllerApi(basePath: String = "http://localhost:8080") : ApiClien
                 localVariableConfig
         )
 
-        return when (response.responseType) {
+        return@runBlocking when (response.responseType) {
             ResponseType.Success -> (response as Success<*>).data as PageUtenteBasicDto
             ResponseType.Informational -> TODO()
             ResponseType.Redirection -> TODO()
@@ -120,7 +122,7 @@ class UtenteControllerApi(basePath: String = "http://localhost:8080") : ApiClien
      * @return PageUtenteBasicDto
      */
     @Suppress("UNCHECKED_CAST")
-    fun getAllPaged(page: Int): PageUtenteBasicDto {
+    fun getAllPaged(page: Int): PageUtenteBasicDto = runBlocking(Dispatchers.IO) {
         val localVariableConfig = RequestConfig(
                 RequestMethod.GET,
                 "/user-api/users/all/{page}".replace("{" + "page" + "}", "$page")
@@ -129,7 +131,7 @@ class UtenteControllerApi(basePath: String = "http://localhost:8080") : ApiClien
                 localVariableConfig
         )
 
-        return when (response.responseType) {
+        return@runBlocking when (response.responseType) {
             ResponseType.Success -> (response as Success<*>).data as PageUtenteBasicDto
             ResponseType.Informational -> TODO()
             ResponseType.Redirection -> TODO()
@@ -144,7 +146,7 @@ class UtenteControllerApi(basePath: String = "http://localhost:8080") : ApiClien
      * @return UtenteDto
      */
     @Suppress("UNCHECKED_CAST")
-    fun getById(idUser: Long): UtenteDto {
+    fun getById(idUser: Long): UtenteDto = runBlocking(Dispatchers.IO) {
         val localVariableConfig = RequestConfig(
                 RequestMethod.GET,
                 "/user-api/users/{idUser}".replace("{" + "idUser" + "}", "$idUser")
@@ -153,7 +155,7 @@ class UtenteControllerApi(basePath: String = "http://localhost:8080") : ApiClien
                 localVariableConfig
         )
 
-        return when (response.responseType) {
+        return@runBlocking when (response.responseType) {
             ResponseType.Success -> (response as Success<*>).data as UtenteDto
             ResponseType.Informational -> TODO()
             ResponseType.Redirection -> TODO()

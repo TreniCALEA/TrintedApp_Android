@@ -117,7 +117,7 @@ fun RegistrationFormActivity(activity: ComponentActivity, appwrite: AppwriteConf
             }
             Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().padding(vertical = 10.dp)) {
                 Button(onClick = {
-                    var user = UtenteViewModel()
+                    val user = UtenteViewModel()
                     user.register(username, email, password)
                 }) {
                     Text(text = "Registrati")
