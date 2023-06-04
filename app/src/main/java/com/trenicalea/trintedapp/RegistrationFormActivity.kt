@@ -5,6 +5,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
@@ -50,7 +52,7 @@ import kotlinx.coroutines.launch
 fun RegistrationFormActivity(activity: ComponentActivity, appwrite: AppwriteConfig) {
     Card(elevation = CardDefaults.cardElevation(defaultElevation = 5.dp), modifier = Modifier
         .padding(12.dp)
-        .fillMaxWidth(),
+        .fillMaxSize()
     ) {
 
         var username by remember { mutableStateOf("") }
@@ -66,6 +68,7 @@ fun RegistrationFormActivity(activity: ComponentActivity, appwrite: AppwriteConf
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
+                    modifier = Modifier.padding(bottom = 10.dp, top = 10.dp),
                     text = "Iscriviti con l'e-mail",
                     textAlign = TextAlign.Center,
                     style = TextStyle(fontSize = 25.sp)
@@ -112,7 +115,7 @@ fun RegistrationFormActivity(activity: ComponentActivity, appwrite: AppwriteConf
                                   }
                 )
             }
-            Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+            Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().padding(vertical = 10.dp)) {
                 Button(onClick = {
                     var user = UtenteViewModel()
                     user.register(username, email, password)
@@ -120,7 +123,7 @@ fun RegistrationFormActivity(activity: ComponentActivity, appwrite: AppwriteConf
                     Text(text = "Registrati")
                 }
             }
-            Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+            Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().padding(top = 20.dp, bottom = 15.dp)) {
                 Text("Oppure accedi con:")
             }
             Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
