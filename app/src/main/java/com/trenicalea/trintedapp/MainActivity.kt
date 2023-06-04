@@ -46,6 +46,10 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.trenicalea.trintedapp.appwrite.AppwriteConfig
 import com.trenicalea.trintedapp.ui.theme.TrintedAppTheme
+import com.trenicalea.trintedapp.viewmodels.UtenteViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,7 +60,11 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    HomePage(AppwriteConfig(this.applicationContext), this)
+
+//                    HomePage(AppwriteConfig(this.applicationContext), this)
+
+                    UserProfileActivity()
+
                 }
             }
         }

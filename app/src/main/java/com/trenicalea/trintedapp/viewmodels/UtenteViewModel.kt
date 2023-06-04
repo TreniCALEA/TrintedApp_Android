@@ -1,6 +1,8 @@
 package com.trenicalea.trintedapp.viewmodels
 
-import android.app.Application
+
+import android.graphics.Bitmap
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.lifecycle.ViewModel
 import com.trenicalea.trintedapp.apis.UtenteControllerApi
 import com.trenicalea.trintedapp.appwrite.AppwriteConfig

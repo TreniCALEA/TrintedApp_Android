@@ -11,6 +11,8 @@
  */
 package com.trenicalea.trintedapp.models
 
+import android.graphics.Bitmap
+
 
 /**
  * 
@@ -23,11 +25,12 @@ package com.trenicalea.trintedapp.models
  */
 data class UtenteDto (
 
-    val id: Long? = null,
+    val id: Long,
     val nome: String,
     val cognome: String,
     val credenzialiEmail: String? = null,
     val isAdmin: Boolean? = null,
-    val ratingGenerale: Float? = null
+    val ratingGenerale: Float? = null,
+    val image: Bitmap? = null
 ) {
 }

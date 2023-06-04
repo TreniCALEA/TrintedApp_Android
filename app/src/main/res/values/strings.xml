@@ -17,4 +17,9 @@
     <string name="passwordIcon">Password icon</string>
     <string name="googleLogin">Login con Google</string>
     <string name="facebookLogin">Login con Facebook</string>
+    <string name="profileEmailIcon">profileEmailIcon</string>
+    <string name="propic">"Propic of: "</string>
+    <string name="recentPurchases">Acquisti recenti</string>
+    <string name="recentSales">Vendite recenti</string>
+    <string name="noImages">no images</string>
 </resources>
