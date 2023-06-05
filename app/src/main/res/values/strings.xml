@@ -22,4 +22,5 @@
     <string name="recentPurchases">Acquisti recenti</string>
     <string name="recentSales">Vendite recenti</string>
     <string name="noImages">no images</string>
+    <string name="salesDate">venduto il:</string>
 </resources>
