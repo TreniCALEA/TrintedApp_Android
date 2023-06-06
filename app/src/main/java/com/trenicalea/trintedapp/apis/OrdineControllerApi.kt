@@ -14,7 +14,7 @@ package com.trenicalea.trintedapp.apis
 import com.trenicalea.trintedapp.models.*
 import com.trenicalea.trintedapp.infrastructure.*
 
-class OrdineControllerApi(basePath: kotlin.String = "http://localhost:8080") : ApiClient(basePath) {
+class OrdineControllerApi(basePath: kotlin.String = "https://localhost:8443") : ApiClient(basePath) {
 
     /**
      * 
@@ -95,6 +95,33 @@ class OrdineControllerApi(basePath: kotlin.String = "http://localhost:8080") : A
     /**
      * 
      * 
+     * @param id  
+     * @return kotlin.Array<OrdineDto>
+     */
+    @Suppress("UNCHECKED_CAST")
+    fun getByAcquirente(id: kotlin.Long): kotlin.Array<OrdineDto> {
+        val localVariableQuery: MultiValueMap = mutableMapOf<kotlin.String, kotlin.collections.List<kotlin.String>>().apply {
+            put("id", listOf(id.toString()))
+        }
+        val localVariableConfig = RequestConfig(
+                RequestMethod.GET,
+                "/order-api/buyer", query = localVariableQuery
+        )
+        val response = request<kotlin.Array<OrdineDto>>(
+                localVariableConfig
+        )
+
+        return when (response.responseType) {
+            ResponseType.Success -> (response as Success<*>).data as kotlin.Array<OrdineDto>
+            ResponseType.Informational -> TODO()
+            ResponseType.Redirection -> TODO()
+            ResponseType.ClientError -> throw ClientException((response as ClientError<*>).body as? String ?: "Client error")
+            ResponseType.ServerError -> throw ServerException((response as ServerError<*>).message ?: "Server error")
+        }
+    }
+    /**
+     * 
+     * 
      * @param orderId  
      * @return OrdineDto
      */
@@ -110,6 +137,33 @@ class OrdineControllerApi(basePath: kotlin.String = "http://localhost:8080") : A
 
         return when (response.responseType) {
             ResponseType.Success -> (response as Success<*>).data as OrdineDto
+            ResponseType.Informational -> TODO()
+            ResponseType.Redirection -> TODO()
+            ResponseType.ClientError -> throw ClientException((response as ClientError<*>).body as? String ?: "Client error")
+            ResponseType.ServerError -> throw ServerException((response as ServerError<*>).message ?: "Server error")
+        }
+    }
+    /**
+     * 
+     * 
+     * @param id  
+     * @return kotlin.Array<OrdineDto>
+     */
+    @Suppress("UNCHECKED_CAST")
+    fun getByVenditore(id: kotlin.Long): kotlin.Array<OrdineDto> {
+        val localVariableQuery: MultiValueMap = mutableMapOf<kotlin.String, kotlin.collections.List<kotlin.String>>().apply {
+            put("id", listOf(id.toString()))
+        }
+        val localVariableConfig = RequestConfig(
+                RequestMethod.GET,
+                "/order-api/seller", query = localVariableQuery
+        )
+        val response = request<kotlin.Array<OrdineDto>>(
+                localVariableConfig
+        )
+
+        return when (response.responseType) {
+            ResponseType.Success -> (response as Success<*>).data as kotlin.Array<OrdineDto>
             ResponseType.Informational -> TODO()
             ResponseType.Redirection -> TODO()
             ResponseType.ClientError -> throw ClientException((response as ClientError<*>).body as? String ?: "Client error")

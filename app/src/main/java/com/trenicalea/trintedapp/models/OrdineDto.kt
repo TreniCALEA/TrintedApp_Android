@@ -11,15 +11,17 @@
  */
 package com.trenicalea.trintedapp.models
 
+import java.time.LocalDate
+
 
 /**
  * 
  * @param id 
  * @param dataAcquisto 
  */
-data class OrdineDto (
+data class OrdineDto(
 
-    val id: kotlin.Long? = null,
-    val dataAcquisto: java.time.LocalDate
+    val id: Long? = null,
+    val dataAcquisto: LocalDate?
 ) {
 }
