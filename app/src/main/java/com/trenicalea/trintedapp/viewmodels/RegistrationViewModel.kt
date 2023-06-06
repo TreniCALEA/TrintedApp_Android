@@ -38,7 +38,7 @@ class RegistrationViewModel: ViewModel() {
                 println("[i] Session invalid!")
                 isLogged.value = false;
             }
-        }
+        }.invokeOnCompletion { loading.value = false }
     }
 
     fun providerLogin(appwrite: AppwriteConfig, activity: ComponentActivity, provider: String) {
