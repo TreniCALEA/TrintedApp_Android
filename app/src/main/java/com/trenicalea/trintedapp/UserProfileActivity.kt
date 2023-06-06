@@ -2,6 +2,7 @@ package com.trenicalea.trintedapp
 
 
 import android.graphics.Bitmap
+import android.graphics.drawable.Icon
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -19,6 +20,7 @@ import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.HideImage
 import androidx.compose.material.icons.filled.Mail
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.ProductionQuantityLimits
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
@@ -28,7 +30,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -38,7 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.trenicalea.trintedapp.models.OrdineDto
 import com.trenicalea.trintedapp.models.UtenteDto
-import com.trenicalea.trintedapp.viewmodels.UtenteViewModel
+import com.trenicalea.trintedapp.viewmodels.OrdineViewModel
 import java.time.LocalDate
 
 
@@ -54,18 +55,21 @@ fun UserProfileActivity(
         false
     )
 ) {
-    val purchasesList = listOf<OrdineDto>(
+//      val purchasesList = OrdineViewModel().getByAcquirente(user.id)
+//      val salesList = OrdineViewModel().getByVenditore(user.id)
+
+    val purchasesList = arrayOf<OrdineDto>(
         OrdineDto(1, LocalDate.now()),
         OrdineDto(2, LocalDate.now()),
         OrdineDto(3, LocalDate.now()),
         OrdineDto(4, LocalDate.now())
     )
 
-    val salesList = listOf<OrdineDto>(
-        OrdineDto(1, LocalDate.now()),
-        OrdineDto(2, LocalDate.now()),
-        OrdineDto(3, LocalDate.now()),
-        OrdineDto(4, LocalDate.now())
+    val salesList = arrayOf<OrdineDto>(
+//        OrdineDto(1, LocalDate.now()),
+//        OrdineDto(2, LocalDate.now()),
+//        OrdineDto(3, LocalDate.now()),
+//        OrdineDto(4, LocalDate.now())
     )
 
     Card(
@@ -130,11 +134,17 @@ fun UserProfileActivity(
 
             Divider()
 
-            Carousel(list = salesList, title = stringResource(R.string.recentSales))
+            if(salesList.isNotEmpty())
+                Carousel(list = salesList, title = stringResource(R.string.recentSales))
+            else
+                arrayEmpty()
 
             Divider()
 
-            Carousel(list = purchasesList, title = stringResource(R.string.recentPurchases))
+            if(purchasesList.isNotEmpty())
+                Carousel(list = purchasesList, title = stringResource(R.string.recentPurchases))
+            else
+                arrayEmpty()
 
 
         }
@@ -142,7 +152,31 @@ fun UserProfileActivity(
 }
 
 @Composable
-fun Carousel(list: List<OrdineDto>, title: String) {
+fun arrayEmpty(){
+    Row(
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(10.dp)
+    ){
+        Icon(imageVector = Icons.Filled.ProductionQuantityLimits ,
+            contentDescription = stringResource(id = R.string.noItems),
+            modifier = Modifier.size(40.dp))
+    }
+    Row(
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(10.dp)
+    ){
+        Text(text = stringResource(id = R.string.noItems), fontSize = 20.sp)
+    }
+
+}
+@Composable
+fun Carousel(list: Array<OrdineDto>, title: String) {
     Row(
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically,
