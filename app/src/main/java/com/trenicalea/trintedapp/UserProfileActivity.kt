@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.sp
 import com.trenicalea.trintedapp.models.OrdineDto
 import com.trenicalea.trintedapp.models.UtenteDto
 import com.trenicalea.trintedapp.viewmodels.OrdineViewModel
+import com.trenicalea.trintedapp.viewmodels.RegistrationViewModel
 import java.time.LocalDate
 
 
@@ -52,8 +53,9 @@ fun UserProfileActivity(
         "pietro",
         "macrì",
         "pietro.macri2000@gmail.com",
-        false
-    )
+        false,
+    ),
+    registrationViewModel: RegistrationViewModel
 ) {
 //      val purchasesList = OrdineViewModel().getByAcquirente(user.id)
 //      val salesList = OrdineViewModel().getByVenditore(user.id)

@@ -149,8 +149,12 @@ fun HomePage(appwrite: AppwriteConfig, activity: ComponentActivity, registration
                 registrationViewModel.checkLogged(appwrite)
                 if(registrationViewModel.loading.value) {
                     Text(text = "Loading...")
-                } else if(!registrationViewModel.isLogged.value) {
+                }
+                else if(!registrationViewModel.isLogged.value) {
                     RegistrationFormActivity(activity = activity, appwrite = appwrite, registrationViewModel)
+                }
+                else if(registrationViewModel.isLogged.value) {
+                    UserProfileActivity(registrationViewModel = registrationViewModel)
                 }
             }
         }

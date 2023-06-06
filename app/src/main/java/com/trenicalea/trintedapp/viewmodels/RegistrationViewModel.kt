@@ -2,7 +2,10 @@ package com.trenicalea.trintedapp.viewmodels
 
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -12,6 +15,19 @@ import com.trenicalea.trintedapp.appwrite.AppwriteConfig
 class RegistrationViewModel: ViewModel() {
     val isLogged: MutableState<Boolean> = mutableStateOf(false);
     val loading: MutableState<Boolean> = mutableStateOf(true);
+    val login: MutableState<Boolean> = mutableStateOf(false)
+
+    fun emailLogin(email: String, password: String, appwrite: AppwriteConfig) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                appwrite.account.createEmailSession(email, password)
+                isLogged.value = true
+            }
+            catch (e: Exception) {
+                isLogged.value = false
+            }
+        }.invokeOnCompletion { login.value = false }
+    }
 
     fun checkLogged(appwrite: AppwriteConfig) {
         CoroutineScope(Dispatchers.IO).launch {
@@ -22,7 +38,7 @@ class RegistrationViewModel: ViewModel() {
                 println("[i] Session invalid!")
                 isLogged.value = false;
             }
-        }.invokeOnCompletion { loading.value = false }
+        }
     }
 
     fun providerLogin(appwrite: AppwriteConfig, activity: ComponentActivity, provider: String) {
@@ -38,7 +54,7 @@ class RegistrationViewModel: ViewModel() {
         }
     }
 
-    fun registerWithCredentials(username: String, email: String, password: String) {
+    fun registerWithCredentials(username: String, email: String, password: String, appwrite: AppwriteConfig) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val user = UtenteViewModel()

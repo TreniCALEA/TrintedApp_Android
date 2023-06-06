@@ -18,8 +18,6 @@ import kotlinx.coroutines.runBlocking
 class UtenteViewModel : ViewModel() {
 
     private val _userApi: UtenteControllerApi = UtenteControllerApi()
-    private val _listUser: Array<UtenteBasicDto> = _userApi.all()
-    val users = _listUser
 
     fun register(username: String, email: String, password: String) {
         _userApi.add(UtenteRegistrationDto(username, email, password))
