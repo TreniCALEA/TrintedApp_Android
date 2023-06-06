@@ -73,11 +73,11 @@ open class ApiClient(val baseUrl: String) {
         val url = urlBuilder.build()
         val headers = requestConfig.headers + defaultHeaders
 
-        if (headers[ContentType] ?: "" == "") {
+        if ((headers[ContentType] ?: "") == "") {
             throw kotlin.IllegalStateException("Missing Content-Type header. This is required.")
         }
 
-        if (headers[Accept] ?: "" == "") {
+        if ((headers[Accept] ?: "") == "") {
             throw kotlin.IllegalStateException("Missing Accept header. This is required.")
         }
 

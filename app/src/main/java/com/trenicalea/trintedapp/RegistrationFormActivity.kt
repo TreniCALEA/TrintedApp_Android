@@ -42,6 +42,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.trenicalea.trintedapp.appwrite.AppwriteConfig
+import com.trenicalea.trintedapp.viewmodels.RegistrationViewModel
 import com.trenicalea.trintedapp.viewmodels.UtenteViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -49,7 +50,7 @@ import kotlinx.coroutines.launch
 
 
 @Composable
-fun RegistrationFormActivity(activity: ComponentActivity, appwrite: AppwriteConfig) {
+fun RegistrationFormActivity(activity: ComponentActivity, appwrite: AppwriteConfig, registrationViewModel: RegistrationViewModel) {
     Card(elevation = CardDefaults.cardElevation(defaultElevation = 5.dp), modifier = Modifier
         .padding(12.dp)
         .fillMaxSize()
@@ -117,12 +118,12 @@ fun RegistrationFormActivity(activity: ComponentActivity, appwrite: AppwriteConf
             }
             Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().padding(vertical = 10.dp)) {
                 Button(onClick = {
-                    val user = UtenteViewModel()
-                    user.register(username, email, password)
+                    registrationViewModel.registerWithCredentials(username, email, password)
                 }) {
                     Text(text = "Registrati")
                 }
             }
+
             Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().padding(top = 20.dp, bottom = 15.dp)) {
                 Text("Oppure accedi con:")
             }
@@ -130,14 +131,7 @@ fun RegistrationFormActivity(activity: ComponentActivity, appwrite: AppwriteConf
                 Button(
                     colors = ButtonDefaults.buttonColors(containerColor = Color(59, 89, 152)),
                     onClick = {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        try {
-                            appwrite.account.createOAuth2Session(activity, "facebook", "appwrite-callback-645d4c2c39e030c6f6ba://cloud.appwrite.io/auth/oauth2/success",
-                                "appwrite-callback-645d4c2c39e030c6f6ba://cloud.appwrite.io/auth/oauth2/failure")
-                        } catch(e: Exception) {
-                            println("[i] Login with facebook cancelled.")
-                        }
-                    }
+                        registrationViewModel.providerLogin(appwrite, activity, "facebook")
                 }) {
                     Text(stringResource(id = R.string.facebookLogin))
                 }
@@ -146,14 +140,7 @@ fun RegistrationFormActivity(activity: ComponentActivity, appwrite: AppwriteConf
                 Button(
                     colors = ButtonDefaults.buttonColors(containerColor = Color(219, 68, 55)),
                     onClick = {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        try {
-                            appwrite.account.createOAuth2Session(activity, "google", "appwrite-callback-645d4c2c39e030c6f6ba://cloud.appwrite.io/auth/oauth2/success",
-                                "appwrite-callback-645d4c2c39e030c6f6ba://cloud.appwrite.io/auth/oauth2/failure")
-                        } catch(e: Exception) {
-                            println("[i] Login with google cancelled.")
-                        }
-                    }
+                        registrationViewModel.providerLogin(appwrite, activity, "google")
                 }) {
                     Text(stringResource(id = R.string.googleLogin), modifier = Modifier.padding(horizontal = 7.dp))
                 }

@@ -11,13 +11,8 @@
  */
 package com.trenicalea.trintedapp.models
 
-
-/**
- * 
- */
 class UtenteRegistrationDto (
-    username: String,
-    email: String,
-    password: String
-) {
-}
+    val username: String,
+    val email: String,
+    val password: String
+)

@@ -11,22 +11,17 @@
  */
 package com.trenicalea.trintedapp.apis
 
+import com.trenicalea.trintedapp.Config
 import com.trenicalea.trintedapp.models.*
 import com.trenicalea.trintedapp.infrastructure.*
+import io.appwrite.extensions.toJson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 
-class UtenteControllerApi(basePath: String = "https://192.168.1.9:8443") : ApiClient(basePath) {
+class UtenteControllerApi(basePath: String = Config.ip) : ApiClient(basePath) {
 
-    /**
-     * 
-     * 
-     * @param body  
-     * @return UtenteRegistrationDto
-     */
-    @Suppress("UNCHECKED_CAST")
     fun add(body: UtenteRegistrationDto): UtenteRegistrationDto = runBlocking(Dispatchers.IO) {
-        val localVariableBody: Any? = body
+        val localVariableBody: Any = body
         val localVariableConfig = RequestConfig(
                 RequestMethod.POST,
                 "/user-api/users"
@@ -44,8 +39,8 @@ class UtenteControllerApi(basePath: String = "https://192.168.1.9:8443") : ApiCl
         }
     }
     /**
-     * 
-     * 
+     *
+     *
      * @return kotlin.Array<UtenteBasicDto>
      */
     @Suppress("UNCHECKED_CAST")
@@ -67,9 +62,9 @@ class UtenteControllerApi(basePath: String = "https://192.168.1.9:8443") : ApiCl
         }
     }
     /**
-     * 
-     * 
-     * @param idUser  
+     *
+     *
+     * @param idUser
      * @return kotlin.String
      */
     @Suppress("UNCHECKED_CAST")
@@ -91,10 +86,10 @@ class UtenteControllerApi(basePath: String = "https://192.168.1.9:8443") : ApiCl
         }
     }
     /**
-     * 
-     * 
-     * @param prefix  
-     * @param page  
+     *
+     *
+     * @param prefix
+     * @param page
      * @return PageUtenteBasicDto
      */
     @Suppress("UNCHECKED_CAST")
@@ -116,9 +111,9 @@ class UtenteControllerApi(basePath: String = "https://192.168.1.9:8443") : ApiCl
         }
     }
     /**
-     * 
-     * 
-     * @param page  
+     *
+     *
+     * @param page
      * @return PageUtenteBasicDto
      */
     @Suppress("UNCHECKED_CAST")
@@ -140,9 +135,9 @@ class UtenteControllerApi(basePath: String = "https://192.168.1.9:8443") : ApiCl
         }
     }
     /**
-     * 
-     * 
-     * @param idUser  
+     *
+     *
+     * @param idUser
      * @return UtenteDto
      */
     @Suppress("UNCHECKED_CAST")

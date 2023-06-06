@@ -12,17 +12,8 @@
 package com.trenicalea.trintedapp.models
 
 import android.graphics.Bitmap
+import com.squareup.moshi.Json
 
-
-/**
- * 
- * @param id 
- * @param nome 
- * @param cognome
- * @param credenzialiEmail
- * @param isAdmin 
- * @param ratingGenerale 
- */
 data class UtenteDto (
 
     val id: Long,
@@ -31,6 +22,7 @@ data class UtenteDto (
     val credenzialiEmail: String? = null,
     val isAdmin: Boolean? = null,
     val ratingGenerale: Float? = null,
+    @Json(name = "image")
     val image: Bitmap? = null
 ) {
 }

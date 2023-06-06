@@ -46,10 +46,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.trenicalea.trintedapp.appwrite.AppwriteConfig
 import com.trenicalea.trintedapp.ui.theme.TrintedAppTheme
-import com.trenicalea.trintedapp.viewmodels.UtenteViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.trenicalea.trintedapp.viewmodels.RegistrationViewModel
+import okhttp3.internal.wait
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,11 +58,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-
-//                    HomePage(AppwriteConfig(this.applicationContext), this)
-
-                    UserProfileActivity()
-
+                    HomePage(AppwriteConfig(this.applicationContext), this)
                 }
             }
         }
@@ -145,17 +139,18 @@ fun TrintedTopBar(navHostController: NavHostController) {
 @SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomePage(appwrite: AppwriteConfig, activity: ComponentActivity) {
+fun HomePage(appwrite: AppwriteConfig, activity: ComponentActivity, registrationViewModel: RegistrationViewModel = RegistrationViewModel()) {
     val (shownBottomSheet, setBottomSheet)  = remember { mutableStateOf(false) }
     val navHostController = rememberNavController()
-    var isLogged by remember { mutableStateOf(false) }
-
     val selectedIndex = remember { mutableStateOf(0) }
     Scaffold(topBar = { TrintedTopBar(navHostController) }, bottomBar = { TrintedBottomBar(selectedIndex)} ) {
         Box(modifier = Modifier.padding(it)) {
             if(selectedIndex.value == 4) {
-                if(!isLogged) {
-                    RegistrationFormActivity(activity = activity, appwrite = appwrite)
+                registrationViewModel.checkLogged(appwrite)
+                if(registrationViewModel.loading.value) {
+                    Text(text = "Loading...")
+                } else if(!registrationViewModel.isLogged.value) {
+                    RegistrationFormActivity(activity = activity, appwrite = appwrite, registrationViewModel)
                 }
             }
         }
