@@ -40,17 +40,15 @@ import com.trenicalea.trintedapp.models.OrdineDto
 import com.trenicalea.trintedapp.models.UtenteDto
 import com.trenicalea.trintedapp.viewmodels.OrdineViewModel
 import com.trenicalea.trintedapp.viewmodels.UtenteViewModel
-import java.time.LocalDate
 
 
 @Composable
 fun UserProfileActivity(
-    id: Long,
+    user: UtenteDto,
     appwriteConfig: AppwriteConfig,
     utenteViewModel: UtenteViewModel
 ) {
-    val ordineViewModel = OrdineViewModel(id)
-    val user = UtenteViewModel().getUser(id)
+    val ordineViewModel = OrdineViewModel(user.id)
 
     val purchasesList = ordineViewModel.ordersGetByAcquirente
     val salesList = ordineViewModel.ordersGetByVenditore
@@ -114,7 +112,7 @@ fun UserProfileActivity(
                 )
                 Row() {
                     Text(
-                        text = "${user.credenzialiEmail}",
+                        text = user.credenzialiEmail,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.padding(10.dp)
                     )
@@ -126,14 +124,14 @@ fun UserProfileActivity(
             if (salesList.isNotEmpty())
                 Carousel(list = salesList, title = stringResource(R.string.recentSales))
             else
-                arrayEmpty()
+                ArrayEmpty()
 
             Divider()
 
             if (purchasesList.isNotEmpty())
                 Carousel(list = purchasesList, title = stringResource(R.string.recentPurchases))
             else
-                arrayEmpty()
+                ArrayEmpty()
 
 
         }
@@ -141,7 +139,7 @@ fun UserProfileActivity(
 }
 
 @Composable
-fun arrayEmpty() {
+fun ArrayEmpty() {
     Row(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
@@ -202,16 +200,7 @@ fun Carousel(list: Array<OrdineDto>, title: String) {
                         verticalArrangement = Arrangement.Center
                     ) {
                         Row() {
-                            val orderImage: Bitmap? = null
-                            if (orderImage == null) {
-                                Icon(
-                                    imageVector = Icons.Filled.HideImage,
-                                    contentDescription = stringResource(id = R.string.noImages),
-                                    modifier = Modifier.size(120.dp)
-                                )
-                            } else {
-//                                Image(painter = , contentDescription = )
-                            }
+                            // Use bitmapAdapter
                         }
                         Row() {
                             Icon(

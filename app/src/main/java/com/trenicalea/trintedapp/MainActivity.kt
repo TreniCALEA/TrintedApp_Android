@@ -197,7 +197,7 @@ fun HomePage(
                         utenteViewModel
                     )
                 } else if (registrationViewModel.isLogged.value) {
-                    //UserProfileActivity(appwrite = appwrite)
+                    // UserProfileActivity(registrationViewModel.loggedInUser.value!!, appwrite, utenteViewModel)
                 }
             }
         }
