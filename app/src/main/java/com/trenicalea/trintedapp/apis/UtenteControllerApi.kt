@@ -66,7 +66,6 @@ class UtenteControllerApi(basePath: String = Config.ip) : ApiClient(basePath) {
      * @param idUser
      * @return kotlin.String
      */
-    @Suppress("UNCHECKED_CAST")
     fun delete(idUser: Long): String = runBlocking(Dispatchers.IO) {
         val localVariableConfig = RequestConfig(
                 RequestMethod.DELETE,
@@ -91,11 +90,10 @@ class UtenteControllerApi(basePath: String = Config.ip) : ApiClient(basePath) {
      * @param page
      * @return PageUtenteBasicDto
      */
-    @Suppress("UNCHECKED_CAST")
     fun getAllByUsernameLikePaged(prefix: String, page: Int): PageUtenteBasicDto = runBlocking(Dispatchers.IO) {
         val localVariableConfig = RequestConfig(
                 RequestMethod.GET,
-                "/user-api/users/{prefix}/{page}".replace("{" + "prefix" + "}", "$prefix").replace("{" + "page" + "}", "$page")
+                "/user-api/users/{prefix}/{page}".replace("{" + "prefix" + "}", prefix).replace("{" + "page" + "}", "$page")
         )
         val response = request<PageUtenteBasicDto>(
                 localVariableConfig
@@ -115,7 +113,6 @@ class UtenteControllerApi(basePath: String = Config.ip) : ApiClient(basePath) {
      * @param page
      * @return PageUtenteBasicDto
      */
-    @Suppress("UNCHECKED_CAST")
     fun getAllPaged(page: Int): PageUtenteBasicDto = runBlocking(Dispatchers.IO) {
         val localVariableConfig = RequestConfig(
                 RequestMethod.GET,
@@ -139,7 +136,6 @@ class UtenteControllerApi(basePath: String = Config.ip) : ApiClient(basePath) {
      * @param idUser
      * @return UtenteDto
      */
-    @Suppress("UNCHECKED_CAST")
     fun getById(idUser: Long): UtenteDto = runBlocking(Dispatchers.IO) {
         val localVariableConfig = RequestConfig(
                 RequestMethod.GET,
@@ -147,6 +143,31 @@ class UtenteControllerApi(basePath: String = Config.ip) : ApiClient(basePath) {
         )
         val response = request<UtenteDto>(
                 localVariableConfig
+        )
+
+        return@runBlocking when (response.responseType) {
+            ResponseType.Success -> (response as Success<*>).data as UtenteDto
+            ResponseType.Informational -> TODO()
+            ResponseType.Redirection -> TODO()
+            ResponseType.ClientError -> throw ClientException((response as ClientError<*>).body as? String ?: "Client error")
+            ResponseType.ServerError -> throw ServerException((response as ServerError<*>).message ?: "Server error")
+        }
+    }
+    /**
+     *
+     *
+     * @param credenzialiEmail
+     * @return UtenteDto
+     */
+    fun getByCredenzialiEmail(credenzialiEmail: String): UtenteDto = runBlocking(Dispatchers.IO) {
+        val localVariableConfig = RequestConfig(
+            RequestMethod.GET,
+            "/user-api/users/email/{credenzialiEmail}".replace("{" + "credenzialiEmail" + "}",
+                credenzialiEmail
+            )
+        )
+        val response = request<UtenteDto>(
+            localVariableConfig
         )
 
         return@runBlocking when (response.responseType) {

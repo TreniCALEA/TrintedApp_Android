@@ -47,4 +47,8 @@ class UtenteViewModel : ViewModel() {
         return _userApi.getAllByUsernameLikePaged(prefix, page)
     }
 
+    fun getByCredenzialiEmail(credenzialiEmail: String): UtenteDto {
+        return _userApi.getByCredenzialiEmail(credenzialiEmail)
+    }
+
 }

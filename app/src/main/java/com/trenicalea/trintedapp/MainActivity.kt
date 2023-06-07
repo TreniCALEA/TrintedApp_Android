@@ -47,6 +47,7 @@ import androidx.navigation.compose.rememberNavController
 import com.trenicalea.trintedapp.appwrite.AppwriteConfig
 import com.trenicalea.trintedapp.ui.theme.TrintedAppTheme
 import com.trenicalea.trintedapp.viewmodels.RegistrationViewModel
+import com.trenicalea.trintedapp.viewmodels.UtenteViewModel
 import okhttp3.internal.wait
 
 class MainActivity : ComponentActivity() {
@@ -174,7 +175,8 @@ fun TrintedTopBar(navHostController: NavHostController) {
 fun HomePage(
     appwrite: AppwriteConfig,
     activity: ComponentActivity,
-    registrationViewModel: RegistrationViewModel = RegistrationViewModel()
+    registrationViewModel: RegistrationViewModel = RegistrationViewModel(),
+    utenteViewModel: UtenteViewModel = UtenteViewModel()
 ) {
     val (shownBottomSheet, setBottomSheet) = remember { mutableStateOf(false) }
     val navHostController = rememberNavController()
@@ -184,17 +186,18 @@ fun HomePage(
         bottomBar = { TrintedBottomBar(selectedIndex) }) {
         Box(modifier = Modifier.padding(it)) {
             if (selectedIndex.value == 4) {
-                registrationViewModel.checkLogged(appwrite)
+                registrationViewModel.checkLogged(appwrite, utenteViewModel)
                 if (registrationViewModel.loading.value) {
                     Text(text = "Loading...")
                 } else if (!registrationViewModel.isLogged.value) {
                     RegistrationFormActivity(
                         activity = activity,
                         appwrite = appwrite,
-                        registrationViewModel
+                        registrationViewModel,
+                        utenteViewModel
                     )
                 } else if (registrationViewModel.isLogged.value) {
-                    // UserProfileActivity(appwrite = appwrite)
+                    //UserProfileActivity(appwrite = appwrite)
                 }
             }
         }

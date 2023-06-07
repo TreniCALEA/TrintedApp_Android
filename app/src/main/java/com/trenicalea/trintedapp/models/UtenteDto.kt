@@ -17,9 +17,9 @@ import com.squareup.moshi.Json
 data class UtenteDto (
 
     val id: Long,
-    val nome: String,
-    val cognome: String,
-    val credenzialiEmail: String? = null,
+    val nome: String? = null,
+    val cognome: String? = null,
+    val credenzialiEmail: String,
     val isAdmin: Boolean? = null,
     val ratingGenerale: Float? = null,
     @Json(name = "image")

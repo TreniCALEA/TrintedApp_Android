@@ -8,16 +8,20 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import com.trenicalea.trintedapp.appwrite.AppwriteConfig
+import com.trenicalea.trintedapp.models.UtenteDto
 
 class RegistrationViewModel: ViewModel() {
-    val isLogged: MutableState<Boolean> = mutableStateOf(false);
-    val loading: MutableState<Boolean> = mutableStateOf(true);
+    val isLogged: MutableState<Boolean> = mutableStateOf(false)
+    val loading: MutableState<Boolean> = mutableStateOf(true)
     val login: MutableState<Boolean> = mutableStateOf(false)
+    val loggedInUser: MutableState<UtenteDto?> = mutableStateOf(null)
 
-    fun emailLogin(email: String, password: String, appwrite: AppwriteConfig) {
+    fun emailLogin(email: String, password: String, appwrite: AppwriteConfig, utenteViewModel: UtenteViewModel) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 appwrite.account.createEmailSession(email, password)
+                loggedInUser.value = utenteViewModel.getByCredenzialiEmail(email)
+                println("Utente emailLogin: ${loggedInUser.value!!.nome}")
                 isLogged.value = true
             }
             catch (e: Exception) {
@@ -26,10 +30,16 @@ class RegistrationViewModel: ViewModel() {
         }.invokeOnCompletion { login.value = false }
     }
 
-    fun checkLogged(appwrite: AppwriteConfig) {
+    fun checkLogged(appwrite: AppwriteConfig, utenteViewModel: UtenteViewModel) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 println("[i] Session: \n" + appwrite.account.getSession("current"))
+                try {
+                    loggedInUser.value = utenteViewModel.getByCredenzialiEmail(appwrite.account.getSession("current").providerUid)
+                    println("Utente checkLogged: ${loggedInUser.value!!.credenzialiEmail}")
+                } catch(e: Exception) {
+                    e.printStackTrace()
+                }
                 isLogged.value = true;
             } catch(e: Exception) {
                 println("[i] Session invalid!")
@@ -38,11 +48,13 @@ class RegistrationViewModel: ViewModel() {
         }.invokeOnCompletion { loading.value = false }
     }
 
-    fun providerLogin(appwrite: AppwriteConfig, activity: ComponentActivity, provider: String) {
+    fun providerLogin(appwrite: AppwriteConfig, activity: ComponentActivity, provider: String, utenteViewModel: UtenteViewModel) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 appwrite.account.createOAuth2Session(activity, provider, "appwrite-callback-645d4c2c39e030c6f6ba://cloud.appwrite.io/auth/oauth2/success",
                     "appwrite-callback-645d4c2c39e030c6f6ba://cloud.appwrite.io/auth/oauth2/failure")
+                loggedInUser.value = utenteViewModel.getByCredenzialiEmail(appwrite.account.getSession("current").providerUid)
+                println("Utente providerLogin: ${loggedInUser.value!!.nome}")
                 isLogged.value = true
             } catch(e: Exception) {
                 println("[i] Login with $provider cancelled.")

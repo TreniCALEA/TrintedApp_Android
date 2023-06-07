@@ -40,10 +40,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.trenicalea.trintedapp.appwrite.AppwriteConfig
 import com.trenicalea.trintedapp.viewmodels.RegistrationViewModel
+import com.trenicalea.trintedapp.viewmodels.UtenteViewModel
 
 
 @Composable
-fun RegistrationFormActivity(activity: ComponentActivity, appwrite: AppwriteConfig, registrationViewModel: RegistrationViewModel) {
+fun RegistrationFormActivity(activity: ComponentActivity, appwrite: AppwriteConfig, registrationViewModel: RegistrationViewModel, utenteViewModel: UtenteViewModel) {
     Card(elevation = CardDefaults.cardElevation(defaultElevation = 5.dp), modifier = Modifier
         .padding(12.dp)
         .fillMaxSize()
@@ -165,7 +166,7 @@ fun RegistrationFormActivity(activity: ComponentActivity, appwrite: AppwriteConf
                         .padding(vertical = 10.dp)
                 ) {
                     Button(onClick = {
-                        registrationViewModel.emailLogin(email, password, appwrite)
+                        registrationViewModel.emailLogin(email, password, appwrite, utenteViewModel)
                     }) {
                         Text(text = "Login")
                     }
@@ -190,7 +191,7 @@ fun RegistrationFormActivity(activity: ComponentActivity, appwrite: AppwriteConf
                 Button(
                     colors = ButtonDefaults.buttonColors(containerColor = Color(59, 89, 152)),
                     onClick = {
-                        registrationViewModel.providerLogin(appwrite, activity, "facebook")
+                        registrationViewModel.providerLogin(appwrite, activity, "facebook", utenteViewModel)
                 }) {
                     Text(stringResource(id = R.string.facebookLogin))
                 }
@@ -199,7 +200,7 @@ fun RegistrationFormActivity(activity: ComponentActivity, appwrite: AppwriteConf
                 Button(
                     colors = ButtonDefaults.buttonColors(containerColor = Color(219, 68, 55)),
                     onClick = {
-                        registrationViewModel.providerLogin(appwrite, activity, "google")
+                        registrationViewModel.providerLogin(appwrite, activity, "google", utenteViewModel)
                 }) {
                     Text(stringResource(id = R.string.googleLogin), modifier = Modifier.padding(horizontal = 7.dp))
                 }
