@@ -2,10 +2,7 @@ package com.trenicalea.trintedapp.viewmodels
 
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -54,7 +51,7 @@ class RegistrationViewModel: ViewModel() {
         }
     }
 
-    fun registerWithCredentials(username: String, email: String, password: String, appwrite: AppwriteConfig) {
+    fun registerWithCredentials(username: String, email: String, password: String) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val user = UtenteViewModel()

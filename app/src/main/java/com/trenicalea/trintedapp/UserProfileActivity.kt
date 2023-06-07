@@ -2,8 +2,6 @@ package com.trenicalea.trintedapp
 
 
 import android.graphics.Bitmap
-import android.graphics.drawable.Icon
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,6 +19,7 @@ import androidx.compose.material.icons.filled.HideImage
 import androidx.compose.material.icons.filled.Mail
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.ProductionQuantityLimits
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
@@ -34,53 +33,45 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.trenicalea.trintedapp.appwrite.AppwriteConfig
 import com.trenicalea.trintedapp.models.OrdineDto
 import com.trenicalea.trintedapp.models.UtenteDto
 import com.trenicalea.trintedapp.viewmodels.OrdineViewModel
-import com.trenicalea.trintedapp.viewmodels.RegistrationViewModel
+import com.trenicalea.trintedapp.viewmodels.UtenteViewModel
 import java.time.LocalDate
 
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun UserProfileActivity(
-    user: UtenteDto = UtenteDto(
-        1,
-        "pietro",
-        "macrì",
-        "pietro.macri2000@gmail.com",
-        false,
-    ),
-    registrationViewModel: RegistrationViewModel
+    id: Long,
+    appwriteConfig: AppwriteConfig,
+    utenteViewModel: UtenteViewModel
 ) {
 //      val purchasesList = OrdineViewModel().getByAcquirente(user.id)
 //      val salesList = OrdineViewModel().getByVenditore(user.id)
-
-    val purchasesList = arrayOf<OrdineDto>(
-        OrdineDto(1, LocalDate.now()),
-        OrdineDto(2, LocalDate.now()),
-        OrdineDto(3, LocalDate.now()),
-        OrdineDto(4, LocalDate.now())
-    )
-
-    val salesList = arrayOf<OrdineDto>(
-//        OrdineDto(1, LocalDate.now()),
-//        OrdineDto(2, LocalDate.now()),
-//        OrdineDto(3, LocalDate.now()),
-//        OrdineDto(4, LocalDate.now())
-    )
-
+    
+    val user = utenteViewModel.getUser(id)
+    
+    val salesList = OrdineViewModel().getByAcquirente(id)
+    
+    val purchasesList = OrdineViewModel().getByVenditore(id)
+    
     Card(
         elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
         modifier = Modifier
             .padding(12.dp)
             .fillMaxWidth()
     ) {
-
         Column {
+            if (!utenteViewModel.isChecked.value) {
+                Row {
+                    Button(onClick = { utenteViewModel.checkVerified(appwriteConfig) }) {
+                        Text(text = "Verifica account")
+                    }
+                }
+            }
             Row(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically,

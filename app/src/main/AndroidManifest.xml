@@ -24,6 +24,12 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter android:label="email_verification">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="appwrite-callback-645d4c2c39e030c6f6ba"  />
+            </intent-filter>
         </activity>
         <activity android:name="io.appwrite.views.CallbackActivity" android:exported="true">
             <intent-filter android:label="android_web_auth">

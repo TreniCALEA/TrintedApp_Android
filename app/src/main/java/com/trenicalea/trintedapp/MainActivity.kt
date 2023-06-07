@@ -194,7 +194,7 @@ fun HomePage(
                         registrationViewModel
                     )
                 } else if (registrationViewModel.isLogged.value) {
-                    UserProfileActivity(registrationViewModel = registrationViewModel)
+                    // UserProfileActivity(appwrite = appwrite)
                 }
             }
         }
