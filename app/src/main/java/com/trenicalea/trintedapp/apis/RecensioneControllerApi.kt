@@ -11,10 +11,13 @@
  */
 package com.trenicalea.trintedapp.apis
 
+import com.trenicalea.trintedapp.Config
 import com.trenicalea.trintedapp.models.*
 import com.trenicalea.trintedapp.infrastructure.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 
-class RecensioneControllerApi(basePath: kotlin.String = "http://localhost:8080") : ApiClient(basePath) {
+class RecensioneControllerApi(basePath: String = Config.ip) : ApiClient(basePath) {
 
     /**
      * 
@@ -23,18 +26,18 @@ class RecensioneControllerApi(basePath: kotlin.String = "http://localhost:8080")
      * @return kotlin.String
      */
     @Suppress("UNCHECKED_CAST")
-    fun add1(body: RecensioneDto): kotlin.String {
-        val localVariableBody: kotlin.Any? = body
+    fun add(body: RecensioneDto): String = runBlocking(Dispatchers.IO) {
+        val localVariableBody: Any? = body
         val localVariableConfig = RequestConfig(
                 RequestMethod.POST,
                 "/review-api/review"
         )
-        val response = request<kotlin.String>(
+        val response = request<String>(
                 localVariableConfig, localVariableBody
         )
 
-        return when (response.responseType) {
-            ResponseType.Success -> (response as Success<*>).data as kotlin.String
+        return@runBlocking when (response.responseType) {
+            ResponseType.Success -> (response as Success<*>).data as String
             ResponseType.Informational -> TODO()
             ResponseType.Redirection -> TODO()
             ResponseType.ClientError -> throw ClientException((response as ClientError<*>).body as? String ?: "Client error")
@@ -48,17 +51,17 @@ class RecensioneControllerApi(basePath: kotlin.String = "http://localhost:8080")
      * @return kotlin.String
      */
     @Suppress("UNCHECKED_CAST")
-    fun delete1(reviewId: kotlin.Long): kotlin.String {
+    fun delete(reviewId: Long): String = runBlocking(Dispatchers.IO) {
         val localVariableConfig = RequestConfig(
                 RequestMethod.DELETE,
                 "/review-api/review/{reviewId}".replace("{" + "reviewId" + "}", "$reviewId")
         )
-        val response = request<kotlin.String>(
+        val response = request<String>(
                 localVariableConfig
         )
 
-        return when (response.responseType) {
-            ResponseType.Success -> (response as Success<*>).data as kotlin.String
+        return@runBlocking when (response.responseType) {
+            ResponseType.Success -> (response as Success<*>).data as String
             ResponseType.Informational -> TODO()
             ResponseType.Redirection -> TODO()
             ResponseType.ClientError -> throw ClientException((response as ClientError<*>).body as? String ?: "Client error")
@@ -72,17 +75,17 @@ class RecensioneControllerApi(basePath: kotlin.String = "http://localhost:8080")
      * @return kotlin.Array<Recensione>
      */
     @Suppress("UNCHECKED_CAST")
-    fun findAll(reviewId: kotlin.Long): kotlin.Array<Recensione> {
+    fun findAll(reviewId: Long): Array<Recensione> = runBlocking(Dispatchers.IO) {
         val localVariableConfig = RequestConfig(
                 RequestMethod.GET,
                 "/review-api/review/{reviewId}".replace("{" + "reviewId" + "}", "$reviewId")
         )
-        val response = request<kotlin.Array<Recensione>>(
+        val response = request<Array<Recensione>>(
                 localVariableConfig
         )
 
-        return when (response.responseType) {
-            ResponseType.Success -> (response as Success<*>).data as kotlin.Array<Recensione>
+        return@runBlocking when (response.responseType) {
+            ResponseType.Success -> (response as Success<*>).data as Array<Recensione>
             ResponseType.Informational -> TODO()
             ResponseType.Redirection -> TODO()
             ResponseType.ClientError -> throw ClientException((response as ClientError<*>).body as? String ?: "Client error")
@@ -96,7 +99,7 @@ class RecensioneControllerApi(basePath: kotlin.String = "http://localhost:8080")
      * @return PageRecensioneDto
      */
     @Suppress("UNCHECKED_CAST")
-    fun getAllPaged1(review: kotlin.Int): PageRecensioneDto {
+    fun getAllPaged(review: Int): PageRecensioneDto = runBlocking(Dispatchers.IO) {
         val localVariableConfig = RequestConfig(
                 RequestMethod.GET,
                 "/review-api/review/all/{review}".replace("{" + "review" + "}", "$review")
@@ -105,7 +108,7 @@ class RecensioneControllerApi(basePath: kotlin.String = "http://localhost:8080")
                 localVariableConfig
         )
 
-        return when (response.responseType) {
+        return@runBlocking when (response.responseType) {
             ResponseType.Success -> (response as Success<*>).data as PageRecensioneDto
             ResponseType.Informational -> TODO()
             ResponseType.Redirection -> TODO()

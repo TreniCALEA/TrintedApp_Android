@@ -11,10 +11,11 @@
  */
 package com.trenicalea.trintedapp.apis
 
+import com.trenicalea.trintedapp.Config
 import com.trenicalea.trintedapp.models.*
 import com.trenicalea.trintedapp.infrastructure.*
 
-class ArticoloControllerApi(basePath: kotlin.String = "http://localhost:8080") : ApiClient(basePath) {
+class ArticoloControllerApi(basePath: String = Config.ip) : ApiClient(basePath) {
 
     /**
      * 
@@ -71,17 +72,17 @@ class ArticoloControllerApi(basePath: kotlin.String = "http://localhost:8080") :
      * @return kotlin.String
      */
     @Suppress("UNCHECKED_CAST")
-    fun delete3(idItem: kotlin.Long): kotlin.String {
+    fun delete3(idItem: kotlin.Long): String {
         val localVariableConfig = RequestConfig(
                 RequestMethod.DELETE,
                 "/item-api/item/{idItem}".replace("{" + "idItem" + "}", "$idItem")
         )
-        val response = request<kotlin.String>(
+        val response = request<String>(
                 localVariableConfig
         )
 
         return when (response.responseType) {
-            ResponseType.Success -> (response as Success<*>).data as kotlin.String
+            ResponseType.Success -> (response as Success<*>).data as String
             ResponseType.Informational -> TODO()
             ResponseType.Redirection -> TODO()
             ResponseType.ClientError -> throw ClientException((response as ClientError<*>).body as? String ?: "Client error")

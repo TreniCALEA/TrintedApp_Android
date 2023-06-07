@@ -11,10 +11,13 @@
  */
 package com.trenicalea.trintedapp.apis
 
+import com.trenicalea.trintedapp.Config
 import com.trenicalea.trintedapp.models.*
 import com.trenicalea.trintedapp.infrastructure.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 
-class OrdineControllerApi(basePath: kotlin.String = "https://localhost:8443") : ApiClient(basePath) {
+class OrdineControllerApi(basePath: String = Config.ip) : ApiClient(basePath) {
 
     /**
      * 
@@ -24,8 +27,8 @@ class OrdineControllerApi(basePath: kotlin.String = "https://localhost:8443") : 
      * @return OrdineDto
      */
     @Suppress("UNCHECKED_CAST")
-    fun add2(acquirente: kotlin.Long, articoloDto: ArticoloDto): OrdineDto {
-        val localVariableQuery: MultiValueMap = mutableMapOf<kotlin.String, kotlin.collections.List<kotlin.String>>().apply {
+    fun add(acquirente: Long, articoloDto: ArticoloDto): OrdineDto = runBlocking(Dispatchers.IO) {
+        val localVariableQuery: MultiValueMap = mutableMapOf<String, List<String>>().apply {
             put("acquirente", listOf(acquirente.toString()))
             put("articoloDto", listOf(articoloDto.toString()))
         }
@@ -37,7 +40,7 @@ class OrdineControllerApi(basePath: kotlin.String = "https://localhost:8443") : 
                 localVariableConfig
         )
 
-        return when (response.responseType) {
+        return@runBlocking when (response.responseType) {
             ResponseType.Success -> (response as Success<*>).data as OrdineDto
             ResponseType.Informational -> TODO()
             ResponseType.Redirection -> TODO()
@@ -51,17 +54,17 @@ class OrdineControllerApi(basePath: kotlin.String = "https://localhost:8443") : 
      * @return kotlin.Array<OrdineDto>
      */
     @Suppress("UNCHECKED_CAST")
-    fun all1(): kotlin.Array<OrdineDto> {
+    fun all(): Array<OrdineDto> = runBlocking(Dispatchers.IO) {
         val localVariableConfig = RequestConfig(
                 RequestMethod.GET,
                 "/order-api/orders"
         )
-        val response = request<kotlin.Array<OrdineDto>>(
+        val response = request<Array<OrdineDto>>(
                 localVariableConfig
         )
 
-        return when (response.responseType) {
-            ResponseType.Success -> (response as Success<*>).data as kotlin.Array<OrdineDto>
+        return@runBlocking when (response.responseType) {
+            ResponseType.Success -> (response as Success<*>).data as Array<OrdineDto>
             ResponseType.Informational -> TODO()
             ResponseType.Redirection -> TODO()
             ResponseType.ClientError -> throw ClientException((response as ClientError<*>).body as? String ?: "Client error")
@@ -75,17 +78,17 @@ class OrdineControllerApi(basePath: kotlin.String = "https://localhost:8443") : 
      * @return kotlin.String
      */
     @Suppress("UNCHECKED_CAST")
-    fun delete2(orderId: kotlin.Long): kotlin.String {
+    fun delete2(orderId: Long): String = runBlocking(Dispatchers.IO) {
         val localVariableConfig = RequestConfig(
                 RequestMethod.DELETE,
                 "/order-api/orders/{orderId}".replace("{" + "orderId" + "}", "$orderId")
         )
-        val response = request<kotlin.String>(
+        val response = request<String>(
                 localVariableConfig
         )
 
-        return when (response.responseType) {
-            ResponseType.Success -> (response as Success<*>).data as kotlin.String
+        return@runBlocking when (response.responseType) {
+            ResponseType.Success -> (response as Success<*>).data as String
             ResponseType.Informational -> TODO()
             ResponseType.Redirection -> TODO()
             ResponseType.ClientError -> throw ClientException((response as ClientError<*>).body as? String ?: "Client error")
@@ -99,20 +102,20 @@ class OrdineControllerApi(basePath: kotlin.String = "https://localhost:8443") : 
      * @return kotlin.Array<OrdineDto>
      */
     @Suppress("UNCHECKED_CAST")
-    fun getByAcquirente(id: kotlin.Long): kotlin.Array<OrdineDto> {
-        val localVariableQuery: MultiValueMap = mutableMapOf<kotlin.String, kotlin.collections.List<kotlin.String>>().apply {
+    fun getByAcquirente(id: Long): Array<OrdineDto> = runBlocking(Dispatchers.IO) {
+        val localVariableQuery: MultiValueMap = mutableMapOf<String, kotlin.collections.List<String>>().apply {
             put("id", listOf(id.toString()))
         }
         val localVariableConfig = RequestConfig(
                 RequestMethod.GET,
                 "/order-api/buyer", query = localVariableQuery
         )
-        val response = request<kotlin.Array<OrdineDto>>(
+        val response = request<Array<OrdineDto>>(
                 localVariableConfig
         )
 
-        return when (response.responseType) {
-            ResponseType.Success -> (response as Success<*>).data as kotlin.Array<OrdineDto>
+        return@runBlocking when (response.responseType) {
+            ResponseType.Success -> (response as Success<*>).data as Array<OrdineDto>
             ResponseType.Informational -> TODO()
             ResponseType.Redirection -> TODO()
             ResponseType.ClientError -> throw ClientException((response as ClientError<*>).body as? String ?: "Client error")
@@ -126,7 +129,7 @@ class OrdineControllerApi(basePath: kotlin.String = "https://localhost:8443") : 
      * @return OrdineDto
      */
     @Suppress("UNCHECKED_CAST")
-    fun getById1(orderId: kotlin.Long): OrdineDto {
+    fun getById(orderId: Long): OrdineDto = runBlocking(Dispatchers.IO) {
         val localVariableConfig = RequestConfig(
                 RequestMethod.GET,
                 "/order-api/orders/{orderId}".replace("{" + "orderId" + "}", "$orderId")
@@ -135,7 +138,7 @@ class OrdineControllerApi(basePath: kotlin.String = "https://localhost:8443") : 
                 localVariableConfig
         )
 
-        return when (response.responseType) {
+        return@runBlocking when (response.responseType) {
             ResponseType.Success -> (response as Success<*>).data as OrdineDto
             ResponseType.Informational -> TODO()
             ResponseType.Redirection -> TODO()
@@ -150,20 +153,20 @@ class OrdineControllerApi(basePath: kotlin.String = "https://localhost:8443") : 
      * @return kotlin.Array<OrdineDto>
      */
     @Suppress("UNCHECKED_CAST")
-    fun getByVenditore(id: kotlin.Long): kotlin.Array<OrdineDto> {
-        val localVariableQuery: MultiValueMap = mutableMapOf<kotlin.String, kotlin.collections.List<kotlin.String>>().apply {
+    fun getByVenditore(id: Long): Array<OrdineDto> = runBlocking(Dispatchers.IO) {
+        val localVariableQuery: MultiValueMap = mutableMapOf<String, kotlin.collections.List<String>>().apply {
             put("id", listOf(id.toString()))
         }
         val localVariableConfig = RequestConfig(
                 RequestMethod.GET,
                 "/order-api/seller", query = localVariableQuery
         )
-        val response = request<kotlin.Array<OrdineDto>>(
+        val response = request<Array<OrdineDto>>(
                 localVariableConfig
         )
 
-        return when (response.responseType) {
-            ResponseType.Success -> (response as Success<*>).data as kotlin.Array<OrdineDto>
+        return@runBlocking when (response.responseType) {
+            ResponseType.Success -> (response as Success<*>).data as Array<OrdineDto>
             ResponseType.Informational -> TODO()
             ResponseType.Redirection -> TODO()
             ResponseType.ClientError -> throw ClientException((response as ClientError<*>).body as? String ?: "Client error")
