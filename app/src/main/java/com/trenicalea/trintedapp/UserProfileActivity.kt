@@ -49,15 +49,12 @@ fun UserProfileActivity(
     appwriteConfig: AppwriteConfig,
     utenteViewModel: UtenteViewModel
 ) {
-//      val purchasesList = OrdineViewModel().getByAcquirente(user.id)
-//      val salesList = OrdineViewModel().getByVenditore(user.id)
-    
-    val user = utenteViewModel.getUser(id)
-    
-    val salesList = OrdineViewModel().getByAcquirente(id)
-    
-    val purchasesList = OrdineViewModel().getByVenditore(id)
-    
+    val ordineViewModel = OrdineViewModel(id)
+    val user = UtenteViewModel().getUser(id)
+
+    val purchasesList = ordineViewModel.ordersGetByAcquirente
+    val salesList = ordineViewModel.ordersGetByVenditore
+
     Card(
         elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
         modifier = Modifier
