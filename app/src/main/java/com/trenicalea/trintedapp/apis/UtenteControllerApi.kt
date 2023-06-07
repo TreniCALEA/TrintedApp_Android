@@ -11,14 +11,12 @@
  */
 package com.trenicalea.trintedapp.apis
 
-import com.trenicalea.trintedapp.Config
-import com.trenicalea.trintedapp.models.*
 import com.trenicalea.trintedapp.infrastructure.*
-import io.appwrite.extensions.toJson
+import com.trenicalea.trintedapp.models.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 
-class UtenteControllerApi(basePath: String = Config.ip) : ApiClient(basePath) {
+class UtenteControllerApi(basePath: kotlin.String = "http://localhost:8080") : ApiClient(basePath) {
 
     fun add(body: UtenteRegistrationDto): UtenteRegistrationDto = runBlocking(Dispatchers.IO) {
         val localVariableBody: Any = body

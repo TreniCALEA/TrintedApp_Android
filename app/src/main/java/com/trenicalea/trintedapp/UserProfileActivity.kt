@@ -45,7 +45,6 @@ import java.time.LocalDate
 
 
 @OptIn(ExperimentalFoundationApi::class)
-@Preview
 @Composable
 fun UserProfileActivity(
     user: UtenteDto = UtenteDto(
@@ -136,14 +135,14 @@ fun UserProfileActivity(
 
             Divider()
 
-            if(salesList.isNotEmpty())
+            if (salesList.isNotEmpty())
                 Carousel(list = salesList, title = stringResource(R.string.recentSales))
             else
                 arrayEmpty()
 
             Divider()
 
-            if(purchasesList.isNotEmpty())
+            if (purchasesList.isNotEmpty())
                 Carousel(list = purchasesList, title = stringResource(R.string.recentPurchases))
             else
                 arrayEmpty()
@@ -154,17 +153,19 @@ fun UserProfileActivity(
 }
 
 @Composable
-fun arrayEmpty(){
+fun arrayEmpty() {
     Row(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
             .padding(10.dp)
-    ){
-        Icon(imageVector = Icons.Filled.ProductionQuantityLimits ,
+    ) {
+        Icon(
+            imageVector = Icons.Filled.ProductionQuantityLimits,
             contentDescription = stringResource(id = R.string.noItems),
-            modifier = Modifier.size(40.dp))
+            modifier = Modifier.size(40.dp)
+        )
     }
     Row(
         horizontalArrangement = Arrangement.Center,
@@ -172,11 +173,12 @@ fun arrayEmpty(){
         modifier = Modifier
             .fillMaxWidth()
             .padding(10.dp)
-    ){
+    ) {
         Text(text = stringResource(id = R.string.noItems), fontSize = 20.sp)
     }
 
 }
+
 @Composable
 fun Carousel(list: Array<OrdineDto>, title: String) {
     Row(
@@ -207,8 +209,10 @@ fun Carousel(list: Array<OrdineDto>, title: String) {
                         .wrapContentHeight()
                         .wrapContentWidth()
                 ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
                         Row() {
                             val orderImage: Bitmap? = null
                             if (orderImage == null) {
@@ -218,7 +222,7 @@ fun Carousel(list: Array<OrdineDto>, title: String) {
                                     modifier = Modifier.size(120.dp)
                                 )
                             } else {
-
+//                                Image(painter = , contentDescription = )
                             }
                         }
                         Row() {
@@ -227,7 +231,7 @@ fun Carousel(list: Array<OrdineDto>, title: String) {
                                 contentDescription = null,
                                 modifier = Modifier.size(20.dp)
                             )
-                            if(order.dataAcquisto == null)
+                            if (order.dataAcquisto == null)
                                 Text(text = stringResource(id = R.string.unavailable))
                             else
                                 Text(text = "${order.dataAcquisto}")

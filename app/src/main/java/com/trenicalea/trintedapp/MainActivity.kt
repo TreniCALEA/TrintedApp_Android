@@ -76,36 +76,63 @@ fun NavigationView(navHostController: NavHostController) {
 fun TrintedBottomBar(selectedIndex: MutableState<Int>) {
     BottomAppBar {
         NavigationBar {
-            NavigationBarItem(selected = selectedIndex.value == 0, onClick = { selectedIndex.value = 0 }, icon = {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Icon(Icons.Filled.Home, contentDescription = stringResource(R.string.home))
-                    Text("Home")
-                }
-            })
-            NavigationBarItem(selected = selectedIndex.value == 1, onClick = { selectedIndex.value = 1 }, icon = {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Icon(Icons.Filled.Search, contentDescription = stringResource(R.string.search))
-                    Text("Cerca")
-                }
-            })
-            NavigationBarItem(selected = selectedIndex.value == 2, onClick = { selectedIndex.value = 2 }, icon = {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Icon(Icons.Filled.AddCircle, contentDescription = stringResource(R.string.sell))
-                    Text("Vendi")
-                }
-            })
-            NavigationBarItem(selected = selectedIndex.value == 3, onClick = { selectedIndex.value = 3 }, icon = {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Icon(Icons.Filled.Email, contentDescription = stringResource(R.string.inbox))
-                    Text("Inbox")
-                }
-            })
-            NavigationBarItem(selected = selectedIndex.value == 4, onClick = { selectedIndex.value = 4 }, icon = {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Icon(Icons.Filled.AccountCircle, contentDescription = stringResource(R.string.profile))
-                    Text("Profilo")
-                }
-            })
+            NavigationBarItem(
+                selected = selectedIndex.value == 0,
+                onClick = { selectedIndex.value = 0 },
+                icon = {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Icon(Icons.Filled.Home, contentDescription = stringResource(R.string.home))
+                        Text("Home")
+                    }
+                })
+            NavigationBarItem(
+                selected = selectedIndex.value == 1,
+                onClick = { selectedIndex.value = 1 },
+                icon = {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Icon(
+                            Icons.Filled.Search,
+                            contentDescription = stringResource(R.string.search)
+                        )
+                        Text("Cerca")
+                    }
+                })
+            NavigationBarItem(
+                selected = selectedIndex.value == 2,
+                onClick = { selectedIndex.value = 2 },
+                icon = {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Icon(
+                            Icons.Filled.AddCircle,
+                            contentDescription = stringResource(R.string.sell)
+                        )
+                        Text("Vendi")
+                    }
+                })
+            NavigationBarItem(
+                selected = selectedIndex.value == 3,
+                onClick = { selectedIndex.value = 3 },
+                icon = {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Icon(
+                            Icons.Filled.Email,
+                            contentDescription = stringResource(R.string.inbox)
+                        )
+                        Text("Inbox")
+                    }
+                })
+            NavigationBarItem(
+                selected = selectedIndex.value == 4,
+                onClick = { selectedIndex.value = 4 },
+                icon = {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Icon(
+                            Icons.Filled.AccountCircle,
+                            contentDescription = stringResource(R.string.profile)
+                        )
+                        Text("Profilo")
+                    }
+                })
         }
     }
 }
@@ -116,7 +143,7 @@ fun TrintedBottomBar(selectedIndex: MutableState<Int>) {
 fun TrintedTopBar(navHostController: NavHostController) {
     val currentBackStackEntry by navHostController.currentBackStackEntryAsState()
     val showBackIcon by remember(currentBackStackEntry) { derivedStateOf { navHostController.previousBackStackEntry != null } }
-    TopAppBar(title = { Text("")},
+    TopAppBar(title = { Text("") },
         actions = {
             Button(
                 onClick = {
@@ -128,7 +155,12 @@ fun TrintedTopBar(navHostController: NavHostController) {
                     .fillMaxWidth(1f),
                 shape = CutCornerShape(10),
             ) {
-                Icon(Icons.Filled.Search, contentDescription = stringResource(R.string.search), modifier = Modifier.padding(end = 5.dp), tint = Color.Black)
+                Icon(
+                    Icons.Filled.Search,
+                    contentDescription = stringResource(R.string.search),
+                    modifier = Modifier.padding(end = 5.dp),
+                    tint = Color.Black
+                )
                 Text(text = "Cerca tra i vari articoli", color = Color.DarkGray)
             }
         }
@@ -139,21 +171,29 @@ fun TrintedTopBar(navHostController: NavHostController) {
 @SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomePage(appwrite: AppwriteConfig, activity: ComponentActivity, registrationViewModel: RegistrationViewModel = RegistrationViewModel()) {
-    val (shownBottomSheet, setBottomSheet)  = remember { mutableStateOf(false) }
+fun HomePage(
+    appwrite: AppwriteConfig,
+    activity: ComponentActivity,
+    registrationViewModel: RegistrationViewModel = RegistrationViewModel()
+) {
+    val (shownBottomSheet, setBottomSheet) = remember { mutableStateOf(false) }
     val navHostController = rememberNavController()
     val selectedIndex = remember { mutableStateOf(0) }
-    Scaffold(topBar = { TrintedTopBar(navHostController) }, bottomBar = { TrintedBottomBar(selectedIndex)} ) {
+    Scaffold(
+        topBar = { TrintedTopBar(navHostController) },
+        bottomBar = { TrintedBottomBar(selectedIndex) }) {
         Box(modifier = Modifier.padding(it)) {
-            if(selectedIndex.value == 4) {
+            if (selectedIndex.value == 4) {
                 registrationViewModel.checkLogged(appwrite)
-                if(registrationViewModel.loading.value) {
+                if (registrationViewModel.loading.value) {
                     Text(text = "Loading...")
-                }
-                else if(!registrationViewModel.isLogged.value) {
-                    RegistrationFormActivity(activity = activity, appwrite = appwrite, registrationViewModel)
-                }
-                else if(registrationViewModel.isLogged.value) {
+                } else if (!registrationViewModel.isLogged.value) {
+                    RegistrationFormActivity(
+                        activity = activity,
+                        appwrite = appwrite,
+                        registrationViewModel
+                    )
+                } else if (registrationViewModel.isLogged.value) {
                     UserProfileActivity(registrationViewModel = registrationViewModel)
                 }
             }
