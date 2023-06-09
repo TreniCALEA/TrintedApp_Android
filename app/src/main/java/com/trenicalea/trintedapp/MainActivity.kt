@@ -1,6 +1,5 @@
 package com.trenicalea.trintedapp
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -34,7 +33,6 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -46,9 +44,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.trenicalea.trintedapp.appwrite.AppwriteConfig
 import com.trenicalea.trintedapp.ui.theme.TrintedAppTheme
-import com.trenicalea.trintedapp.viewmodels.RegistrationViewModel
+import com.trenicalea.trintedapp.viewmodels.AuthViewModel
 import com.trenicalea.trintedapp.viewmodels.UtenteViewModel
-import okhttp3.internal.wait
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -138,7 +135,6 @@ fun TrintedBottomBar(selectedIndex: MutableState<Int>) {
     }
 }
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TrintedTopBar(navHostController: NavHostController, selectedIndex: MutableState<Int>) {
@@ -172,13 +168,15 @@ fun TrintedTopBar(navHostController: NavHostController, selectedIndex: MutableSt
 fun HomePage(
     appwrite: AppwriteConfig,
     activity: ComponentActivity,
-    registrationViewModel: RegistrationViewModel = RegistrationViewModel(),
+    authViewModel: AuthViewModel = AuthViewModel(),
     utenteViewModel: UtenteViewModel = UtenteViewModel()
 ) {
     val (shownBottomSheet, setBottomSheet) = remember { mutableStateOf(false) }
     val navHostController = rememberNavController()
     val selectedIndex = remember { mutableStateOf(0) }
     val selectedIndexFind = remember { mutableStateOf(0) }
+
+
     Scaffold(
         topBar = { TrintedTopBar(navHostController, selectedIndex) },
         bottomBar = { TrintedBottomBar(selectedIndex) }) {
@@ -187,18 +185,18 @@ fun HomePage(
                 FindActivity(userViewModel = utenteViewModel, selectedIndex = selectedIndexFind)
             }
             if (selectedIndex.value == 4) {
-                registrationViewModel.checkLogged(appwrite, utenteViewModel)
-                if (registrationViewModel.loading.value) {
+                authViewModel.checkLogged(appwrite, utenteViewModel)
+                if (authViewModel.loading.value) {
                     Text(text = "Loading...")
-                } else if (!registrationViewModel.isLogged.value) {
+                } else if (!authViewModel.isLogged.value) {
                     RegistrationFormActivity(
                         activity = activity,
                         appwrite = appwrite,
-                        registrationViewModel,
+                        authViewModel,
                         utenteViewModel
                     )
-                } else if (registrationViewModel.isLogged.value) {
-                    UserProfileActivity(registrationViewModel.loggedInUser.value!!, registrationViewModel, appwrite, utenteViewModel)
+                } else if (authViewModel.isLogged.value) {
+                    UserProfileActivity(authViewModel.loggedInUser.value!!, authViewModel, appwrite, utenteViewModel)
                 }
             }
         }

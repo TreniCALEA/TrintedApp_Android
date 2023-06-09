@@ -15,4 +15,18 @@ class UtenteRegistrationDto (
     val credenzialiUsername: String,
     val credenzialiEmail: String,
     val credenzialiPassword: String
-)
+) {
+    companion object {
+        fun validateCredenzialiUsername(username: String): Boolean {
+            return username != "";
+        }
+
+        fun validateCredenzialiEmail(email: String): Boolean {
+            return email != "" && email.contains("@") && email.contains(".");
+        }
+
+        fun validateCredenzialiPassword(password: String): Boolean {
+            return password != "" && password.length > 8;
+        }
+    }
+}

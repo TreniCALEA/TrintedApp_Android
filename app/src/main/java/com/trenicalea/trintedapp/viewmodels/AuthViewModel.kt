@@ -1,10 +1,6 @@
 package com.trenicalea.trintedapp.viewmodels
 
-import android.app.AlertDialog
-import android.content.Context
-import android.view.View
 import androidx.activity.ComponentActivity
-import androidx.compose.material3.Snackbar
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -13,12 +9,31 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import com.trenicalea.trintedapp.appwrite.AppwriteConfig
 import com.trenicalea.trintedapp.models.UtenteDto
+import com.trenicalea.trintedapp.models.UtenteRegistrationDto
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
-class RegistrationViewModel : ViewModel() {
+data class AuthState(
+    val username: String = "",
+    val password: String = "",
+    val email: String = "",
+    val usernameProvider: String = "",
+    val usernameHasError: Boolean = !UtenteRegistrationDto.validateCredenzialiUsername(username),
+    val emailHasError: Boolean = !UtenteRegistrationDto.validateCredenzialiEmail(email),
+    val passwordHasError: Boolean = !UtenteRegistrationDto.validateCredenzialiPassword(password),
+    val usernameProviderHasError: Boolean = !UtenteRegistrationDto.validateCredenzialiUsername(usernameProvider),
+)
+
+class AuthViewModel : ViewModel() {
+    private val _authState = MutableStateFlow(AuthState())
+    val authState: StateFlow<AuthState> = _authState.asStateFlow()
+
     val isLogged: MutableState<Boolean> = mutableStateOf(false)
     val loading: MutableState<Boolean> = mutableStateOf(true)
     val login: MutableState<Boolean> = mutableStateOf(false)
     val loggedInUser: MutableState<UtenteDto?> = mutableStateOf(null)
+
 
     fun logout(appwrite: AppwriteConfig) {
         CoroutineScope(Dispatchers.IO).launch {
@@ -68,7 +83,8 @@ class RegistrationViewModel : ViewModel() {
         appwrite: AppwriteConfig,
         activity: ComponentActivity,
         provider: String,
-        utenteViewModel: UtenteViewModel
+        utenteViewModel: UtenteViewModel,
+        usernameProvider: String? = null
     ) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -78,14 +94,23 @@ class RegistrationViewModel : ViewModel() {
                     "appwrite-callback-645d4c2c39e030c6f6ba://cloud.appwrite.io/auth/oauth2/success",
                     "appwrite-callback-645d4c2c39e030c6f6ba://cloud.appwrite.io/auth/oauth2/failure"
                 )
-
-                loggedInUser.value =
-                    utenteViewModel.getByCredenzialiEmail(appwrite.account.get().email)
-                println("Utente providerLogin: ${loggedInUser.value!!.nome}")
+                try {
+                    loggedInUser.value =
+                        utenteViewModel.getByCredenzialiEmail(appwrite.account.get().email)
+                    println("Utente checkLogged: ${loggedInUser.value!!.credenzialiEmail}")
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
                 isLogged.value = true
             } catch (e: Exception) {
                 println("[i] Login with $provider cancelled.")
                 isLogged.value = false;
+            }
+        }.invokeOnCompletion {
+            CoroutineScope(Dispatchers.IO).launch {
+                if(usernameProvider != null) {
+                    registerWithCredentials(usernameProvider, appwrite.account.get().email, appwrite.account.get().id)
+                }
             }
         }
     }
@@ -101,5 +126,37 @@ class RegistrationViewModel : ViewModel() {
                 isLogged.value = false
             }
         }.invokeOnCompletion { loading.value = true }
+    }
+
+    fun updateUsername(username: String) {
+        val hasError = !UtenteRegistrationDto.validateCredenzialiUsername(username)
+        _authState.value = _authState.value.copy(
+            username = username,
+            usernameHasError = hasError
+        )
+    }
+
+    fun updateEmail(email: String) {
+        val hasError = !UtenteRegistrationDto.validateCredenzialiEmail(email)
+        _authState.value = _authState.value.copy(
+            email = email,
+            emailHasError = hasError
+        )
+    }
+
+    fun updatePassword(password: String) {
+        val hasError = !UtenteRegistrationDto.validateCredenzialiUsername(password)
+        _authState.value = _authState.value.copy(
+            password = password,
+            passwordHasError = hasError
+        )
+    }
+
+    fun updateUsernameProvider(usernameProvider: String) {
+        val hasError = !UtenteRegistrationDto.validateCredenzialiUsername(usernameProvider)
+        _authState.value = _authState.value.copy(
+            usernameProvider = usernameProvider,
+            usernameProviderHasError = hasError
+        )
     }
 }

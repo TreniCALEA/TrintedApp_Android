@@ -1,8 +1,6 @@
 package com.trenicalea.trintedapp
 
 
-import android.graphics.Bitmap
-import android.provider.CalendarContract.Colors
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,17 +14,14 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarToday
-import androidx.compose.material.icons.filled.HideImage
 import androidx.compose.material.icons.filled.Mail
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.ProductionQuantityLimits
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -42,14 +37,14 @@ import com.trenicalea.trintedapp.appwrite.AppwriteConfig
 import com.trenicalea.trintedapp.models.OrdineDto
 import com.trenicalea.trintedapp.models.UtenteDto
 import com.trenicalea.trintedapp.viewmodels.OrdineViewModel
-import com.trenicalea.trintedapp.viewmodels.RegistrationViewModel
+import com.trenicalea.trintedapp.viewmodels.AuthViewModel
 import com.trenicalea.trintedapp.viewmodels.UtenteViewModel
 
 
 @Composable
 fun UserProfileActivity(
     user: UtenteDto,
-    registrationViewModel: RegistrationViewModel,
+    authViewModel: AuthViewModel,
     appwriteConfig: AppwriteConfig,
     utenteViewModel: UtenteViewModel
 ) {
@@ -143,7 +138,7 @@ fun UserProfileActivity(
 
         Row {
             Button(
-                onClick = { registrationViewModel.logout(appwriteConfig) },
+                onClick = { authViewModel.logout(appwriteConfig) },
             ) {
                 Text(text = "Logout")
             }
