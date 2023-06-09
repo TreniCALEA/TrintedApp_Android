@@ -110,19 +110,19 @@ class UtenteControllerApi(basePath: String = Config.ip) : ApiClient(basePath) {
      * @param page
      * @return PageUtenteBasicDto
      */
-    fun getAllByUsernameLikePaged(prefix: String, page: Int): PageUtenteBasicDto = runBlocking(Dispatchers.IO) {
+    fun getAllByUsernameLike(prefix: String): Array<UtenteBasicDto> = runBlocking(Dispatchers.IO) {
         val localVariableConfig = RequestConfig(
                 RequestMethod.GET,
-                "/user-api/users/{prefix}/{page}".replace("{" + "prefix" + "}", prefix).replace("{" + "page" + "}", "$page")
+                "/user-api/users/find/{prefix}".replace("{" + "prefix" + "}", prefix)
         )
 
-        val response = request<PageUtenteBasicDto>(
+        val response = request<Array<UtenteBasicDto>>(
                 localVariableConfig
         )
 
 
         return@runBlocking when (response.responseType) {
-            ResponseType.Success -> (response as Success<*>).data as PageUtenteBasicDto
+            ResponseType.Success -> (response as Success<*>).data as Array<UtenteBasicDto>
             ResponseType.Informational -> TODO()
             ResponseType.Redirection -> TODO()
             ResponseType.ClientError -> throw ClientException((response as ClientError<*>).body as? String ?: "Client error")

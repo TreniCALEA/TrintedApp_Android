@@ -18,8 +18,8 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class UtenteBasicDto (
     val id: Long,
-    @Json(name = "immagine")
-    val immagine: Bitmap? = null,
+    @Json(name = "image")
+    val image: Bitmap? = null,
     val credenzialiUsername: String,
     val ratingGenerale: Float? = null,
 ) {

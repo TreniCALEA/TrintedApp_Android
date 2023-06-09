@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModel
 import com.trenicalea.trintedapp.Config
 import com.trenicalea.trintedapp.apis.UtenteControllerApi
 import com.trenicalea.trintedapp.appwrite.AppwriteConfig
-import com.trenicalea.trintedapp.models.PageUtenteBasicDto
 import com.trenicalea.trintedapp.models.UtenteBasicDto
 import com.trenicalea.trintedapp.models.UtenteDto
 import com.trenicalea.trintedapp.models.UtenteRegistrationDto
@@ -20,6 +19,7 @@ class UtenteViewModel : ViewModel() {
     private val _userApi: UtenteControllerApi = UtenteControllerApi()
     val isChecked: MutableState<Boolean> = mutableStateOf(false)
     val prefix: MutableState<String> = mutableStateOf("")
+    val userList: MutableState<List<UtenteBasicDto>> = mutableStateOf(listOf())
 
     fun register(username: String, email: String, password: String) {
         _userApi.add(UtenteRegistrationDto(username, email, password))
@@ -39,8 +39,9 @@ class UtenteViewModel : ViewModel() {
         }.invokeOnCompletion { isChecked.value = true }
     }
 
-    fun getUserByUsernameLikePaged(): List<UtenteBasicDto> {
-        return _userApi.getAllByUsernameLikePaged(prefix.value, 0).content?.toList() ?: listOf()
+    fun getUserByUsernameLike(){
+        userList.value = _userApi.getAllByUsernameLike(prefix.value).toList()
+        println(userList.value)
     }
 
     fun getByCredenzialiEmail(credenzialiEmail: String): UtenteDto {
