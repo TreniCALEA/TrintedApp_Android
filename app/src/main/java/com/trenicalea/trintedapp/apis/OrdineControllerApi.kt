@@ -103,7 +103,7 @@ class OrdineControllerApi(basePath: String = Config.ip) : ApiClient(basePath) {
      */
     @Suppress("UNCHECKED_CAST")
     fun getByAcquirente(id: Long): Array<OrdineDto> = runBlocking(Dispatchers.IO) {
-        val localVariableQuery: MultiValueMap = mutableMapOf<String, kotlin.collections.List<String>>().apply {
+        val localVariableQuery: MultiValueMap = mutableMapOf<String, List<String>>().apply {
             put("id", listOf(id.toString()))
         }
         val localVariableConfig = RequestConfig(
@@ -154,7 +154,7 @@ class OrdineControllerApi(basePath: String = Config.ip) : ApiClient(basePath) {
      */
     @Suppress("UNCHECKED_CAST")
     fun getByVenditore(id: Long): Array<OrdineDto> = runBlocking(Dispatchers.IO) {
-        val localVariableQuery: MultiValueMap = mutableMapOf<String, kotlin.collections.List<String>>().apply {
+        val localVariableQuery: MultiValueMap = mutableMapOf<String, List<String>>().apply {
             put("id", listOf(id.toString()))
         }
         val localVariableConfig = RequestConfig(

@@ -95,7 +95,7 @@ open class ApiClient(val baseUrl: String) {
             RequestMethod.OPTIONS -> Request.Builder().url(url).method("OPTIONS", null)
         }
 
-        headers.forEach { header -> request = request.addHeader(header.key, header.value.toString()) }
+        headers.forEach { header -> request = request.addHeader(header.key, header.value) }
 
         val realRequest = request.build()
         val response = client.newCall(realRequest).execute()

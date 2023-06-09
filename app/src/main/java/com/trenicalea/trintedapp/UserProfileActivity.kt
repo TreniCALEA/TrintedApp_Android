@@ -2,6 +2,7 @@ package com.trenicalea.trintedapp
 
 
 import android.graphics.Bitmap
+import android.provider.CalendarContract.Colors
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,10 +21,12 @@ import androidx.compose.material.icons.filled.Mail
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.ProductionQuantityLimits
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -39,19 +42,21 @@ import com.trenicalea.trintedapp.appwrite.AppwriteConfig
 import com.trenicalea.trintedapp.models.OrdineDto
 import com.trenicalea.trintedapp.models.UtenteDto
 import com.trenicalea.trintedapp.viewmodels.OrdineViewModel
+import com.trenicalea.trintedapp.viewmodels.RegistrationViewModel
 import com.trenicalea.trintedapp.viewmodels.UtenteViewModel
 
 
 @Composable
 fun UserProfileActivity(
     user: UtenteDto,
+    registrationViewModel: RegistrationViewModel,
     appwriteConfig: AppwriteConfig,
     utenteViewModel: UtenteViewModel
 ) {
     val ordineViewModel = OrdineViewModel(user.id)
 
-    val purchasesList = ordineViewModel.ordersGetByAcquirente
-    val salesList = ordineViewModel.ordersGetByVenditore
+    val purchasesList = ordineViewModel.ordersGetByAcquirente ?: arrayOf()
+    val salesList = ordineViewModel.ordersGetByVenditore ?: arrayOf()
 
     Card(
         elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
@@ -62,7 +67,9 @@ fun UserProfileActivity(
         Column {
             if (!utenteViewModel.isChecked.value) {
                 Row {
-                    Button(onClick = { utenteViewModel.checkVerified(appwriteConfig) }) {
+                    Button(
+                        onClick = { utenteViewModel.checkVerified(appwriteConfig) },
+                    ) {
                         Text(text = "Verifica account")
                     }
                 }
@@ -110,7 +117,7 @@ fun UserProfileActivity(
                     imageVector = Icons.Default.Mail,
                     contentDescription = stringResource(id = R.string.profileEmailIcon)
                 )
-                Row() {
+                Row {
                     Text(
                         text = user.credenzialiEmail,
                         textAlign = TextAlign.Center,
@@ -121,19 +128,25 @@ fun UserProfileActivity(
 
             Divider()
 
-            if (salesList.isNotEmpty())
-                Carousel(list = salesList, title = stringResource(R.string.recentSales))
-            else
-                ArrayEmpty()
+            if (salesList.isNotEmpty()) Carousel(
+                list = salesList, title = stringResource(R.string.recentSales)
+            )
+            else ArrayEmpty()
 
             Divider()
 
-            if (purchasesList.isNotEmpty())
-                Carousel(list = purchasesList, title = stringResource(R.string.recentPurchases))
-            else
-                ArrayEmpty()
+            if (purchasesList.isNotEmpty()) Carousel(
+                list = purchasesList, title = stringResource(R.string.recentPurchases)
+            )
+            else ArrayEmpty()
+        }
 
-
+        Row {
+            Button(
+                onClick = { registrationViewModel.logout(appwriteConfig) },
+            ) {
+                Text(text = "Logout")
+            }
         }
     }
 }
@@ -175,9 +188,7 @@ fun Carousel(list: Array<OrdineDto>, title: String) {
             .padding(10.dp)
     ) {
         Text(
-            text = title,
-            fontWeight = FontWeight.Bold,
-            fontSize = 20.sp
+            text = title, fontWeight = FontWeight.Bold, fontSize = 20.sp
         )
     }
     Row(
@@ -199,19 +210,17 @@ fun Carousel(list: Array<OrdineDto>, title: String) {
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
-                        Row() {
+                        Row {
                             // Use bitmapAdapter
                         }
-                        Row() {
+                        Row {
                             Icon(
                                 imageVector = Icons.Filled.CalendarToday,
                                 contentDescription = null,
                                 modifier = Modifier.size(20.dp)
                             )
-                            if (order.dataAcquisto == null)
-                                Text(text = stringResource(id = R.string.unavailable))
-                            else
-                                Text(text = "${order.dataAcquisto}")
+                            if (order.dataAcquisto == null) Text(text = stringResource(id = R.string.unavailable))
+                            else Text(text = "${order.dataAcquisto}")
                         }
                     }
 

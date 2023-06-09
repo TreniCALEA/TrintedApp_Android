@@ -44,10 +44,16 @@ import com.trenicalea.trintedapp.viewmodels.UtenteViewModel
 
 
 @Composable
-fun RegistrationFormActivity(activity: ComponentActivity, appwrite: AppwriteConfig, registrationViewModel: RegistrationViewModel, utenteViewModel: UtenteViewModel) {
-    Card(elevation = CardDefaults.cardElevation(defaultElevation = 5.dp), modifier = Modifier
-        .padding(12.dp)
-        .fillMaxSize()
+fun RegistrationFormActivity(
+    activity: ComponentActivity,
+    appwrite: AppwriteConfig,
+    registrationViewModel: RegistrationViewModel,
+    utenteViewModel: UtenteViewModel
+) {
+    Card(
+        elevation = CardDefaults.cardElevation(defaultElevation = 5.dp), modifier = Modifier
+            .padding(12.dp)
+            .fillMaxSize()
     ) {
 
         var username by remember { mutableStateOf("") }
@@ -64,7 +70,7 @@ fun RegistrationFormActivity(activity: ComponentActivity, appwrite: AppwriteConf
             ) {
                 Text(
                     modifier = Modifier.padding(bottom = 10.dp, top = 10.dp),
-                    text = if(!registrationViewModel.login.value) "Iscriviti!" else "Login!",
+                    text = if (!registrationViewModel.login.value) "Iscriviti!" else "Login!",
                     textAlign = TextAlign.Center,
                     style = TextStyle(fontSize = 25.sp)
                 )
@@ -89,56 +95,56 @@ fun RegistrationFormActivity(activity: ComponentActivity, appwrite: AppwriteConf
                     )
                 }
             }
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    OutlinedTextField(
-                        value = email,
-                        onValueChange = { email = it },
-                        label = { Text(stringResource(R.string.emailLabel)) },
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.Email,
-                                contentDescription = stringResource(R.string.emailIcon)
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                OutlinedTextField(
+                    value = email,
+                    onValueChange = { email = it },
+                    label = { Text(stringResource(R.string.emailLabel)) },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Email,
+                            contentDescription = stringResource(R.string.emailIcon)
+                        )
+                    },
+                )
+            }
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                OutlinedTextField(value = password,
+                    onValueChange = { password = it },
+                    label = { Text(stringResource(R.string.passwordLabel)) },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Lock,
+                            contentDescription = stringResource(
+                                id = R.string.passwordIcon
                             )
-                        },
-                    )
-                }
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    OutlinedTextField(value = password,
-                        onValueChange = { password = it },
-                        label = { Text(stringResource(R.string.passwordLabel)) },
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.Lock,
-                                contentDescription = stringResource(
-                                    id = R.string.passwordIcon
-                                )
-                            )
-                        },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                        visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                        trailingIcon = {
-                            val image = if (passwordVisible)
-                                Icons.Filled.Visibility
-                            else Icons.Filled.VisibilityOff
+                        )
+                    },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                    trailingIcon = {
+                        val image = if (passwordVisible)
+                            Icons.Filled.Visibility
+                        else Icons.Filled.VisibilityOff
 
-                            // Please provide localized description for accessibility services
-                            val description =
-                                if (passwordVisible) "Hide password" else "Show password"
+                        // Please provide localized description for accessibility services
+                        val description =
+                            if (passwordVisible) "Hide password" else "Show password"
 
-                            IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                                Icon(imageVector = image, description)
-                            }
+                        IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                            Icon(imageVector = image, description)
                         }
-                    )
-                }
+                    }
+                )
+            }
             if (!registrationViewModel.login.value) {
                 Row(
                     horizontalArrangement = Arrangement.Center,
@@ -173,36 +179,75 @@ fun RegistrationFormActivity(activity: ComponentActivity, appwrite: AppwriteConf
                 }
             }
 
-            Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(bottom = 10.dp).fillMaxWidth()) {
-                Text(text = "Oppure, " + if(!registrationViewModel.login.value) "hai già un profilo?" else "vuoi registrarti?")
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .padding(bottom = 10.dp)
+                    .fillMaxWidth()
+            ) {
+                Text(text = "Oppure, " + if (!registrationViewModel.login.value) "hai già un profilo?" else "vuoi registrarti?")
             }
-            Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(bottom = 30.dp).fillMaxWidth()) {
-                Button(onClick = { registrationViewModel.login.value = !registrationViewModel.login.value }) {
-                    Text(text = if(!registrationViewModel.login.value) "Login" else "Registrati")
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .padding(bottom = 30.dp)
+                    .fillMaxWidth()
+            ) {
+                Button(onClick = {
+                    registrationViewModel.login.value = !registrationViewModel.login.value
+                }) {
+                    Text(text = if (!registrationViewModel.login.value) "Login" else "Registrati")
                 }
             }
 
-            Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically, modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 20.dp, bottom = 15.dp)) {
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 20.dp, bottom = 15.dp)
+            ) {
                 Text("Oppure, accedi con:")
             }
-            Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
                 Button(
                     colors = ButtonDefaults.buttonColors(containerColor = Color(59, 89, 152)),
                     onClick = {
-                        registrationViewModel.providerLogin(appwrite, activity, "facebook", utenteViewModel)
-                }) {
+                        registrationViewModel.providerLogin(
+                            appwrite,
+                            activity,
+                            "facebook",
+                            utenteViewModel
+                        )
+                    }) {
                     Text(stringResource(id = R.string.facebookLogin))
                 }
             }
-            Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
                 Button(
                     colors = ButtonDefaults.buttonColors(containerColor = Color(219, 68, 55)),
                     onClick = {
-                        registrationViewModel.providerLogin(appwrite, activity, "google", utenteViewModel)
-                }) {
-                    Text(stringResource(id = R.string.googleLogin), modifier = Modifier.padding(horizontal = 7.dp))
+                        registrationViewModel.providerLogin(
+                            appwrite,
+                            activity,
+                            "google",
+                            utenteViewModel
+                        )
+                    }) {
+                    Text(
+                        stringResource(id = R.string.googleLogin),
+                        modifier = Modifier.padding(horizontal = 7.dp)
+                    )
                 }
             }
         }

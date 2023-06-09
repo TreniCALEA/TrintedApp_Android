@@ -25,4 +25,10 @@
     <string name="salesDate">venduto il:</string>
     <string name="unavailable">non disponibile</string>
     <string name="noItems">nessun elemento</string>
+    <string name="noUsers">Nessun utente</string>
+    <string name="searchLabel">Cerca tra vari articoli e utenti</string>
+    <string name="utenti">Utenti</string>
+    <string name="articoli">Articoli</string>
+    <string name="cercaUtenti">Cerca tra migliaia di utenti</string>
+    <string name="cercaArticoli">Cerca tra migliaia di articoli</string>
 </resources>

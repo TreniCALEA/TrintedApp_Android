@@ -141,14 +141,14 @@ fun TrintedBottomBar(selectedIndex: MutableState<Int>) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TrintedTopBar(navHostController: NavHostController) {
+fun TrintedTopBar(navHostController: NavHostController, selectedIndex: MutableState<Int>) {
     val currentBackStackEntry by navHostController.currentBackStackEntryAsState()
     val showBackIcon by remember(currentBackStackEntry) { derivedStateOf { navHostController.previousBackStackEntry != null } }
     TopAppBar(title = { Text("") },
         actions = {
             Button(
                 onClick = {
-                    //your onclick code
+                    selectedIndex.value = 1
                 },
                 colors = ButtonDefaults.buttonColors(Color.LightGray),
                 modifier = Modifier
@@ -162,15 +162,12 @@ fun TrintedTopBar(navHostController: NavHostController) {
                     modifier = Modifier.padding(end = 5.dp),
                     tint = Color.Black
                 )
-                Text(text = "Cerca tra i vari articoli", color = Color.DarkGray)
+                Text(text = stringResource(R.string.search), color = Color.DarkGray)
             }
         }
     )
 }
 
-
-@SuppressLint("CoroutineCreationDuringComposition")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomePage(
     appwrite: AppwriteConfig,
@@ -181,10 +178,14 @@ fun HomePage(
     val (shownBottomSheet, setBottomSheet) = remember { mutableStateOf(false) }
     val navHostController = rememberNavController()
     val selectedIndex = remember { mutableStateOf(0) }
+    val selectedIndexFind = remember { mutableStateOf(0) }
     Scaffold(
-        topBar = { TrintedTopBar(navHostController) },
+        topBar = { TrintedTopBar(navHostController, selectedIndex) },
         bottomBar = { TrintedBottomBar(selectedIndex) }) {
         Box(modifier = Modifier.padding(it)) {
+            if (selectedIndex.value == 1) {
+                FindActivity(userViewModel = utenteViewModel, selectedIndex = selectedIndexFind)
+            }
             if (selectedIndex.value == 4) {
                 registrationViewModel.checkLogged(appwrite, utenteViewModel)
                 if (registrationViewModel.loading.value) {
@@ -197,7 +198,7 @@ fun HomePage(
                         utenteViewModel
                     )
                 } else if (registrationViewModel.isLogged.value) {
-                    // UserProfileActivity(registrationViewModel.loggedInUser.value!!, appwrite, utenteViewModel)
+                    UserProfileActivity(registrationViewModel.loggedInUser.value!!, registrationViewModel, appwrite, utenteViewModel)
                 }
             }
         }

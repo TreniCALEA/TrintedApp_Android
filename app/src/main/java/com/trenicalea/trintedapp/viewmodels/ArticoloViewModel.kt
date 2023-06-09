@@ -3,7 +3,7 @@ package com.trenicalea.trintedapp.viewmodels
 import androidx.lifecycle.ViewModel
 import com.trenicalea.trintedapp.apis.ArticoloControllerApi
 
-class ArticoloViewModel: ViewModel() {
+class ArticoloViewModel : ViewModel() {
     private val _articoloApi: ArticoloControllerApi = ArticoloControllerApi()
 
     fun getImage(id: Long): String? {

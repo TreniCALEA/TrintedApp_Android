@@ -8,27 +8,35 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class OrdineViewModel(val id: Long): ViewModel() {
+class OrdineViewModel(val id: Long) : ViewModel() {
 
     init {
         getByAcquirente(id)
         getByVenditore(id)
     }
 
-    private val _orderApi : OrdineControllerApi = OrdineControllerApi()
+    private val _orderApi: OrdineControllerApi = OrdineControllerApi()
 
-    var ordersGetByVenditore : Array<OrdineDto> = emptyArray()
+    var ordersGetByVenditore: Array<OrdineDto> = emptyArray()
     var ordersGetByAcquirente: Array<OrdineDto> = emptyArray()
 
     fun getByVenditore(id: Long) {
         CoroutineScope(Dispatchers.IO).launch {
-            ordersGetByVenditore = _orderApi.getByVenditore(id)
+            try {
+                ordersGetByVenditore = _orderApi.getByVenditore(id)
+            } catch (e: Exception) {
+                ordersGetByVenditore = emptyArray()
+            }
         }
     }
 
     fun getByAcquirente(id: Long) {
         CoroutineScope(Dispatchers.IO).launch {
-            ordersGetByAcquirente = _orderApi.getByAcquirente(id)
+            try {
+                ordersGetByAcquirente = _orderApi.getByAcquirente(id)
+            } catch (e: Exception) {
+                ordersGetByAcquirente = emptyArray()
+            }
         }
     }
 }

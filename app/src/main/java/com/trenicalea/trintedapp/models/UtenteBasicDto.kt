@@ -13,14 +13,14 @@ package com.trenicalea.trintedapp.models
 
 import android.graphics.Bitmap
 import com.squareup.moshi.Json
-import com.trenicalea.trintedapp.models.BitmapAdapter
+import com.squareup.moshi.JsonClass
 
+@JsonClass(generateAdapter = true)
 data class UtenteBasicDto (
-
     val id: Long,
     @Json(name = "immagine")
     val immagine: Bitmap? = null,
     val credenzialiUsername: String,
-    val ratingGenerale: Float? = null
+    val ratingGenerale: Float? = null,
 ) {
 }

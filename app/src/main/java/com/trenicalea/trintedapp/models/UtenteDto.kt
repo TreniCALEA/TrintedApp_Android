@@ -13,7 +13,9 @@ package com.trenicalea.trintedapp.models
 
 import android.graphics.Bitmap
 import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
+@JsonClass(generateAdapter = true)
 data class UtenteDto (
 
     val id: Long,
