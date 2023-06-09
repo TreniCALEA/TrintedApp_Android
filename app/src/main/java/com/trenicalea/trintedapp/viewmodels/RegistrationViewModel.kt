@@ -47,10 +47,11 @@ class RegistrationViewModel : ViewModel() {
     fun checkLogged(appwrite: AppwriteConfig, utenteViewModel: UtenteViewModel) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
+                println(appwrite.account.get().email)
                 println("[i] Session: \n" + appwrite.account.getSession("current"))
                 try {
                     loggedInUser.value =
-                        utenteViewModel.getByCredenzialiEmail(appwrite.account.getSession("current").providerUid)
+                        utenteViewModel.getByCredenzialiEmail(appwrite.account.get().email)
                     println("Utente checkLogged: ${loggedInUser.value!!.credenzialiEmail}")
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -77,8 +78,9 @@ class RegistrationViewModel : ViewModel() {
                     "appwrite-callback-645d4c2c39e030c6f6ba://cloud.appwrite.io/auth/oauth2/success",
                     "appwrite-callback-645d4c2c39e030c6f6ba://cloud.appwrite.io/auth/oauth2/failure"
                 )
+
                 loggedInUser.value =
-                    utenteViewModel.getByCredenzialiEmail(appwrite.account.getSession("current").providerUid)
+                    utenteViewModel.getByCredenzialiEmail(appwrite.account.get().email)
                 println("Utente providerLogin: ${loggedInUser.value!!.nome}")
                 isLogged.value = true
             } catch (e: Exception) {
