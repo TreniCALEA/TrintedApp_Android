@@ -31,4 +31,5 @@
     <string name="articoli">Articoli</string>
     <string name="cercaUtenti">Cerca tra migliaia di utenti</string>
     <string name="cercaArticoli">Cerca tra migliaia di articoli</string>
+    <string name="rating">Rating of:</string>
 </resources>

@@ -13,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ShoppingBag
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
@@ -131,13 +132,11 @@ fun FindActivity(
 
 @Composable
 fun ListUsers(userList: List<UtenteBasicDto>) {
-    println("Diocane: \n" + userList)
     if (userList.isEmpty()) {
-        Row(horizontalArrangement = Arrangement.Center){
+        Row(horizontalArrangement = Arrangement.Center) {
             Text(text = "Nessun utente")
         }
-    }
-    else {
+    } else {
         LazyColumn {
             items(userList) { user ->
                 key(user.id) {
@@ -155,6 +154,13 @@ fun ListUsers(userList: List<UtenteBasicDto>) {
                             )
                         }
                         Text(text = user.credenzialiUsername, modifier = Modifier.weight(1f))
+                    }
+                    Row(modifier = Modifier.padding(horizontal = 10.dp)) {
+                        Icon(
+                            imageVector = Icons.Filled.Star,
+                            contentDescription = stringResource(id = R.string.rating)
+                        )
+                        Text(text = if (user.ratingGenerale == 0.0f) "Nessuna recensione" else user.ratingGenerale.toString())
                     }
                     Divider()
                 }

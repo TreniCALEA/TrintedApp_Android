@@ -24,6 +24,10 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
@@ -49,98 +53,112 @@ fun UserProfileActivity(
     utenteViewModel: UtenteViewModel
 ) {
     val ordineViewModel = OrdineViewModel(user.id)
-
+    var showReview by remember { mutableStateOf(false) }
     val purchasesList = ordineViewModel.ordersGetByAcquirente ?: arrayOf()
     val salesList = ordineViewModel.ordersGetByVenditore ?: arrayOf()
+    if (!showReview) {
+        Card(
+            elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
+            modifier = Modifier
+                .padding(12.dp)
+                .fillMaxWidth()
+        ) {
+            Column {
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
 
-    Card(
-        elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
-        modifier = Modifier
-            .padding(12.dp)
-            .fillMaxWidth()
-    ) {
-        Column {
-            if (!utenteViewModel.isChecked.value) {
-                Row {
+                    if (user.image != null) {
+                        Image(
+                            bitmap = user.image.asImageBitmap(),
+                            contentDescription = "${stringResource(id = R.string.propic)} ${user.nome} ${user.cognome}"
+                        )
+                    } else {
+                        Icon(
+                            imageVector = Icons.Filled.Person,
+                            contentDescription = stringResource(id = R.string.defaultImage),
+                            modifier = Modifier.size(60.dp)
+                        )
+                    }
+
+                }
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = "${user.nome} ${user.cognome}",
+                        textAlign = TextAlign.Center,
+                        style = TextStyle(fontSize = 25.sp)
+                    )
+                }
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Button(
+                        onClick = { showReview = true }
+                    ) {
+                        Text(text = "Rating: " + (user.ratingGenerale ?: 0).toString())
+                    }
+                }
+                Row(
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp)
+                ) {
+
+                    Icon(
+                        imageVector = Icons.Default.Mail,
+                        contentDescription = stringResource(id = R.string.profileEmailIcon)
+                    )
+                    Row {
+                        Text(
+                            text = user.credenzialiEmail,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(10.dp)
+                        )
+                    }
+                }
+
+                Divider()
+
+                if (salesList.isNotEmpty()) Carousel(
+                    list = salesList, title = stringResource(R.string.recentSales)
+                )
+                else ArrayEmpty()
+
+                Divider()
+
+                if (purchasesList.isNotEmpty()) Carousel(
+                    list = purchasesList, title = stringResource(R.string.recentPurchases)
+                )
+                else ArrayEmpty()
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                if (!utenteViewModel.isChecked.value) {
                     Button(
                         onClick = { utenteViewModel.checkVerified(appwriteConfig) },
                     ) {
                         Text(text = "Verifica account")
                     }
                 }
-            }
-            Row(
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-
-                if (user.image != null) {
-                    Image(
-                        bitmap = user.image.asImageBitmap(),
-                        contentDescription = "${stringResource(id = R.string.propic)} ${user.nome} ${user.cognome}"
-                    )
-                } else {
-                    Icon(
-                        imageVector = Icons.Filled.Person,
-                        contentDescription = stringResource(id = R.string.defaultImage),
-                        modifier = Modifier.size(60.dp)
-                    )
+                Button(
+                    onClick = { authViewModel.logout(appwriteConfig) },
+                    modifier = Modifier.padding(horizontal = 10.dp)
+                ) {
+                    Text(text = "Logout")
                 }
-
-            }
-            Row(
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(
-                    text = "${user.nome} ${user.cognome}",
-                    textAlign = TextAlign.Center,
-                    style = TextStyle(fontSize = 25.sp)
-                )
-            }
-            Row(
-                horizontalArrangement = Arrangement.Start,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(10.dp)
-            ) {
-
-                Icon(
-                    imageVector = Icons.Default.Mail,
-                    contentDescription = stringResource(id = R.string.profileEmailIcon)
-                )
-                Row {
-                    Text(
-                        text = user.credenzialiEmail,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(10.dp)
-                    )
-                }
-            }
-
-            Divider()
-
-            if (salesList.isNotEmpty()) Carousel(
-                list = salesList, title = stringResource(R.string.recentSales)
-            )
-            else ArrayEmpty()
-
-            Divider()
-
-            if (purchasesList.isNotEmpty()) Carousel(
-                list = purchasesList, title = stringResource(R.string.recentPurchases)
-            )
-            else ArrayEmpty()
-        }
-
-        Row {
-            Button(
-                onClick = { authViewModel.logout(appwriteConfig) },
-            ) {
-                Text(text = "Logout")
             }
         }
     }
@@ -170,7 +188,6 @@ fun ArrayEmpty() {
     ) {
         Text(text = stringResource(id = R.string.noItems), fontSize = 20.sp)
     }
-
 }
 
 @Composable
