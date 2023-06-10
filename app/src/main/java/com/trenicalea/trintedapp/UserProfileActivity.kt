@@ -24,6 +24,7 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -105,6 +106,7 @@ fun UserProfileActivity(
                     ) {
                         Text(text = "Rating: " + (user.ratingGenerale ?: 0).toString())
                     }
+
                 }
                 Row(
                     horizontalArrangement = Arrangement.Start,

@@ -11,6 +11,8 @@
  */
 package com.trenicalea.trintedapp.models
 
+import android.graphics.Bitmap
+
 /**
  * 
  * @param id 
@@ -32,12 +34,12 @@ data class Utente (
     val id: Long? = null,
     val nome: String? = null,
     val cognome: String? = null,
-    val immagine: String? = null,
+    val immagine: Bitmap? = null,
     val indirizzo: Indirizzo? = null,
     val recensioniRicevute: Array<Recensione>? = null,
     val articoli: Array<Articolo>? = null,
     val preferiti: Array<Articolo>? = null,
-    val credenziali: Credenziali? = null,
+    val credenziali: Credenziali,
     val isAdmin: Boolean? = null,
     val ordiniUtente: Array<Ordine>? = null,
     val saldo: Double? = null,

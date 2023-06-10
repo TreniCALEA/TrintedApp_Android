@@ -20,8 +20,8 @@ package com.trenicalea.trintedapp.models
  */
 data class Credenziali (
 
-    val username: kotlin.String? = null,
-    val password: kotlin.String? = null,
-    val email: kotlin.String? = null
+    val username: String,
+    val password: String,
+    val email: String
 ) {
 }
