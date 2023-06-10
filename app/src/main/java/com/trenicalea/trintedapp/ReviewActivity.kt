@@ -46,93 +46,89 @@ fun ReviewActivity(
 ) {
     val reviewList: List<Recensione> = reviewViewModel.reviewList.value
     val reviewState by reviewViewModel.reviewState.collectAsState()
-    var expanded by remember {mutableStateOf(false)}
+    var expanded by remember { mutableStateOf(false) }
 
-    if (reviewList.isEmpty()) {
-        Text(text = "Non è presente alcuna recensione")
-    } else {
-        LazyColumn {
-            items(reviewList) { review ->
-                key(review.id) {
-                    Row {
-                        if (review.destinatario.immagine != null) {
-                            Image(
-                                bitmap = review.destinatario.immagine.asImageBitmap(),
-                                contentDescription = "${stringResource(id = R.string.propic)} ${review.autore}"
-                            )
-                        } else {
-                            Icon(
-                                imageVector = Icons.Filled.Person,
-                                contentDescription = stringResource(id = R.string.defaultImage),
-                                modifier = Modifier.size(60.dp)
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        if (reviewList.isEmpty()) {
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(text = "Non è presente alcuna recensione")
+            }
+        } else {
+            LazyColumn {
+                items(reviewList) { review ->
+                    key(review.id) {
+                        Row {
+                            if (review.destinatario.immagine != null) {
+                                Image(
+                                    bitmap = review.destinatario.immagine.asImageBitmap(),
+                                    contentDescription = "${stringResource(id = R.string.propic)} ${review.autore}"
+                                )
+                            } else {
+                                Icon(
+                                    imageVector = Icons.Filled.Person,
+                                    contentDescription = stringResource(id = R.string.defaultImage),
+                                    modifier = Modifier.size(60.dp)
+                                )
+                            }
+                            Text(
+                                text = review.autore.credenziali.username,
+                                modifier = Modifier.weight(1f)
                             )
                         }
-                        Text(
-                            text = review.autore.credenziali.username,
-                            modifier = Modifier.weight(1f)
-                        )
+                        Row(modifier = Modifier.padding(horizontal = 10.dp)) {
+                            Icon(
+                                imageVector = Icons.Filled.Star,
+                                contentDescription = stringResource(id = R.string.rating)
+                            )
+                            Text(text = review.rating.toString())
+                        }
+                        Row(modifier = Modifier.padding(horizontal = 10.dp)) {
+                            Text(text = review.commento.toString())
+                        }
+                        Divider()
                     }
-                    Row(modifier = Modifier.padding(horizontal = 10.dp)) {
-                        Icon(
-                            imageVector = Icons.Filled.Star,
-                            contentDescription = stringResource(id = R.string.rating)
-                        )
-                        Text(text = review.rating.toString())
-                    }
-                    Row(modifier = Modifier.padding(horizontal = 10.dp)) {
-                        Text(text = review.commento.toString())
-                    }
-                    Divider()
                 }
             }
         }
         if (!reviewViewModel.isSameUser(authViewModel, utenteDto)) {
-
-            Row(
-                modifier = Modifier.fillMaxWidth()
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Column(
-                    horizontalAlignment = Alignment.Start,
-                    verticalArrangement = Arrangement.Center,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text (text = "Rating: ")
-                    Row(
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        DropdownMenu(expanded, onDismissRequest = { expanded = false }) {
-                            for (i in 1..5) {
-                                DropdownMenuItem(
-                                    text = { Text(text = "$i")},
-                                    onClick = {
-                                        println("Nuovo rating:$i")
-                                        reviewViewModel.updateRating(i)
-                                    }
-                                )
+                Text(text = "Rating: ")
+                DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                    for (i in 1..5) {
+                        DropdownMenuItem(
+                            text = { Text(text = "$i") },
+                            onClick = {
+                                println("Nuovo rating: $i")
+                                reviewViewModel.updateRating(i)
+                                expanded = false
                             }
-                        }
-                    }
-                    Row(
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        OutlinedTextField(
-                            isError = reviewState.descriptionHasError,
-                            value = reviewState.description,
-                            onValueChange = { reviewViewModel.updateDescrizione(it) },
-                            label = { Text("Lascia una recensione qui...")  },
                         )
                     }
                 }
-                Column(
-                    horizontalAlignment = Alignment.End,
-                    verticalArrangement = Arrangement.Center
+                OutlinedTextField(
+                    isError = reviewState.descriptionHasError,
+                    value = reviewState.description,
+                    onValueChange = { reviewViewModel.updateDescrizione(it) },
+                    label = { Text("Lascia una recensione qui...") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Button(
+                    onClick = {
+
+                    },
+                    modifier = Modifier.padding(vertical = 8.dp)
                 ) {
-                    Button(onClick = { /*TODO*/ }) {
-                        Text(text = "Invia")
-                    }
+                    Text(text = "Invia")
                 }
             }
         }
