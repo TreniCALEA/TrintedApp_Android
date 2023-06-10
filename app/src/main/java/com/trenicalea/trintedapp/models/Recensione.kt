@@ -27,7 +27,7 @@ data class Recensione (
     val rating: Float,
     val commento: String? = null,
     val destinatario: Utente,
-    val autore: Utente,
+    var autore: Utente,
     val ordine: Ordine? = null
 ) {
 }

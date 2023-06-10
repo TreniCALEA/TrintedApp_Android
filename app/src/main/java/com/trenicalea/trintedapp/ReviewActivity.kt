@@ -109,7 +109,7 @@ fun ReviewActivity(
                             text = { Text(text = "$i") },
                             onClick = {
                                 println("Nuovo rating: $i")
-                                reviewViewModel.updateRating(i)
+                                reviewViewModel.updateRating(i as Float)
                                 expanded = false
                             }
                         )
@@ -124,7 +124,7 @@ fun ReviewActivity(
                 )
                 Button(
                     onClick = {
-
+                              reviewViewModel.addReview(authViewModel, reviewState.description, reviewState.rating, utenteDto)
                     },
                     modifier = Modifier.padding(vertical = 8.dp)
                 ) {

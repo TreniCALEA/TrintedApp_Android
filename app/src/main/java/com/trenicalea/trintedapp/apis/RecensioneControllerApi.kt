@@ -26,18 +26,18 @@ class RecensioneControllerApi(basePath: String = Config.ip) : ApiClient(basePath
      * @return kotlin.String
      */
     @Suppress("UNCHECKED_CAST")
-    fun add(body: RecensioneDto): String = runBlocking(Dispatchers.IO) {
+    fun add(body: RecensioneDto): RecensioneDto = runBlocking(Dispatchers.IO) {
         val localVariableBody: Any? = body
         val localVariableConfig = RequestConfig(
                 RequestMethod.POST,
                 "/review-api/review"
         )
-        val response = request<String>(
+        val response = request<RecensioneDto>(
                 localVariableConfig, localVariableBody
         )
 
         return@runBlocking when (response.responseType) {
-            ResponseType.Success -> (response as Success<*>).data as String
+            ResponseType.Success -> (response as Success<*>).data as RecensioneDto
             ResponseType.Informational -> TODO()
             ResponseType.Redirection -> TODO()
             ResponseType.ClientError -> throw ClientException((response as ClientError<*>).body as? String ?: "Client error")

@@ -20,9 +20,11 @@ package com.trenicalea.trintedapp.models
  */
 data class RecensioneDto (
 
-    val id: Long,
+    val id: Long? = null,
     val rating: Float,
-    val commento: String? = null
+    val commento: String? = null,
+    val autoreCredenzialiEmail: String,
+    val destinatarioCredenzialiEmail: String
 ) {
     companion object {
         fun validateDescrizione(descrizione: String): Boolean {
