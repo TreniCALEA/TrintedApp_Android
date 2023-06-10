@@ -43,6 +43,7 @@ import com.trenicalea.trintedapp.models.OrdineDto
 import com.trenicalea.trintedapp.models.UtenteDto
 import com.trenicalea.trintedapp.viewmodels.OrdineViewModel
 import com.trenicalea.trintedapp.viewmodels.AuthViewModel
+import com.trenicalea.trintedapp.viewmodels.ReviewViewModel
 import com.trenicalea.trintedapp.viewmodels.UtenteViewModel
 
 
@@ -51,12 +52,13 @@ fun UserProfileActivity(
     user: UtenteDto,
     authViewModel: AuthViewModel,
     appwriteConfig: AppwriteConfig,
-    utenteViewModel: UtenteViewModel
+    utenteViewModel: UtenteViewModel,
+    isRedirected: MutableState<Boolean>
 ) {
     val ordineViewModel = OrdineViewModel(user.id)
     var showReview by remember { mutableStateOf(false) }
-    val purchasesList = ordineViewModel.ordersGetByAcquirente ?: arrayOf()
-    val salesList = ordineViewModel.ordersGetByVenditore ?: arrayOf()
+    val purchasesList = ordineViewModel.ordersGetByAcquirente
+    val salesList = ordineViewModel.ordersGetByVenditore
     if (!showReview) {
         Card(
             elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
@@ -130,39 +132,50 @@ fun UserProfileActivity(
 
                 Divider()
 
-                if (salesList.isNotEmpty()) Carousel(
-                    list = salesList, title = stringResource(R.string.recentSales)
-                )
-                else ArrayEmpty()
+                if (!isRedirected.value) {
+                    if (salesList.isNotEmpty()) Carousel(
+                        list = salesList, title = stringResource(R.string.recentSales)
+                    )
+                    else ArrayEmpty()
+                }
 
                 Divider()
 
-                if (purchasesList.isNotEmpty()) Carousel(
-                    list = purchasesList, title = stringResource(R.string.recentPurchases)
-                )
-                else ArrayEmpty()
+                if (!isRedirected.value) {
+                    if (purchasesList.isNotEmpty()) Carousel(
+                        list = purchasesList, title = stringResource(R.string.recentPurchases)
+                    )
+                    else ArrayEmpty()
+                }
             }
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ) {
-                if (!utenteViewModel.isChecked.value) {
-                    Button(
-                        onClick = { utenteViewModel.checkVerified(appwriteConfig) },
-                    ) {
-                        Text(text = "Verifica account")
+                if (!isRedirected.value) {
+                    if (!utenteViewModel.isChecked.value) {
+                        Button(
+                            onClick = { utenteViewModel.checkVerified(appwriteConfig) },
+                        ) {
+                            Text(text = "Verifica account")
+                        }
                     }
-                }
-                Button(
-                    onClick = { authViewModel.logout(appwriteConfig) },
-                    modifier = Modifier.padding(horizontal = 10.dp)
-                ) {
-                    Text(text = "Logout")
+                    Button(
+                        onClick = { authViewModel.logout(appwriteConfig) },
+                        modifier = Modifier.padding(horizontal = 10.dp)
+                    ) {
+                        Text(text = "Logout")
+                    }
                 }
             }
         }
-    }
+    } else ReviewActivity(
+        appwriteConfig = appwriteConfig,
+        authViewModel = authViewModel,
+        reviewViewModel = ReviewViewModel(),
+        utenteDto = user
+    )
 }
 
 @Composable

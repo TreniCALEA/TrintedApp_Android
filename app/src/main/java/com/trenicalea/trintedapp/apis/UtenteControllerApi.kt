@@ -38,25 +38,6 @@ class UtenteControllerApi(basePath: String = Config.ip) : ApiClient(basePath) {
         }
     }
 
-    fun update(body: UtenteDto): UtenteDto = runBlocking(Dispatchers.IO) {
-        val localVariableBody: Any = body
-        val localVariableConfig = RequestConfig(
-            RequestMethod.PUT,
-            "/user-api/users/update"
-        )
-        val response = request<UtenteDto>(
-            localVariableConfig, localVariableBody
-        )
-
-        return@runBlocking when (response.responseType) {
-            ResponseType.Success -> (response as Success<*>).data as UtenteDto
-            ResponseType.Informational -> TODO()
-            ResponseType.Redirection -> TODO()
-            ResponseType.ClientError -> throw ClientException((response as ClientError<*>).body as? String ?: "Client error")
-            ResponseType.ServerError -> throw ServerException((response as ServerError<*>).message ?: "Server error")
-        }
-    }
-
     /**
      *
      *

@@ -41,8 +41,9 @@ class UtenteViewModel : ViewModel() {
 
     fun getUserByUsernameLike(){
         userList.value = _userApi.getAllByUsernameLike(prefix.value).toList()
-        println(userList.value)
     }
+
+
 
     fun getByCredenzialiEmail(credenzialiEmail: String): UtenteDto {
         return _userApi.getByCredenzialiEmail(credenzialiEmail)

@@ -43,6 +43,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.trenicalea.trintedapp.appwrite.AppwriteConfig
+import com.trenicalea.trintedapp.models.UtenteDto
 import com.trenicalea.trintedapp.ui.theme.TrintedAppTheme
 import com.trenicalea.trintedapp.viewmodels.AuthViewModel
 import com.trenicalea.trintedapp.viewmodels.UtenteViewModel
@@ -175,14 +176,31 @@ fun HomePage(
     val navHostController = rememberNavController()
     val selectedIndex = remember { mutableStateOf(0) }
     val selectedIndexFind = remember { mutableStateOf(0) }
-
+    val isRedirected = remember { mutableStateOf(false) }
+    val utente: MutableState<UtenteDto?> = remember { mutableStateOf(null) }
 
     Scaffold(
         topBar = { TrintedTopBar(navHostController, selectedIndex) },
         bottomBar = { TrintedBottomBar(selectedIndex) }) {
         Box(modifier = Modifier.padding(it)) {
+            if (selectedIndex.value == 0) {
+                isRedirected.value = false
+            }
             if (selectedIndex.value == 1) {
-                FindActivity(userViewModel = utenteViewModel, selectedIndex = selectedIndexFind)
+                isRedirected.value = false
+                FindActivity(
+                    userViewModel = utenteViewModel,
+                    selectedIndex = selectedIndexFind,
+                    isRedirected = isRedirected,
+                    selectedHomePageIndex = selectedIndex,
+                    user = utente
+                )
+            }
+            if (selectedIndex.value == 2) {
+                isRedirected.value = false
+            }
+            if (selectedIndex.value == 3) {
+                isRedirected.value = false
             }
             if (selectedIndex.value == 4) {
                 authViewModel.checkLogged(appwrite, utenteViewModel)
@@ -196,7 +214,24 @@ fun HomePage(
                         utenteViewModel
                     )
                 } else if (authViewModel.isLogged.value) {
-                    UserProfileActivity(authViewModel.loggedInUser.value!!, authViewModel, appwrite, utenteViewModel)
+                    if (!isRedirected.value) {
+                        UserProfileActivity(
+                            authViewModel.loggedInUser.value!!,
+                            authViewModel,
+                            appwrite,
+                            utenteViewModel,
+                            isRedirected
+                        )
+                    } else {
+                        println(utente.value!!)
+                        UserProfileActivity(
+                            user = utente.value!!,
+                            authViewModel = authViewModel,
+                            appwriteConfig = appwrite,
+                            utenteViewModel = utenteViewModel,
+                            isRedirected
+                        )
+                    }
                 }
             }
         }

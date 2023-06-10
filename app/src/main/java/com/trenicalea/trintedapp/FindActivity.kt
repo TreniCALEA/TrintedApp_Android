@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -15,10 +16,11 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ShoppingBag
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
-import androidx.compose.material3.Divider
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,15 +32,23 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.unit.dp
 import com.trenicalea.trintedapp.models.UtenteBasicDto
+import com.trenicalea.trintedapp.models.UtenteDto
 import com.trenicalea.trintedapp.viewmodels.UtenteViewModel
 
 @Composable
 fun FindActivity(
-    userViewModel: UtenteViewModel, selectedIndex: MutableState<Int>
+    userViewModel: UtenteViewModel,
+    selectedIndex: MutableState<Int>,
+    isRedirected: MutableState<Boolean>,
+    selectedHomePageIndex: MutableState<Int>,
+    user: MutableState<UtenteDto?>
 ) {
     var searchValue by remember { mutableStateOf("") }
 
@@ -97,7 +107,13 @@ fun FindActivity(
                     Text(text = stringResource(R.string.search))
                 }
             }
-            ListUsers(userList = userViewModel.userList.value)
+            ListUsers(
+                userList = userViewModel.userList.value,
+                redirect = isRedirected,
+                utente = user,
+                selectedIndex = selectedHomePageIndex,
+                utenteViewModel = userViewModel
+            )
 
         } else {
             Row(
@@ -131,16 +147,37 @@ fun FindActivity(
 }
 
 @Composable
-fun ListUsers(userList: List<UtenteBasicDto>) {
+fun ListUsers(
+    userList: List<UtenteBasicDto>,
+    redirect: MutableState<Boolean>,
+    utente: MutableState<UtenteDto?>,
+    selectedIndex: MutableState<Int>,
+    utenteViewModel: UtenteViewModel
+) {
     if (userList.isEmpty()) {
-        Row(horizontalArrangement = Arrangement.Center) {
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
             Text(text = "Nessun utente")
         }
     } else {
         LazyColumn {
             items(userList) { user ->
                 key(user.id) {
-                    Row {
+                    OutlinedButton(
+                        onClick = {
+                            redirect.value = true
+                            utente.value = utenteViewModel.getUser(user.id)
+                            selectedIndex.value = 4
+                        },
+                        shape = RectangleShape,
+                        colors = ButtonDefaults.buttonColors(
+                            contentColor = Color.Black.copy(0.20f),
+                            containerColor = Color.Transparent
+                        )
+                    ) {
                         if (user.image != null) {
                             Image(
                                 bitmap = user.image.asImageBitmap(),
@@ -150,19 +187,28 @@ fun ListUsers(userList: List<UtenteBasicDto>) {
                             Icon(
                                 imageVector = Icons.Filled.Person,
                                 contentDescription = stringResource(id = R.string.defaultImage),
-                                modifier = Modifier.size(60.dp)
+                                modifier = Modifier.size(60.dp),
+                                tint = Color.Black
+
                             )
                         }
-                        Text(text = user.credenzialiUsername, modifier = Modifier.weight(1f))
-                    }
-                    Row(modifier = Modifier.padding(horizontal = 10.dp)) {
-                        Icon(
-                            imageVector = Icons.Filled.Star,
-                            contentDescription = stringResource(id = R.string.rating)
+                        Text(
+                            text = user.credenzialiUsername,
+                            modifier = Modifier.weight(1f),
+                            color = Color.Black
                         )
-                        Text(text = if (user.ratingGenerale == 0.0f) "Nessuna recensione" else user.ratingGenerale.toString())
+                        Row(modifier = Modifier.padding(horizontal = 10.dp)) {
+                            Icon(
+                                tint = Color.Black,
+                                imageVector = Icons.Filled.Star,
+                                contentDescription = stringResource(id = R.string.rating)
+                            )
+                            Text(
+                                text = if (user.ratingGenerale == null) "Nessuna recensione" else user.ratingGenerale.toString(),
+                                color = Color.Black
+                            )
+                        }
                     }
-                    Divider()
                 }
             }
         }
