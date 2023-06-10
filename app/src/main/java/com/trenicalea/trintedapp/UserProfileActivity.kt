@@ -76,7 +76,7 @@ fun UserProfileActivity(
                     if (user.image != null) {
                         Image(
                             bitmap = user.image.asImageBitmap(),
-                            contentDescription = "${stringResource(id = R.string.propic)} ${user.nome} ${user.cognome}"
+                            contentDescription = "${stringResource(id = R.string.propic)} ${user.credenzialiUsername}"
                         )
                     } else {
                         Icon(
@@ -93,7 +93,7 @@ fun UserProfileActivity(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
-                        text = "${user.nome} ${user.cognome}",
+                        text = "${user.credenzialiUsername}",
                         textAlign = TextAlign.Center,
                         style = TextStyle(fontSize = 25.sp)
                     )
@@ -236,9 +236,6 @@ fun Carousel(list: Array<OrdineDto>, title: String) {
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
-                        Row {
-                            // Use bitmapAdapter
-                        }
                         Row {
                             Icon(
                                 imageVector = Icons.Filled.CalendarToday,

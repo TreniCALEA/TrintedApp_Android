@@ -22,6 +22,7 @@ data class UtenteDto (
     val nome: String? = null,
     val cognome: String? = null,
     val credenzialiEmail: String,
+    val credenzialiUsername: String,
     val isAdmin: Boolean? = null,
     val ratingGenerale: Float? = null,
     @Json(name = "image")
