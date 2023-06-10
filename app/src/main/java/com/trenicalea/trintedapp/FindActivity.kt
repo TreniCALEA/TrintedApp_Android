@@ -91,7 +91,7 @@ fun FindActivity(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Button(onClick = {
-                    userViewModel.getUserByUsernameLike()
+                    if (searchValue != "") userViewModel.getUserByUsernameLike()
                 }, modifier = Modifier.padding(horizontal = 150.dp)) {
                     Text(text = stringResource(R.string.search))
                 }
@@ -120,7 +120,7 @@ fun FindActivity(
             }
             Button(
                 onClick = {
-                    userViewModel.getUserByUsernameLike()
+                    if (searchValue != "") userViewModel.getUserByUsernameLike()
                 }, modifier = Modifier.padding(horizontal = 150.dp)
             ) {
                 Text(text = stringResource(R.string.search))
