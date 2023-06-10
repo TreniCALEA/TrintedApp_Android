@@ -24,4 +24,9 @@ data class RecensioneDto (
     val rating: Float,
     val commento: String? = null
 ) {
+    companion object {
+        fun validateDescrizione(descrizione: String): Boolean {
+            return descrizione != "";
+        }
+    }
 }

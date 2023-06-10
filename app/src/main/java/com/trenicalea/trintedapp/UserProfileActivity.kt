@@ -106,7 +106,6 @@ fun UserProfileActivity(
                     ) {
                         Text(text = "Rating: " + (user.ratingGenerale ?: 0).toString())
                     }
-
                 }
                 Row(
                     horizontalArrangement = Arrangement.Start,

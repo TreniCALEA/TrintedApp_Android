@@ -24,7 +24,7 @@ package com.trenicalea.trintedapp.models
 data class Recensione (
 
     val id: Long? = null,
-    val rating: Float? = null,
+    val rating: Float,
     val commento: String? = null,
     val destinatario: Utente,
     val autore: Utente,
