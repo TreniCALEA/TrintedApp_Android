@@ -203,7 +203,7 @@ fun HomePage(
                 isRedirected.value = false
             }
             if (selectedIndex.value == 4) {
-                authViewModel.checkLogged(appwrite, utenteViewModel)
+                authViewModel.checkLogin(appwrite, utenteViewModel)
                 if (authViewModel.loading.value) {
                     Text(text = "Loading...")
                 } else if (!authViewModel.isLogged.value) {

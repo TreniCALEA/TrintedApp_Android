@@ -4,15 +4,16 @@ import androidx.activity.ComponentActivity
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import com.trenicalea.trintedapp.appwrite.AppwriteConfig
 import com.trenicalea.trintedapp.models.UtenteDto
 import com.trenicalea.trintedapp.models.UtenteRegistrationDto
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 data class AuthState(
     val username: String = "",
@@ -22,7 +23,9 @@ data class AuthState(
     val usernameHasError: Boolean = !UtenteRegistrationDto.validateCredenzialiUsername(username),
     val emailHasError: Boolean = !UtenteRegistrationDto.validateCredenzialiEmail(email),
     val passwordHasError: Boolean = !UtenteRegistrationDto.validateCredenzialiPassword(password),
-    val usernameProviderHasError: Boolean = !UtenteRegistrationDto.validateCredenzialiUsername(usernameProvider),
+    val usernameProviderHasError: Boolean = !UtenteRegistrationDto.validateCredenzialiUsername(
+        usernameProvider
+    ),
 )
 
 class AuthViewModel : ViewModel() {
@@ -31,6 +34,7 @@ class AuthViewModel : ViewModel() {
 
     val isLogged: MutableState<Boolean> = mutableStateOf(false)
     val loading: MutableState<Boolean> = mutableStateOf(true)
+    private val providerLoginCompleted = CompletableDeferred(true)
     val login: MutableState<Boolean> = mutableStateOf(false)
     val loggedInUser: MutableState<UtenteDto?> = mutableStateOf(null)
 
@@ -59,24 +63,30 @@ class AuthViewModel : ViewModel() {
         }.invokeOnCompletion { login.value = true }
     }
 
-    fun checkLogged(appwrite: AppwriteConfig, utenteViewModel: UtenteViewModel) {
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                println(appwrite.account.get().email)
-                println("[i] Session: \n" + appwrite.account.getSession("current"))
+    fun checkLogin(appwrite: AppwriteConfig, utenteViewModel: UtenteViewModel) {
+        if (!isLogged.value) {
+            println("")
+            CoroutineScope(Dispatchers.IO).launch {
+                providerLoginCompleted.await()
                 try {
-                    loggedInUser.value =
-                        utenteViewModel.getByCredenzialiEmail(appwrite.account.get().email)
-                    println("Utente checkLogged: ${loggedInUser.value!!.credenzialiEmail}")
+                    println(appwrite.account.get().email)
+                    println("[i] Session: \n" + appwrite.account.getSession("current"))
+                    try {
+                        loggedInUser.value =
+                            utenteViewModel.getByCredenzialiEmail(appwrite.account.get().email)
+                        println("Utente checkLogged: ${loggedInUser.value!!.credenzialiEmail}")
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                    isLogged.value = true
                 } catch (e: Exception) {
-                    e.printStackTrace()
+                    println("[i] Session invalid!")
+                    isLogged.value = false
                 }
-                isLogged.value = true;
-            } catch (e: Exception) {
-                println("[i] Session invalid!")
-                isLogged.value = false;
-            }
-        }.invokeOnCompletion { loading.value = false }
+            }.invokeOnCompletion { loading.value = false }
+        } else {
+            println("[D] User is already logged in as ${loggedInUser.value!!.credenzialiEmail}, no need to re-check.")
+        }
     }
 
     fun providerLogin(
@@ -86,32 +96,45 @@ class AuthViewModel : ViewModel() {
         utenteViewModel: UtenteViewModel,
         usernameProvider: String? = null
     ) {
+        // Show loading screen
+        loading.value = true
+
+        // Set providerLoginCompleted to false to stop other jobs
+        providerLoginCompleted.complete(false)
+
         CoroutineScope(Dispatchers.IO).launch {
             try {
+                // Create OAuth2 Session on Appwrite
                 appwrite.account.createOAuth2Session(
                     activity,
                     provider,
                     "appwrite-callback-645d4c2c39e030c6f6ba://cloud.appwrite.io/auth/oauth2/success",
                     "appwrite-callback-645d4c2c39e030c6f6ba://cloud.appwrite.io/auth/oauth2/failure"
                 )
-                try {
-                    loggedInUser.value =
-                        utenteViewModel.getByCredenzialiEmail(appwrite.account.get().email)
-                    println("Utente checkLogged: ${loggedInUser.value!!.credenzialiEmail}")
-                } catch (e: Exception) {
-                    e.printStackTrace()
+                // If an username is passed as a parameter, means that the user is about to register
+                if (usernameProvider != null) {
+                    println("[D] User is registering with OAuth2! Username: $usernameProvider.")
+                    try {
+                        registerWithCredentials(
+                            usernameProvider,
+                            appwrite.account.get().email,
+                            appwrite.account.get().id
+                        )
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                    // ...otherwise, the user is just logging in using OAuth2.
+                } else {
+                    println("[D] User is just logging in, proceed with populating loggedInUser.")
+                    checkLogin(appwrite, utenteViewModel)
                 }
-                isLogged.value = true
             } catch (e: Exception) {
-                println("[i] Login with $provider cancelled.")
-                isLogged.value = false;
+                println("[i] Login/Register with $provider cancelled.")
+                isLogged.value = false
             }
         }.invokeOnCompletion {
-            CoroutineScope(Dispatchers.IO).launch {
-                if(usernameProvider != null) {
-                    registerWithCredentials(usernameProvider, appwrite.account.get().email, appwrite.account.get().id)
-                }
-            }
+            // If needed, tell checkLogged to proceed without any further issue
+            providerLoginCompleted.complete(true)
         }
     }
 
