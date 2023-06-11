@@ -265,11 +265,12 @@ fun RegistrationFormActivity(
                                     utenteViewModel,
                                     authState.usernameProvider
                                 )
-                            } else {
-                                authViewModel.providerLogin(
-                                    appwrite, activity, "facebook", utenteViewModel
-                                )
                             }
+                        }
+                        if (authViewModel.login.value) {
+                            authViewModel.providerLogin(
+                                appwrite, activity, "facebook", utenteViewModel
+                            )
                         }
                     }) {
                     Text(
@@ -295,11 +296,12 @@ fun RegistrationFormActivity(
                                     utenteViewModel,
                                     authState.usernameProvider
                                 )
-                            } else {
-                                authViewModel.providerLogin(
-                                    appwrite, activity, "google", utenteViewModel
-                                )
                             }
+                        }
+                        if (authViewModel.login.value) {
+                            authViewModel.providerLogin(
+                                appwrite, activity, "google", utenteViewModel
+                            )
                         }
                     }) {
                     Text(
