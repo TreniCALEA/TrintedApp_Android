@@ -36,7 +36,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.unit.dp
 import com.trenicalea.trintedapp.models.UtenteBasicDto
 import com.trenicalea.trintedapp.models.UtenteDto
@@ -170,7 +169,7 @@ fun ListUsers(
                         onClick = {
                             redirect.value = true
                             utente.value = utenteViewModel.getUser(user.id)
-                            selectedIndex.value = 4
+                            selectedIndex.value = 3
                         },
                         shape = RectangleShape,
                         colors = ButtonDefaults.buttonColors(
