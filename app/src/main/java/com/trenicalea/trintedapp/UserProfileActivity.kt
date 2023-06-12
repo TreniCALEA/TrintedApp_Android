@@ -41,8 +41,8 @@ import androidx.compose.ui.unit.sp
 import com.trenicalea.trintedapp.appwrite.AppwriteConfig
 import com.trenicalea.trintedapp.models.OrdineDto
 import com.trenicalea.trintedapp.models.UtenteDto
-import com.trenicalea.trintedapp.viewmodels.OrdineViewModel
 import com.trenicalea.trintedapp.viewmodels.AuthViewModel
+import com.trenicalea.trintedapp.viewmodels.OrdineListsViewModel
 import com.trenicalea.trintedapp.viewmodels.ReviewViewModel
 import com.trenicalea.trintedapp.viewmodels.UtenteViewModel
 
@@ -55,10 +55,10 @@ fun UserProfileActivity(
     utenteViewModel: UtenteViewModel,
     isRedirected: MutableState<Boolean>
 ) {
-    val ordineViewModel = OrdineViewModel(user.id)
+    val ordineListsViewModel = OrdineListsViewModel(user.id)
     var showReview by remember { mutableStateOf(false) }
-    val purchasesList = ordineViewModel.ordersGetByAcquirente
-    val salesList = ordineViewModel.ordersGetByVenditore
+    val purchasesList = ordineListsViewModel.ordersGetByAcquirente
+    val salesList = ordineListsViewModel.ordersGetByVenditore
     if (!showReview) {
         Card(
             elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),

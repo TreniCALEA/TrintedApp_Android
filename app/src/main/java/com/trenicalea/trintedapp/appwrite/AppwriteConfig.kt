@@ -1,9 +1,8 @@
 package com.trenicalea.trintedapp.appwrite
 
-import io.appwrite.services.Account
-import android.app.Application
 import android.content.Context
 import io.appwrite.Client
+import io.appwrite.services.Account
 import io.appwrite.services.Databases
 
 data class AppwriteConfig(var context: Context) {

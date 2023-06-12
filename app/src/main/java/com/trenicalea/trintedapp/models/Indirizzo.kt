@@ -20,8 +20,8 @@ package com.trenicalea.trintedapp.models
  */
 data class Indirizzo (
 
-    val via: String? = null,
-    val numeroCivico: Int? = null,
-    val citta: String? = null
+    var via: String? = null,
+    var numeroCivico: Int? = null,
+    var citta: String? = null
 ) {
 }

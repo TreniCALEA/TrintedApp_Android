@@ -25,36 +25,19 @@ import com.trenicalea.trintedapp.models.ArticoloDto
 import com.trenicalea.trintedapp.models.Indirizzo
 import com.trenicalea.trintedapp.models.UtenteDto
 import com.trenicalea.trintedapp.viewmodels.CheckoutViewModel
+import com.trenicalea.trintedapp.viewmodels.UtenteViewModel
 
 @Composable
 fun OrdineFormActivity(
     articoloDto: ArticoloDto,
-//    acquirente: Long,
-//    utenteViewModel: UtenteViewModel
+    acquirente: Long,
+    utenteViewModel: UtenteViewModel
 ) {
-//    val _acquirente = utenteViewModel.getUser(acquirente)
-//    val _venditore = utenteViewModel.getUser(articoloDto.utente)
-
-    val _acquirente = UtenteDto(
-        1,
-        "Pietro",
-        "Macrì",
-        credenzialiUsername = "username",
-        credenzialiEmail = "pietromacri2000@gmail.com",
-        indirizzo = Indirizzo("via dal cazzo", 90, "Mendicino")
-    )
-    val _venditore = UtenteDto(
-        2,
-        "Alessandro",
-        "Astorino",
-        credenzialiUsername = "username",
-        credenzialiEmail = "astorix10@gmail.com",
-        indirizzo = Indirizzo("via dai coglioni", 69, "SGF")
-    )
+    val _acquirente = utenteViewModel.getUser(acquirente)
 
     val checkoutViewModel = CheckoutViewModel()
     val usaNuovoIndirizzo = remember { mutableStateOf(false) }
-    
+
     var via = remember { mutableStateOf("") }
     var civico = remember { mutableStateOf("") }
     var citta = remember { mutableStateOf("") }
@@ -62,11 +45,11 @@ fun OrdineFormActivity(
     Card(
         elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
         modifier = Modifier.padding(15.dp)
-    ){
+    ) {
         Column() {
             BasicInformations(articoloDto)
-            
-            if(_acquirente.indirizzo != null)
+
+            if (_acquirente.indirizzo != null)
                 SavedAddress(
                     _acquirente,
                     usaNuovoIndirizzo,
@@ -76,7 +59,7 @@ fun OrdineFormActivity(
                     civico,
                     citta
                 )
-            else{
+            else {
                 Row(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically,
@@ -89,20 +72,19 @@ fun OrdineFormActivity(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.padding(10.dp)
                 ) {
-                    AddressForm(via = via, civico = civico, citta = citta )
+                    AddressForm(via = via, civico = civico, citta = citta)
                 }
                 Row(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.padding(10.dp)
-                ){
+                ) {
                     Button(onClick = {
-                        checkoutViewModel.confirmOrder(_acquirente.id, articoloDto, Indirizzo(via.value, civico.value.toInt(), citta.value))
-
-                        println("""
-                            utente ${_acquirente.id} conferma ordine di id ${articoloDto.id}
-                            a indirizzo ${Indirizzo(via = via.value, numeroCivico = civico.value.toInt(), citta = citta.value)}
-                        """.trimIndent())
+                        checkoutViewModel.confirmOrder(
+                            _acquirente.id,
+                            articoloDto,
+                            Indirizzo(via.value, civico.value.toInt(), citta.value)
+                        )
                     }) {
                         Text(text = stringResource(id = R.string.ConfirmOrder))
                     }
@@ -117,7 +99,15 @@ fun OrdineFormActivity(
 }
 
 @Composable
-fun SavedAddress(acquirente: UtenteDto, usaNuovoIndirizzo: MutableState<Boolean>, articoloDto: ArticoloDto, checkoutViewModel: CheckoutViewModel, via: MutableState<String>, civico: MutableState<String>, citta: MutableState<String>) {
+fun SavedAddress(
+    acquirente: UtenteDto,
+    usaNuovoIndirizzo: MutableState<Boolean>,
+    articoloDto: ArticoloDto,
+    checkoutViewModel: CheckoutViewModel,
+    via: MutableState<String>,
+    civico: MutableState<String>,
+    citta: MutableState<String>
+) {
     Row(
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically,
@@ -151,7 +141,10 @@ fun SavedAddress(acquirente: UtenteDto, usaNuovoIndirizzo: MutableState<Boolean>
         modifier = Modifier.padding(10.dp)
     ) {
         acquirente.indirizzo?.via?.let { Info(stringResource(id = R.string.AddressStreet), it) }
-        Info(stringResource(id = R.string.AddressNumber), acquirente.indirizzo?.numeroCivico.toString())
+        Info(
+            stringResource(id = R.string.AddressNumber),
+            acquirente.indirizzo?.numeroCivico.toString()
+        )
     }
     Row(
         horizontalArrangement = Arrangement.Start,
@@ -173,7 +166,7 @@ fun SavedAddress(acquirente: UtenteDto, usaNuovoIndirizzo: MutableState<Boolean>
             fontSize = 15.sp
         )
     }
-    if (usaNuovoIndirizzo.value){
+    if (usaNuovoIndirizzo.value) {
         AddressForm(via, civico, citta)
     }
     Row(
@@ -182,27 +175,19 @@ fun SavedAddress(acquirente: UtenteDto, usaNuovoIndirizzo: MutableState<Boolean>
         modifier = Modifier.padding(10.dp)
     ) {
         Button(onClick = {
-            if (usaNuovoIndirizzo.value){
-                checkoutViewModel.confirmOrder(acquirente.id, articoloDto, Indirizzo(via.value, civico.value.toInt(), citta.value))
-
-                println("""
-                            utente ${acquirente.id} conferma ordine di id ${articoloDto.id}
-                            a indirizzo ${Indirizzo(via = via.value, numeroCivico = civico.value.toInt(), citta = citta.value)}
-                            
-                            [NUOVO INDIRIZZO]
-                        """.trimIndent())
-            }
-            else{
+            if (usaNuovoIndirizzo.value) {
+                checkoutViewModel.confirmOrder(
+                    acquirente.id,
+                    articoloDto,
+                    Indirizzo(via.value, civico.value.toInt(), citta.value)
+                )
+            } else {
                 acquirente.indirizzo?.let {
-                    checkoutViewModel.confirmOrder(acquirente.id, articoloDto,
+                    checkoutViewModel.confirmOrder(
+                        acquirente.id, articoloDto,
                         it
                     )
                 }
-
-                println("""
-                    utente ${acquirente.id} conferma ordine di id ${articoloDto.id}
-                    a indirizzo ${acquirente.indirizzo} [VECCHIO INDIRIZZO]
-                """.trimIndent())
             }
         }) {
             Text(text = stringResource(id = R.string.ConfirmOrder))
@@ -212,7 +197,11 @@ fun SavedAddress(acquirente: UtenteDto, usaNuovoIndirizzo: MutableState<Boolean>
 }
 
 @Composable
-fun AddressForm(via: MutableState<String>, civico: MutableState<String>, citta: MutableState<String>) {
+fun AddressForm(
+    via: MutableState<String>,
+    civico: MutableState<String>,
+    citta: MutableState<String>
+) {
     Column {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,

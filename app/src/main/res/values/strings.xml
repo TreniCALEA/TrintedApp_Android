@@ -32,4 +32,18 @@
     <string name="cercaUtenti">Cerca tra migliaia di utenti</string>
     <string name="cercaArticoli">Cerca tra migliaia di articoli</string>
     <string name="rating">Rating of:</string>
+    <string name="ItemName">Articolo:</string>
+    <string name="Price">"Prezzo: "</string>
+    <string name="AnotherAddress">Utilizza un altro indirizzo</string>
+    <string name="AddressStreet">Via</string>
+    <string name="AddressNumber">Civico</string>
+    <string name="AddressCity">Città</string>
+    <string name="AddressDistrict">Provincia</string>
+    <string name="PhoneNumber">Telefono</string>
+    <string name="Prefix">"+39 "</string>
+    <string name="SavedAddress">Consegna all\'indirizzo salvato:</string>
+    <string name="DeliveryTo">Consegna a:</string>
+    <string name="Alternative">In alternativa</string>
+    <string name="CompileAddressForm">Non è registrato alcun indirizzo: compila i seguenti campi</string>
+    <string name="ConfirmOrder">Conferma Ordine</string>
 </resources>
