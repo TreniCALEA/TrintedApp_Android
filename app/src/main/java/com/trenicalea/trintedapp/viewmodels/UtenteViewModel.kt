@@ -49,4 +49,8 @@ class UtenteViewModel : ViewModel() {
         return _userApi.getByCredenzialiEmail(credenzialiEmail)
     }
 
+    fun deleteProfile(id: Long) {
+        _userApi.delete(id)
+    }
+
 }

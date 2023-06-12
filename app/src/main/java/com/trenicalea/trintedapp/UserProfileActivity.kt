@@ -54,7 +54,8 @@ fun UserProfileActivity(
     authViewModel: AuthViewModel,
     appwriteConfig: AppwriteConfig,
     utenteViewModel: UtenteViewModel,
-    isRedirected: MutableState<Boolean>
+    isRedirected: MutableState<Boolean>,
+    selectedIndex: MutableState<Int>
 ) {
     val ordineListsViewModel = OrdineListsViewModel(user.id)
     var showReview by remember { mutableStateOf(false) }
@@ -168,6 +169,21 @@ fun UserProfileActivity(
                     ) {
                         Text(text = "Logout")
                     }
+                }
+            }
+            Row (
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Button(
+                    onClick = {
+                        utenteViewModel.deleteProfile(authViewModel.loggedInUser.value!!.id)
+                        authViewModel.logout(appwriteConfig)
+                        selectedIndex.value = 3
+                    }
+                ) {
+                    Text(text = "Elimina il profilo")
                 }
             }
         }

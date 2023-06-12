@@ -204,7 +204,8 @@ fun HomePage(
                             authViewModel,
                             appwrite,
                             utenteViewModel,
-                            isRedirected
+                            isRedirected,
+                            selectedIndex
                         )
                     } else {
                         println(utente.value!!)
@@ -213,7 +214,8 @@ fun HomePage(
                             authViewModel = authViewModel,
                             appwriteConfig = appwrite,
                             utenteViewModel = utenteViewModel,
-                            isRedirected
+                            isRedirected,
+                            selectedIndex
                         )
                     }
                 }
