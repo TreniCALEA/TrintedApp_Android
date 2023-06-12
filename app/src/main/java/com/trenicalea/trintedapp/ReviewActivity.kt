@@ -1,7 +1,7 @@
-package com.trenicalea.trintedapp
-
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,11 +14,14 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -31,12 +34,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.trenicalea.trintedapp.R
 import com.trenicalea.trintedapp.appwrite.AppwriteConfig
 import com.trenicalea.trintedapp.models.Recensione
 import com.trenicalea.trintedapp.models.UtenteDto
 import com.trenicalea.trintedapp.viewmodels.AuthViewModel
 import com.trenicalea.trintedapp.viewmodels.ReviewViewModel
 
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun ReviewActivity(
     appwriteConfig: AppwriteConfig,
@@ -47,6 +52,8 @@ fun ReviewActivity(
     val reviewList: List<Recensione> = reviewViewModel.reviewList.value
     val reviewState by reviewViewModel.reviewState.collectAsState()
     var expanded by remember { mutableStateOf(false) }
+    val listItems = arrayOf(1.0f, 2.0f, 3.0f, 4.0f, 5.0f)
+    var selectedRating by remember { mutableStateOf(listItems[0]) }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -97,41 +104,71 @@ fun ReviewActivity(
             }
         }
         if (!reviewViewModel.isSameUser(authViewModel, utenteDto)) {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(text = "Rating: ")
-                DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                    for (i in 1..5) {
-                        DropdownMenuItem(
-                            text = { Text(text = "$i") },
-                            onClick = {
-                                println("Nuovo rating: $i")
-                                reviewViewModel.updateRating(i as Float)
-                                expanded = false
-                            }
-                        )
-                    }
-                }
-                OutlinedTextField(
-                    isError = reviewState.descriptionHasError,
-                    value = reviewState.description,
-                    onValueChange = { reviewViewModel.updateDescrizione(it) },
-                    label = { Text("Lascia una recensione qui...") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Button(
-                    onClick = {
-                              reviewViewModel.addReview(authViewModel, reviewState.description, reviewState.rating, utenteDto)
-                    },
-                    modifier = Modifier.padding(vertical = 8.dp)
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth().padding(5.dp)
+            )
+            {
+                Box(
+                    modifier = Modifier.padding(top = 10.dp)
                 ) {
-                    Text(text = "Invia")
+                    ExposedDropdownMenuBox(
+                        expanded = expanded,
+                        onExpandedChange = {
+                            expanded = !expanded
+                        },
+                    ) {
+                        TextField(
+                            label = { Text(text = "Rating: ") },
+                            value = "$selectedRating",
+                            onValueChange = {},
+                            readOnly = true,
+                            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                            modifier = Modifier.menuAnchor()
+                        )
+
+                        ExposedDropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false }
+                        ) {
+                            listItems.forEach { item ->
+                                DropdownMenuItem(
+                                    text = { Text(text = "$item") },
+                                    onClick = {
+                                        selectedRating = item
+                                        expanded = false
+                                    }
+                                )
+                            }
+                        }
+                    }
                 }
             }
 
+            OutlinedTextField(
+                isError = reviewState.descriptionHasError,
+                value = reviewState.description,
+                onValueChange = { reviewViewModel.updateDescrizione(it) },
+                label = { Text("Lascia una recensione qui...") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 10.dp, end = 10.dp)
+            )
+            Button(
+                onClick = {
+                    reviewViewModel.addReview(
+                        authViewModel,
+                        reviewState.description,
+                        selectedRating,
+                        utenteDto
+                    )
+                },
+                modifier = Modifier.padding(vertical = 8.dp)
+            ) {
+                Text(text = "Invia")
+            }
         }
     }
 }
+
