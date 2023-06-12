@@ -26,8 +26,9 @@ class ReviewViewModel : ViewModel() {
     private val _reviewApi: RecensioneControllerApi = RecensioneControllerApi()
     var reviewList: MutableState<List<Recensione>> = mutableStateOf(listOf())
 
-    fun getUserReview(authViewModel: AuthViewModel) {
-        reviewList.value = _reviewApi.findAll(authViewModel.loggedInUser.value!!.id).toList()
+    fun getUserReview(utenteDto: UtenteDto) {
+        reviewList.value = _reviewApi.findAll(utenteDto.id).toList()
+        println(reviewList.value)
     }
 
     fun isSameUser(authViewModel: AuthViewModel, utenteDto: UtenteDto): Boolean {

@@ -1,16 +1,13 @@
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
@@ -31,12 +28,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.trenicalea.trintedapp.R
 import com.trenicalea.trintedapp.appwrite.AppwriteConfig
-import com.trenicalea.trintedapp.models.Recensione
 import com.trenicalea.trintedapp.models.UtenteDto
 import com.trenicalea.trintedapp.viewmodels.AuthViewModel
 import com.trenicalea.trintedapp.viewmodels.ReviewViewModel
@@ -49,7 +44,7 @@ fun ReviewActivity(
     utenteDto: UtenteDto,
     authViewModel: AuthViewModel
 ) {
-    val reviewList: List<Recensione> = reviewViewModel.reviewList.value
+    reviewViewModel.getUserReview(utenteDto)
     val reviewState by reviewViewModel.reviewState.collectAsState()
     var expanded by remember { mutableStateOf(false) }
     val listItems = arrayOf(1.0f, 2.0f, 3.0f, 4.0f, 5.0f)
@@ -59,7 +54,8 @@ fun ReviewActivity(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        if (reviewList.isEmpty()) {
+
+        if (reviewViewModel.reviewList.value.isEmpty()) {
             Row(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
@@ -68,26 +64,8 @@ fun ReviewActivity(
             }
         } else {
             LazyColumn {
-                items(reviewList) { review ->
+                items(reviewViewModel.reviewList.value) { review ->
                     key(review.id) {
-                        Row {
-                            if (review.destinatario.immagine != null) {
-                                Image(
-                                    bitmap = review.destinatario.immagine.asImageBitmap(),
-                                    contentDescription = "${stringResource(id = R.string.propic)} ${review.autore}"
-                                )
-                            } else {
-                                Icon(
-                                    imageVector = Icons.Filled.Person,
-                                    contentDescription = stringResource(id = R.string.defaultImage),
-                                    modifier = Modifier.size(60.dp)
-                                )
-                            }
-                            Text(
-                                text = review.autore.credenziali.username,
-                                modifier = Modifier.weight(1f)
-                            )
-                        }
                         Row(modifier = Modifier.padding(horizontal = 10.dp)) {
                             Icon(
                                 imageVector = Icons.Filled.Star,
@@ -107,7 +85,9 @@ fun ReviewActivity(
             Row(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth().padding(5.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(5.dp)
             )
             {
                 Box(

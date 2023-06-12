@@ -87,10 +87,10 @@ class RecensioneControllerApi(basePath: String = Config.ip) : ApiClient(basePath
      * @return kotlin.Array<Recensione>
      */
     @Suppress("UNCHECKED_CAST")
-    fun findAll(reviewId: Long): Array<Recensione> = runBlocking(Dispatchers.IO) {
+    fun findAll(userId: Long): Array<Recensione> = runBlocking(Dispatchers.IO) {
         val localVariableConfig = RequestConfig(
             RequestMethod.GET,
-            "/review-api/review/{reviewId}".replace("{" + "reviewId" + "}", "$reviewId")
+            "/review-api/review/{userId}".replace("{" + "userId" + "}", "$userId")
         )
         val response = request<Array<Recensione>>(
             localVariableConfig
