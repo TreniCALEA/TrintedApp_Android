@@ -12,7 +12,6 @@ import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.AddCircle
-import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.BottomAppBar
@@ -114,18 +113,6 @@ fun TrintedBottomBar(selectedIndex: MutableState<Int>) {
                 icon = {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Icon(
-                            Icons.Filled.Email,
-                            contentDescription = stringResource(R.string.inbox)
-                        )
-                        Text("Inbox")
-                    }
-                })
-            NavigationBarItem(
-                selected = selectedIndex.value == 4,
-                onClick = { selectedIndex.value = 4 },
-                icon = {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(
                             Icons.Filled.AccountCircle,
                             contentDescription = stringResource(R.string.profile)
                         )
@@ -200,9 +187,6 @@ fun HomePage(
                 isRedirected.value = false
             }
             if (selectedIndex.value == 3) {
-                isRedirected.value = false
-            }
-            if (selectedIndex.value == 4) {
                 authViewModel.checkLogin(appwrite, utenteViewModel)
                 if (authViewModel.loading.value) {
                     Text(text = "Loading...")
