@@ -138,17 +138,18 @@ fun UserProfileActivity(
                     }
 
                     Divider()
-                    Row(
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(
-                            text = "Articoli venduti",
-                            style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                        )
-                    }
+
                     if (!isRedirected.value) {
+                        Row(
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                text = "Articoli venduti",
+                                style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                            )
+                        }
                         if (salesList.isNotEmpty()) Carousel(
                             list = salesList, title = stringResource(R.string.recentSales)
                         )
@@ -156,39 +157,53 @@ fun UserProfileActivity(
                     }
 
                     Divider()
-                    Row(
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(
-                            text = "Articoli acquistati",
-                            style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                        )
-                    }
+
                     if (!isRedirected.value) {
+                        Row(
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                text = "Articoli acquistati",
+                                style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                            )
+                        }
                         if (purchasesList.isNotEmpty()) Carousel(
                             list = purchasesList, title = stringResource(R.string.recentPurchases)
                         )
                         else ArrayEmpty()
                     }
                 }
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 14.dp),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    if (!isRedirected.value) {
-                        if (!utenteViewModel.isChecked.value) {
-                            Button(
-                                onClick = { utenteViewModel.checkVerified(appwriteConfig) }
-                            ) {
-                                Text(text = "Verifica account")
-                            }
+                if (!isRedirected.value) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Button(
+                            onClick = { showCompleteProfile = true },
+                            modifier = Modifier.padding(start = 13.dp)
+                        ) {
+                            Text(text = "Completa profilo")
                         }
+                        Button(
+                            onClick = {
+                                utenteViewModel.deleteProfile(authViewModel.loggedInUser.value!!.id)
+                                authViewModel.logout(appwriteConfig)
+                                selectedIndex.value = 3
+                            }
+                        ) {
+                            Text(text = "Elimina il profilo")
+                        }
+                    }
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 14.dp),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Button(
                             onClick = { authViewModel.logout(appwriteConfig) },
                             modifier = Modifier.width(150.dp)
@@ -197,27 +212,8 @@ fun UserProfileActivity(
                         }
                     }
                 }
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Button(
-                        onClick = {
-                            utenteViewModel.deleteProfile(authViewModel.loggedInUser.value!!.id)
-                            authViewModel.logout(appwriteConfig)
-                            selectedIndex.value = 3
-                        },
-                        modifier = Modifier.padding(start = 20.dp)
-                    ) {
-                        Text(text = "Elimina il profilo")
-                    }
-                    Button(
-                        onClick = { showCompleteProfile = true }
-                    ) {
-                        Text(text = "Completa profilo")
-                    }
-                }
+
+
             }
         }
     } else ReviewActivity(

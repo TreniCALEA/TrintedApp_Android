@@ -17,6 +17,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
@@ -25,11 +27,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,7 +39,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.trenicalea.trintedapp.models.Indirizzo
-import com.trenicalea.trintedapp.models.UtenteDto
 import com.trenicalea.trintedapp.viewmodels.AuthViewModel
 import com.trenicalea.trintedapp.viewmodels.UtenteViewModel
 
@@ -51,7 +50,10 @@ fun CompleteProfile(
 ) {
 
     val userUpdateState by utenteViewModel.userUpdateState.collectAsState()
-    val immagine = rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) { utenteViewModel.updateImmagine(it) }
+    val immagine = rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) {
+        utenteViewModel.updateImmagine(it)
+    }
+    val openDialog = remember { mutableStateOf(false) }
 
     Column {
         Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
@@ -65,15 +67,14 @@ fun CompleteProfile(
                         .clip(CircleShape)
                         .padding(5.dp)
                 )
-            } ?:
-            Icon(
+            } ?: Icon(
                 Icons.Filled.AccountCircle,
                 contentDescription = stringResource(R.string.defaultImage),
                 modifier = Modifier
                     .size(128.dp)
                     .padding(5.dp)
             )
-            Card(modifier=Modifier.align(Alignment.BottomCenter)) {
+            Card(modifier = Modifier.align(Alignment.BottomCenter)) {
                 Icon(
                     Icons.Filled.Add,
                     contentDescription = stringResource(R.string.accountImage),
@@ -141,6 +142,27 @@ fun CompleteProfile(
                 )
 
             }
+            if (openDialog.value) {
+                AlertDialog(onDismissRequest = {
+                    openDialog.value = false
+                    selectedIndex.value = 0
+                },
+                    title = {
+                        Text(text = "Profilo aggiornato")
+                    },
+                    text = {
+                        Text(text = "Il profilo è stato aggiornato correttamente")
+                    }, confirmButton = {
+                        Button(
+                            onClick = {
+                                openDialog.value = false
+                                selectedIndex.value = 0
+                            }) {
+                            Text("Chiudi")
+                        }
+                    }
+                )
+            }
         }
 
         Row(
@@ -156,7 +178,7 @@ fun CompleteProfile(
                     userUpdateState.immagine,
                     Indirizzo(userUpdateState.via, userUpdateState.civico, userUpdateState.citta)
                 )
-                selectedIndex.value = 3
+                openDialog.value = true
             }) {
                 Text("Aggiorna il profilo")
             }

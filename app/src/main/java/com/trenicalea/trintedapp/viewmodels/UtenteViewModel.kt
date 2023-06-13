@@ -5,20 +5,15 @@ import android.graphics.Bitmap
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.trenicalea.trintedapp.Config
 import com.trenicalea.trintedapp.apis.UtenteControllerApi
-import com.trenicalea.trintedapp.appwrite.AppwriteConfig
 import com.trenicalea.trintedapp.models.Indirizzo
 import com.trenicalea.trintedapp.models.UtenteBasicDto
 import com.trenicalea.trintedapp.models.UtenteCompletionDto
 import com.trenicalea.trintedapp.models.UtenteDto
 import com.trenicalea.trintedapp.models.UtenteRegistrationDto
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
 
 data class UserUpdateState(
     val nome: String = "",
@@ -35,7 +30,6 @@ class UtenteViewModel : ViewModel() {
     val userUpdateState: StateFlow<UserUpdateState> = _userUpdateState.asStateFlow()
 
     private val _userApi: UtenteControllerApi = UtenteControllerApi()
-    val isChecked: MutableState<Boolean> = mutableStateOf(false)
     val prefix: MutableState<String> = mutableStateOf("")
     val userList: MutableState<List<UtenteBasicDto>> = mutableStateOf(listOf())
 
@@ -51,7 +45,7 @@ class UtenteViewModel : ViewModel() {
 
     fun updateCognome(cognome: String) {
         _userUpdateState.value = _userUpdateState.value.copy(
-           cognome = cognome
+            cognome = cognome
         )
     }
 
@@ -96,16 +90,6 @@ class UtenteViewModel : ViewModel() {
         return _userApi.getById(id)
     }
 
-    fun checkVerified(appwrite: AppwriteConfig) {
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                appwrite.account.createVerification("${Config.ip}/account_verification.html")
-            } catch (e: Exception) {
-                isChecked.value = false
-            }
-        }.invokeOnCompletion { isChecked.value = true }
-    }
-
     fun getUserByUsernameLike() {
         userList.value = _userApi.getAllByUsernameLike(prefix.value).toList()
     }
@@ -117,5 +101,6 @@ class UtenteViewModel : ViewModel() {
     fun deleteProfile(id: Long) {
         _userApi.delete(id)
     }
+
 
 }
