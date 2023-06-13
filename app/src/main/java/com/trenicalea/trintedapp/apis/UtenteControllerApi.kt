@@ -19,6 +19,26 @@ import kotlinx.coroutines.runBlocking
 
 class UtenteControllerApi(basePath: String = Config.ip) : ApiClient(basePath) {
 
+
+    fun update(idUser: Long, body: UtenteCompletionDto) = runBlocking(Dispatchers.IO) {
+        val localVariableBody: Any = body
+        val localVariableConfig = RequestConfig(
+            RequestMethod.POST,
+            "/user-api/users/{idUser}".replace("{"+"idUser"+"}", "$idUser")
+        )
+        val response = request<String>(
+            localVariableConfig, localVariableBody
+        )
+
+        return@runBlocking when (response.responseType) {
+            ResponseType.Success -> (response as Success<*>).data as String
+            ResponseType.Informational -> TODO()
+            ResponseType.Redirection -> TODO()
+            ResponseType.ClientError -> throw ClientException((response as ClientError<*>).body as? String ?: "Client error")
+            ResponseType.ServerError -> throw ServerException((response as ServerError<*>).message ?: "Server error")
+        }
+    }
+
     fun add(body: UtenteRegistrationDto): UtenteRegistrationDto = runBlocking(Dispatchers.IO) {
         val localVariableBody: Any = body
         val localVariableConfig = RequestConfig(

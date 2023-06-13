@@ -59,131 +59,143 @@ fun UserProfileActivity(
 ) {
     val ordineListsViewModel = OrdineListsViewModel(user.id)
     var showReview by remember { mutableStateOf(false) }
+    var showCompleteProfile by remember { mutableStateOf(false) }
     val purchasesList = ordineListsViewModel.ordersGetByAcquirente
     val salesList = ordineListsViewModel.ordersGetByVenditore
     if (!showReview) {
-        Card(
-            elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
-            modifier = Modifier
-                .padding(12.dp)
-                .fillMaxWidth()
-        ) {
-            Column {
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-
-                    if (user.image != null) {
-                        Image(
-                            bitmap = user.image.asImageBitmap(),
-                            contentDescription = "${stringResource(id = R.string.propic)} ${user.credenzialiUsername}"
-                        )
-                    } else {
-                        Icon(
-                            imageVector = Icons.Filled.Person,
-                            contentDescription = stringResource(id = R.string.defaultImage),
-                            modifier = Modifier.size(60.dp)
-                        )
-                    }
-
-                }
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = "${user.credenzialiUsername}",
-                        textAlign = TextAlign.Center,
-                        style = TextStyle(fontSize = 25.sp)
-                    )
-                }
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Button(
-                        onClick = { showReview = true }
-                    ) {
-                        Text(text = "Rating: " + (user.ratingGenerale ?: 0).toString())
-                    }
-                }
-                Row(
-                    horizontalArrangement = Arrangement.Start,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(10.dp)
-                ) {
-
-                    Icon(
-                        imageVector = Icons.Default.Mail,
-                        contentDescription = stringResource(id = R.string.profileEmailIcon)
-                    )
-                    Row {
-                        Text(
-                            text = user.credenzialiEmail,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(10.dp)
-                        )
-                    }
-                }
-
-                Divider()
-
-                if (!isRedirected.value) {
-                    if (salesList.isNotEmpty()) Carousel(
-                        list = salesList, title = stringResource(R.string.recentSales)
-                    )
-                    else ArrayEmpty()
-                }
-
-                Divider()
-
-                if (!isRedirected.value) {
-                    if (purchasesList.isNotEmpty()) Carousel(
-                        list = purchasesList, title = stringResource(R.string.recentPurchases)
-                    )
-                    else ArrayEmpty()
-                }
-            }
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
+        if (showCompleteProfile) CompleteProfile(
+            authViewModel = authViewModel,
+            utenteViewModel = utenteViewModel,
+            selectedIndex = selectedIndex
+        )
+        else {
+            Card(
+                elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
+                modifier = Modifier
+                    .padding(12.dp)
+                    .fillMaxWidth()
             ) {
-                if (!isRedirected.value) {
-                    if (!utenteViewModel.isChecked.value) {
+                Column {
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        if (user.image != null) {
+                            Image(
+                                bitmap = user.image.asImageBitmap(),
+                                contentDescription = "${stringResource(id = R.string.propic)} ${user.credenzialiUsername}"
+                            )
+                        } else {
+                            Icon(
+                                imageVector = Icons.Filled.Person,
+                                contentDescription = stringResource(id = R.string.defaultImage),
+                                modifier = Modifier.size(60.dp)
+                            )
+                        }
+
+                    }
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = user.credenzialiUsername,
+                            textAlign = TextAlign.Center,
+                            style = TextStyle(fontSize = 25.sp)
+                        )
+                    }
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
                         Button(
-                            onClick = { utenteViewModel.checkVerified(appwriteConfig) },
+                            onClick = { showReview = true }
                         ) {
-                            Text(text = "Verifica account")
+                            Text(text = "Rating: " + (user.ratingGenerale ?: 0).toString())
                         }
                     }
-                    Button(
-                        onClick = { authViewModel.logout(appwriteConfig) },
-                        modifier = Modifier.padding(horizontal = 10.dp)
+                    Row(
+                        horizontalArrangement = Arrangement.Start,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(10.dp)
                     ) {
-                        Text(text = "Logout")
+
+                        Icon(
+                            imageVector = Icons.Default.Mail,
+                            contentDescription = stringResource(id = R.string.profileEmailIcon)
+                        )
+                        Row {
+                            Text(
+                                text = user.credenzialiEmail,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.padding(10.dp)
+                            )
+                        }
+                    }
+
+                    Divider()
+
+                    if (!isRedirected.value) {
+                        if (salesList.isNotEmpty()) Carousel(
+                            list = salesList, title = stringResource(R.string.recentSales)
+                        )
+                        else ArrayEmpty()
+                    }
+
+                    Divider()
+
+                    if (!isRedirected.value) {
+                        if (purchasesList.isNotEmpty()) Carousel(
+                            list = purchasesList, title = stringResource(R.string.recentPurchases)
+                        )
+                        else ArrayEmpty()
                     }
                 }
-            }
-            Row (
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Button(
-                    onClick = {
-                        utenteViewModel.deleteProfile(authViewModel.loggedInUser.value!!.id)
-                        authViewModel.logout(appwriteConfig)
-                        selectedIndex.value = 3
-                    }
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
                 ) {
-                    Text(text = "Elimina il profilo")
+                    if (!isRedirected.value) {
+                        if (!utenteViewModel.isChecked.value) {
+                            Button(
+                                onClick = { utenteViewModel.checkVerified(appwriteConfig) },
+                            ) {
+                                Text(text = "Verifica account")
+                            }
+                        }
+                        Button(
+                            onClick = { authViewModel.logout(appwriteConfig) },
+                            modifier = Modifier.padding(horizontal = 10.dp)
+                        ) {
+                            Text(text = "Logout")
+                        }
+                    }
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Button(
+                        onClick = {
+                            utenteViewModel.deleteProfile(authViewModel.loggedInUser.value!!.id)
+                            authViewModel.logout(appwriteConfig)
+                            selectedIndex.value = 3
+                        }
+                    ) {
+                        Text(text = "Elimina il profilo")
+                    }
+                    Button(
+                        onClick = { showCompleteProfile = true }
+                    ) {
+                        Text(text = "Completa profilo")
+                    }
                 }
             }
         }
