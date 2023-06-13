@@ -1,5 +1,9 @@
 package com.trenicalea.trintedapp
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -35,17 +39,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.trenicalea.trintedapp.appwrite.AppwriteConfig
 import com.trenicalea.trintedapp.models.UtenteDto
 import com.trenicalea.trintedapp.ui.theme.TrintedAppTheme
+import com.trenicalea.trintedapp.viewmodels.ArticoloViewModel
 import com.trenicalea.trintedapp.viewmodels.AuthViewModel
 import com.trenicalea.trintedapp.viewmodels.UtenteViewModel
+import java.io.FileNotFoundException
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,13 +68,8 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-}
 
-@Composable
-fun NavigationView(navHostController: NavHostController) {
-    NavHost(navController = navHostController, startDestination = "HomePage") {
 
-    }
 }
 
 @Composable
@@ -153,11 +155,28 @@ fun TrintedTopBar(navHostController: NavHostController, selectedIndex: MutableSt
 }
 
 @Composable
+fun decodeUriAsBitmap(uri: Uri?): Bitmap? {
+    val context: Context = LocalContext.current
+    var bitmap: Bitmap? = null
+    bitmap = try {
+        BitmapFactory.decodeStream(
+            context
+                .contentResolver.openInputStream(uri!!)
+        )
+    } catch (e: FileNotFoundException) {
+        e.printStackTrace()
+        return null
+    }
+    return bitmap
+}
+
+@Composable
 fun HomePage(
     appwrite: AppwriteConfig,
     activity: ComponentActivity,
     authViewModel: AuthViewModel = AuthViewModel(),
-    utenteViewModel: UtenteViewModel = UtenteViewModel()
+    utenteViewModel: UtenteViewModel = UtenteViewModel(),
+    articoloViewModel: ArticoloViewModel = ArticoloViewModel()
 ) {
     val (shownBottomSheet, setBottomSheet) = remember { mutableStateOf(false) }
     val navHostController = rememberNavController()
@@ -171,9 +190,12 @@ fun HomePage(
         bottomBar = { TrintedBottomBar(selectedIndex) }) {
         Box(modifier = Modifier.padding(it)) {
             if (selectedIndex.value == 0) {
+                authViewModel.checkLogin(appwrite, utenteViewModel)
                 isRedirected.value = false
+                HomePageActivity(articoloViewModel)
             }
             if (selectedIndex.value == 1) {
+                authViewModel.checkLogin(appwrite, utenteViewModel)
                 isRedirected.value = false
                 FindActivity(
                     userViewModel = utenteViewModel,
@@ -184,14 +206,16 @@ fun HomePage(
                 )
             }
             if (selectedIndex.value == 2) {
+                authViewModel.checkLogin(appwrite, utenteViewModel)
                 isRedirected.value = false
+                AddProductActivity(authViewModel, articoloViewModel)
             }
             if (selectedIndex.value == 3) {
                 authViewModel.checkLogin(appwrite, utenteViewModel)
                 if (authViewModel.loading.value) {
                     Text(text = "Loading...")
                 } else if (!authViewModel.isLogged.value) {
-                    RegistrationFormActivity(
+                    AuthActivity(
                         activity = activity,
                         appwrite = appwrite,
                         authViewModel,

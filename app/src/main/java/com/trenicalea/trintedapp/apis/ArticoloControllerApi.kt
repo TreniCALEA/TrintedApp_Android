@@ -14,6 +14,8 @@ package com.trenicalea.trintedapp.apis
 import com.trenicalea.trintedapp.Config
 import com.trenicalea.trintedapp.infrastructure.*
 import com.trenicalea.trintedapp.models.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 
 class ArticoloControllerApi(basePath: String = Config.ip) : ApiClient(basePath) {
 
@@ -24,7 +26,7 @@ class ArticoloControllerApi(basePath: String = Config.ip) : ApiClient(basePath) 
      * @return ArticoloDto
      */
     @Suppress("UNCHECKED_CAST")
-    fun add3(body: ArticoloDto): ArticoloDto {
+    fun add3(body: ArticoloDto): ArticoloDto = runBlocking(Dispatchers.IO) {
         val localVariableBody: Any = body
         val localVariableConfig = RequestConfig(
             RequestMethod.POST,
@@ -34,7 +36,7 @@ class ArticoloControllerApi(basePath: String = Config.ip) : ApiClient(basePath) 
             localVariableConfig, localVariableBody
         )
 
-        return when (response.responseType) {
+        return@runBlocking when (response.responseType) {
             ResponseType.Success -> (response as Success<*>).data as ArticoloDto
             ResponseType.Informational -> TODO()
             ResponseType.Redirection -> TODO()
@@ -54,7 +56,7 @@ class ArticoloControllerApi(basePath: String = Config.ip) : ApiClient(basePath) 
      * @return kotlin.Array<ArticoloDto>
      */
     @Suppress("UNCHECKED_CAST")
-    fun all2(): Array<ArticoloDto> {
+    fun all2(): Array<ArticoloDto> = runBlocking(Dispatchers.IO) {
         val localVariableConfig = RequestConfig(
             RequestMethod.GET,
             "/item-api/item"
@@ -63,7 +65,7 @@ class ArticoloControllerApi(basePath: String = Config.ip) : ApiClient(basePath) 
             localVariableConfig
         )
 
-        return when (response.responseType) {
+        return@runBlocking when (response.responseType) {
             ResponseType.Success -> (response as Success<*>).data as Array<ArticoloDto>
             ResponseType.Informational -> TODO()
             ResponseType.Redirection -> TODO()
@@ -84,7 +86,7 @@ class ArticoloControllerApi(basePath: String = Config.ip) : ApiClient(basePath) 
      * @return kotlin.String
      */
     @Suppress("UNCHECKED_CAST")
-    fun delete3(idItem: Long): String {
+    fun delete3(idItem: Long): String = runBlocking(Dispatchers.IO) {
         val localVariableConfig = RequestConfig(
             RequestMethod.DELETE,
             "/item-api/item/{idItem}".replace("{" + "idItem" + "}", "$idItem")
@@ -93,7 +95,7 @@ class ArticoloControllerApi(basePath: String = Config.ip) : ApiClient(basePath) 
             localVariableConfig
         )
 
-        return when (response.responseType) {
+        return@runBlocking when (response.responseType) {
             ResponseType.Success -> (response as Success<*>).data as String
             ResponseType.Informational -> TODO()
             ResponseType.Redirection -> TODO()
@@ -114,7 +116,7 @@ class ArticoloControllerApi(basePath: String = Config.ip) : ApiClient(basePath) 
      * @return ArticoloDto
      */
     @Suppress("UNCHECKED_CAST")
-    fun getById2(idItem: Long): ArticoloDto {
+    fun getById2(idItem: Long): ArticoloDto = runBlocking(Dispatchers.IO) {
         val localVariableConfig = RequestConfig(
             RequestMethod.GET,
             "/item-api/item/{idItem}".replace("{" + "idItem" + "}", "$idItem")
@@ -123,7 +125,7 @@ class ArticoloControllerApi(basePath: String = Config.ip) : ApiClient(basePath) 
             localVariableConfig
         )
 
-        return when (response.responseType) {
+        return@runBlocking when (response.responseType) {
             ResponseType.Success -> (response as Success<*>).data as ArticoloDto
             ResponseType.Informational -> TODO()
             ResponseType.Redirection -> TODO()

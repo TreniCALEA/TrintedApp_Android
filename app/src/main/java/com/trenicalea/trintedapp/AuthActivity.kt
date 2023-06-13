@@ -44,12 +44,8 @@ import com.trenicalea.trintedapp.appwrite.AppwriteConfig
 import com.trenicalea.trintedapp.viewmodels.AuthViewModel
 import com.trenicalea.trintedapp.viewmodels.UtenteViewModel
 
-fun checkVars() {
-
-}
-
 @Composable
-fun RegistrationFormActivity(
+fun AuthActivity(
     activity: ComponentActivity,
     appwrite: AppwriteConfig,
     authViewModel: AuthViewModel,
