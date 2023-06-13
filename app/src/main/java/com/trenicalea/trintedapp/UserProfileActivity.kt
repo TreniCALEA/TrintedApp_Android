@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyRow
@@ -118,11 +119,9 @@ fun UserProfileActivity(
                         }
                     }
                     Row(
-                        horizontalArrangement = Arrangement.Start,
+                        horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(10.dp)
+                        modifier = Modifier.fillMaxWidth()
                     ) {
 
                         Icon(
@@ -139,7 +138,16 @@ fun UserProfileActivity(
                     }
 
                     Divider()
-
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = "Articoli venduti",
+                            style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                        )
+                    }
                     if (!isRedirected.value) {
                         if (salesList.isNotEmpty()) Carousel(
                             list = salesList, title = stringResource(R.string.recentSales)
@@ -148,7 +156,16 @@ fun UserProfileActivity(
                     }
 
                     Divider()
-
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = "Articoli acquistati",
+                            style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                        )
+                    }
                     if (!isRedirected.value) {
                         if (purchasesList.isNotEmpty()) Carousel(
                             list = purchasesList, title = stringResource(R.string.recentPurchases)
@@ -158,20 +175,23 @@ fun UserProfileActivity(
                 }
 
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 14.dp),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     if (!isRedirected.value) {
                         if (!utenteViewModel.isChecked.value) {
                             Button(
-                                onClick = { utenteViewModel.checkVerified(appwriteConfig) },
+                                onClick = { utenteViewModel.checkVerified(appwriteConfig) }
                             ) {
                                 Text(text = "Verifica account")
                             }
                         }
                         Button(
                             onClick = { authViewModel.logout(appwriteConfig) },
-                            modifier = Modifier.padding(horizontal = 10.dp)
+                            modifier = Modifier.width(150.dp)
                         ) {
                             Text(text = "Logout")
                         }
@@ -187,7 +207,8 @@ fun UserProfileActivity(
                             utenteViewModel.deleteProfile(authViewModel.loggedInUser.value!!.id)
                             authViewModel.logout(appwriteConfig)
                             selectedIndex.value = 3
-                        }
+                        },
+                        modifier = Modifier.padding(start = 20.dp)
                     ) {
                         Text(text = "Elimina il profilo")
                     }
