@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -31,7 +32,8 @@ import com.trenicalea.trintedapp.viewmodels.UtenteViewModel
 fun OrdineFormActivity(
     articoloDto: ArticoloDto,
     acquirente: Long,
-    utenteViewModel: UtenteViewModel
+    utenteViewModel: UtenteViewModel,
+    selectedIndex: MutableState<Int>
 ) {
     val _acquirente = utenteViewModel.getUser(acquirente)
 
@@ -42,12 +44,16 @@ fun OrdineFormActivity(
     var civico = remember { mutableStateOf("") }
     var citta = remember { mutableStateOf("") }
 
+    var openDialog = remember { mutableStateOf(false) }
+
     Card(
         elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
         modifier = Modifier.padding(15.dp)
     ) {
         Column() {
             BasicInformations(articoloDto)
+
+            ConfirmMessage(selectedIndex = selectedIndex, openDialog = openDialog)
 
             if (_acquirente.indirizzo != null)
                 SavedAddress(
@@ -57,7 +63,8 @@ fun OrdineFormActivity(
                     checkoutViewModel,
                     via,
                     civico,
-                    citta
+                    citta,
+                    openDialog
                 )
             else {
                 Row(
@@ -85,17 +92,14 @@ fun OrdineFormActivity(
                             articoloDto,
                             Indirizzo(via.value, civico.value.toInt(), citta.value)
                         )
+                        openDialog.value = true
                     }) {
                         Text(text = stringResource(id = R.string.ConfirmOrder))
                     }
                 }
             }
-
         }
-
     }
-
-
 }
 
 @Composable
@@ -106,7 +110,8 @@ fun SavedAddress(
     checkoutViewModel: CheckoutViewModel,
     via: MutableState<String>,
     civico: MutableState<String>,
-    citta: MutableState<String>
+    citta: MutableState<String>,
+    openDialog: MutableState<Boolean>
 ) {
     Row(
         horizontalArrangement = Arrangement.Start,
@@ -181,6 +186,7 @@ fun SavedAddress(
                     articoloDto,
                     Indirizzo(via.value, civico.value.toInt(), citta.value)
                 )
+                openDialog.value = true
             } else {
                 acquirente.indirizzo?.let {
                     checkoutViewModel.confirmOrder(
@@ -283,6 +289,25 @@ private fun Info(label: String, content: String) {
         fontWeight = FontWeight.Light,
         fontSize = 15.sp
     )
+}
+
+@Composable
+private fun ConfirmMessage(selectedIndex: MutableState<Int>, openDialog: MutableState<Boolean>) {
+    if (openDialog.value) {
+        AlertDialog(onDismissRequest = {
+            openDialog.value = false
+        },
+            title = { Text(text = stringResource(id = R.string.OrderConfirmTitle)) },
+            text = { Text(text = stringResource(id = R.string.OrderConfirm)) },
+            confirmButton = {
+                Button(onClick = {
+                    openDialog.value = false
+                    selectedIndex.value = 0
+                }) {
+                    Text(text = stringResource(id = R.string.Close))
+                }
+            })
+    }
 }
 
 

@@ -46,4 +46,7 @@
     <string name="Alternative">In alternativa</string>
     <string name="CompileAddressForm">Non è registrato alcun indirizzo: compila i seguenti campi</string>
     <string name="ConfirmOrder">Conferma Ordine</string>
+    <string name="OrderConfirm">Ordine creato con successo!</string>
+    <string name="OrderConfirmTitle">Conferma</string>
+    <string name="Close">Chiudi</string>
 </resources>
