@@ -14,7 +14,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ShoppingBag
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -197,15 +196,22 @@ fun ListUsers(
                             color = Color.Black
                         )
                         Row(modifier = Modifier.padding(horizontal = 10.dp)) {
-                            Icon(
-                                tint = Color.Black,
-                                imageVector = Icons.Filled.Star,
-                                contentDescription = stringResource(id = R.string.rating)
-                            )
-                            Text(
-                                text = if (user.ratingGenerale == null) "Nessuna recensione" else user.ratingGenerale.toString(),
-                                color = Color.Black
-                            )
+                            if (user.ratingGenerale != null) {
+                                Text(
+                                    text = user.ratingGenerale.toString(),
+                                    color = Color.Black
+                                )
+                                for (i in 1..user.ratingGenerale.toInt()) {
+                                    Text(
+                                        text = "⭐",
+                                        color = Color.Black
+                                    )
+                                }
+                            } else {
+                                Text(
+                                    text = "Nessuna recensione"
+                                )
+                            }
                         }
                     }
                 }

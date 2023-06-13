@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 data class ReviewState(
-    val description: String = "",
+    var description: String = "",
     var rating: Float = 0.0f,
     val descriptionHasError: Boolean = !RecensioneDto.validateDescrizione(description)
 )
@@ -61,5 +61,11 @@ class ReviewViewModel : ViewModel() {
             destinatarioCredenzialiEmail = destinatario.credenzialiEmail
         )
         _reviewApi.add(recensioneDto)
+    }
+
+    fun deleteReview(
+        id: Long
+    ) {
+        _reviewApi.delete(id)
     }
 }
