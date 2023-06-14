@@ -28,29 +28,36 @@ class OrdineControllerApi(basePath: String = Config.ip) : ApiClient(basePath) {
      * @param indirizzo
      * @return OrdineDto
      */
-    @Suppress("UNCHECKED_CAST")
-    fun add2(acquirente: Long, articoloDto: ArticoloDto, indirizzo: Indirizzo): String = runBlocking(Dispatchers.IO) {
-        val localVariableConfig = RequestConfig(
-            RequestMethod.POST,
-            "/order-api/orders/{acquirente}".replace("{" + "acquirente" + "}", "$acquirente")
-        )
-        val response = request<String>(
-            localVariableConfig
-        )
-
-        return@runBlocking when (response.responseType) {
-            ResponseType.Success -> (response as Success<*>).data as String
-            ResponseType.Informational -> TODO()
-            ResponseType.Redirection -> TODO()
-            ResponseType.ClientError -> throw ClientException(
-                (response as ClientError<*>).body as? String ?: "Client error"
+    fun add2(acquirente: Long, articoloId: Long, body: Indirizzo): String =
+        runBlocking(Dispatchers.IO) {
+            val localVariableBody: Any = body
+            val localVariableConfig = RequestConfig(
+                RequestMethod.POST,
+                "/order-api/orders/{acquirente}/{articoloId}".replace(
+                    "{" + "acquirente" + "}",
+                    "$acquirente"
+                ).replace(
+                    "{" + "articoloId" + "}",
+                    "$articoloId"
+                )
+            )
+            val response = request<String>(
+                localVariableConfig, localVariableBody
             )
 
-            ResponseType.ServerError -> throw ServerException(
-                (response as ServerError<*>).message ?: "Server error"
-            )
+            return@runBlocking when (response.responseType) {
+                ResponseType.Success -> (response as Success<*>).data as String
+                ResponseType.Informational -> TODO()
+                ResponseType.Redirection -> TODO()
+                ResponseType.ClientError -> throw ClientException(
+                    (response as ClientError<*>).body as? String ?: "Client error"
+                )
+
+                ResponseType.ServerError -> throw ServerException(
+                    (response as ServerError<*>).message ?: "Server error"
+                )
+            }
         }
-    }
 
     /**
      *
@@ -58,7 +65,7 @@ class OrdineControllerApi(basePath: String = Config.ip) : ApiClient(basePath) {
      * @return kotlin.Array<OrdineDto>
      */
     @Suppress("UNCHECKED_CAST")
-    fun all1(): Array<OrdineDto> = runBlocking(Dispatchers.IO){
+    fun all1(): Array<OrdineDto> = runBlocking(Dispatchers.IO) {
         val localVariableConfig = RequestConfig(
             RequestMethod.GET,
             "/order-api/orders"
@@ -88,7 +95,7 @@ class OrdineControllerApi(basePath: String = Config.ip) : ApiClient(basePath) {
      * @return kotlin.String
      */
     @Suppress("UNCHECKED_CAST")
-    fun delete2(orderId: Long): String = runBlocking(Dispatchers.IO){
+    fun delete2(orderId: Long): String = runBlocking(Dispatchers.IO) {
         val localVariableConfig = RequestConfig(
             RequestMethod.DELETE,
             "/order-api/orders/{orderId}".replace("{" + "orderId" + "}", "$orderId")
@@ -118,7 +125,7 @@ class OrdineControllerApi(basePath: String = Config.ip) : ApiClient(basePath) {
      * @return kotlin.Array<OrdineDto>
      */
     @Suppress("UNCHECKED_CAST")
-    fun getByAcquirente(id: Long): Array<OrdineDto> = runBlocking(Dispatchers.IO){
+    fun getByAcquirente(id: Long): Array<OrdineDto> = runBlocking(Dispatchers.IO) {
         val localVariableQuery: MultiValueMap =
             mutableMapOf<String, List<String>>().apply {
                 put("id", listOf(id.toString()))
@@ -152,7 +159,7 @@ class OrdineControllerApi(basePath: String = Config.ip) : ApiClient(basePath) {
      * @return OrdineDto
      */
     @Suppress("UNCHECKED_CAST")
-    fun getById1(orderId: Long): OrdineDto = runBlocking(Dispatchers.IO){
+    fun getById1(orderId: Long): OrdineDto = runBlocking(Dispatchers.IO) {
         val localVariableConfig = RequestConfig(
             RequestMethod.GET,
             "/order-api/orders/{orderId}".replace("{" + "orderId" + "}", "$orderId")
@@ -182,7 +189,7 @@ class OrdineControllerApi(basePath: String = Config.ip) : ApiClient(basePath) {
      * @return kotlin.Array<OrdineDto>
      */
     @Suppress("UNCHECKED_CAST")
-    fun getByVenditore(id: Long): Array<OrdineDto> = runBlocking(Dispatchers.IO){
+    fun getByVenditore(id: Long): Array<OrdineDto> = runBlocking(Dispatchers.IO) {
         val localVariableQuery: MultiValueMap =
             mutableMapOf<String, List<String>>().apply {
                 put("id", listOf(id.toString()))

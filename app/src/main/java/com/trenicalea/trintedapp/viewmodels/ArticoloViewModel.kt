@@ -38,6 +38,7 @@ class ArticoloViewModel : ViewModel() {
     var prefix: MutableState<String> = mutableStateOf("")
     var searchArticolo: MutableState<List<ArticoloDto>> = mutableStateOf(listOf())
     val openExternal: MutableState<Boolean> = mutableStateOf(false)
+    var openIndirizzo: MutableState<Boolean> = mutableStateOf(false)
 
     fun addArticolo(
         authViewModel: AuthViewModel,

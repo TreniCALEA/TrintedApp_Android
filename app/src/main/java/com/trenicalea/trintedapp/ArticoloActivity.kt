@@ -140,146 +140,72 @@ fun ArticoloActivity(
                 // Divider
                 Divider()
 
-                val pageCount = articolo.immagini.size
-                val pagerState = rememberPagerState()
-
-
+                // Colonna prezzo
                 Column(
                     modifier = Modifier
-                        .verticalScroll(rememberScrollState())
-                        .padding(5.dp)
+                        .padding(top = 30.dp)
+                        .fillMaxWidth(),
                 ) {
-                    // Row per le immagini
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(200.dp)
-                    ) {
-                        HorizontalPager(
-                            pageCount = pageCount,
-                            state = pagerState
-                        ) { page ->
-                            // Our page content
-                            Image(
-                                bitmap = articolo.immagini[page].asImageBitmap(),
-                                contentDescription = "Image $page of product: $articolo.titolo"
-                            )
-                        }
-                    }
-
-                    // Divider
-                    Divider()
-
-                    // Button profile infos
-                    Button(
-                        modifier = Modifier.fillMaxWidth(),
-                        onClick = {
-                            selectedIndex!!.value = 3
-                            utente!!.value = articoloOwner
-                            isRedirected!!.value = true
-                        },
-                        shape = RectangleShape,
-                        colors = ButtonDefaults.buttonColors(
-                            contentColor = Color.Black.copy(alpha = 0.75f),
-                            containerColor = Color.Transparent
-                        ),
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.AccountCircle,
-                            contentDescription = "Account image",
-                            modifier = Modifier.size(65.dp)
-                        )
-                        Column(
-                            Modifier
-                                .padding(10.dp)
-                                .fillMaxWidth(),
-                            horizontalAlignment = Alignment.Start
-                        ) {
-                            Row {
-                                Text(text = articoloOwner.credenzialiUsername)
-                            }
-                            Row(
-                                modifier = Modifier.padding(top = 5.dp)
-                            ) {
-                                if (articoloOwner.ratingGenerale == null) {
-                                    Text(text = "")
-                                }
-                                Text(
-                                    text = "⭐ " + if (articoloOwner.ratingGenerale != null) "${articoloOwner.ratingGenerale}" else "Nessuna recensione"
-                                )
-                            }
-                        }
-                    }
-
-                    // Divider
-                    Divider()
-
-                    Column(
-                        modifier = Modifier
-                            .padding(top = 30.dp)
-                            .fillMaxWidth(),
-                    ) {
-                        Row(
-                            horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                        ) {
-                            Text(
-                                text = "Prezzo: ${articolo.prezzo}€",
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight.Bold,
-                            )
-                        }
-
-                        // "Acquista" button
-                        Button(
-                            onClick = {
-                                println(!authViewModel.isLogged.value)
-                                if (!authViewModel.isLogged.value) {
-                                    selectedIndex!!.value = 3
-                                } else {
-                                    showOrderForm.value = true
-                                }
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .width(150.dp),
-                            shape = RectangleShape,
-
-                            ) {
-                            Text("Acquista!")
-                        }
-                    }
-
-                    // Descrizione
                     Row(
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 50.dp)
                     ) {
                         Text(
-                            text = "Descrizione",
+                            text = "Prezzo: ${articolo.prezzo}€",
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
                         )
                     }
-                    Row(
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically,
+
+                    // "Acquista" button
+                    Button(
+                        onClick = {
+                            println(!authViewModel.isLogged.value)
+                            if (!authViewModel.isLogged.value) {
+                                selectedIndex!!.value = 3
+                            } else {
+                                showOrderForm.value = true
+                            }
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 10.dp)
-                    ) {
-                        Text(
-                            text = articolo.descrizione,
-                            fontSize = 18.sp,
-                        )
-                    }
+                            .width(150.dp),
+                        shape = RectangleShape,
 
+                        ) {
+                        Text("Acquista!")
+                    }
                 }
+
+                // Descrizione
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 50.dp)
+                ) {
+                    Text(
+                        text = "Descrizione",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                    )
+                }
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 10.dp)
+                ) {
+                    Text(
+                        text = articolo.descrizione,
+                        fontSize = 18.sp,
+                    )
+                }
+
             }
         }
     } else {
@@ -288,7 +214,8 @@ fun ArticoloActivity(
             acquirente = authViewModel.loggedInUser.value!!.id,
             utenteViewModel = utenteViewModel,
             selectedIndex = selectedIndex!!,
-            authViewModel = authViewModel
+            authViewModel = authViewModel,
+            articoloViewModel = articoloViewModel
         )
     }
 }

@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import com.trenicalea.trintedapp.models.ArticoloDto
 import com.trenicalea.trintedapp.models.Indirizzo
 import com.trenicalea.trintedapp.models.UtenteDto
+import com.trenicalea.trintedapp.viewmodels.ArticoloViewModel
 import com.trenicalea.trintedapp.viewmodels.AuthViewModel
 import com.trenicalea.trintedapp.viewmodels.CheckoutViewModel
 import com.trenicalea.trintedapp.viewmodels.UtenteViewModel
@@ -34,7 +35,8 @@ fun OrdineFormActivity(
     acquirente: Long,
     utenteViewModel: UtenteViewModel,
     selectedIndex: MutableState<Int>?,
-    authViewModel: AuthViewModel
+    authViewModel: AuthViewModel,
+    articoloViewModel: ArticoloViewModel
 ) {
     val _acquirente = authViewModel.loggedInUser.value
 
@@ -47,55 +49,62 @@ fun OrdineFormActivity(
 
     var openDialog = remember { mutableStateOf(false) }
 
-    Card(
-        elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
-        modifier = Modifier.padding(15.dp)
-    ) {
-        Column() {
-            BasicInformations(articoloDto)
 
-            ConfirmMessage(selectedIndex = selectedIndex!!, openDialog = openDialog)
+    if (!articoloViewModel.openIndirizzo.value) {
+        Card(
+            elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
+            modifier = Modifier.padding(15.dp)
+        ) {
+            Column {
+                BasicInformations(articoloDto)
 
-            if (_acquirente!!.indirizzo != null)
-                SavedAddress(
-                    _acquirente,
-                    usaNuovoIndirizzo,
-                    articoloDto,
-                    checkoutViewModel,
-                    via,
-                    civico,
-                    citta,
-                    openDialog
+                ConfirmMessage(
+                    selectedIndex = selectedIndex!!,
+                    openDialog = openDialog,
+                    openIndirizzo = articoloViewModel.openIndirizzo
                 )
-            else {
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(10.dp)
-                ) {
-                    Text(text = stringResource(id = R.string.CompileAddressForm))
-                }
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(10.dp)
-                ) {
-                    AddressForm(via = via, civico = civico, citta = citta)
-                }
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(10.dp)
-                ) {
-                    Button(onClick = {
-                        checkoutViewModel.confirmOrder(
-                            _acquirente.id,
-                            articoloDto,
-                            Indirizzo(via.value, civico.value.toInt(), citta.value)
-                        )
-                        openDialog.value = true
-                    }) {
-                        Text(text = stringResource(id = R.string.ConfirmOrder))
+
+                if (_acquirente!!.indirizzo != null)
+                    SavedAddress(
+                        _acquirente,
+                        usaNuovoIndirizzo,
+                        articoloDto,
+                        checkoutViewModel,
+                        via,
+                        civico,
+                        citta,
+                        openDialog
+                    )
+                else {
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(10.dp)
+                    ) {
+                        Text(text = stringResource(id = R.string.CompileAddressForm))
+                    }
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(10.dp)
+                    ) {
+                        AddressForm(via = via, civico = civico, citta = citta)
+                    }
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(10.dp)
+                    ) {
+                        Button(onClick = {
+                            checkoutViewModel.confirmOrder(
+                                _acquirente.id,
+                                articoloDto.id!!,
+                                Indirizzo(via.value, civico.value.toInt(), citta.value)
+                            )
+                            openDialog.value = true
+                        }) {
+                            Text(text = stringResource(id = R.string.ConfirmOrder))
+                        }
                     }
                 }
             }
@@ -184,17 +193,18 @@ fun SavedAddress(
             if (usaNuovoIndirizzo.value) {
                 checkoutViewModel.confirmOrder(
                     acquirente.id,
-                    articoloDto,
+                    articoloDto.id!!,
                     Indirizzo(via.value, civico.value.toInt(), citta.value)
                 )
                 openDialog.value = true
             } else {
                 acquirente.indirizzo?.let {
                     checkoutViewModel.confirmOrder(
-                        acquirente.id, articoloDto,
+                        acquirente.id, articoloDto.id!!,
                         it
                     )
                 }
+                openDialog.value = true
             }
         }) {
             Text(text = stringResource(id = R.string.ConfirmOrder))
@@ -293,14 +303,19 @@ private fun Info(label: String, content: String) {
 }
 
 @Composable
-private fun ConfirmMessage(selectedIndex: MutableState<Int>, openDialog: MutableState<Boolean>) {
+private fun ConfirmMessage(
+    selectedIndex: MutableState<Int>,
+    openDialog: MutableState<Boolean>,
+    openIndirizzo: MutableState<Boolean>
+) {
     if (openDialog.value) {
         showAlert(
             stringResource(id = R.string.OrderConfirmTitle),
             stringResource(id = R.string.OrderConfirm)
         ) {
             openDialog.value = false
-            selectedIndex.value = 0
+            selectedIndex.value = -1
+            openIndirizzo.value = true
         }
     }
 }

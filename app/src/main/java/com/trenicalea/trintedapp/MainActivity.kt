@@ -192,6 +192,7 @@ fun HomePage(
         Box(modifier = Modifier.padding(it)) {
             if (selectedIndex.value == 0) {
                 articoloViewModel.openExternal.value = false
+                articoloViewModel.openIndirizzo.value = false
                 authViewModel.checkLogin(appwrite, utenteViewModel)
                 isRedirected.value = false
                 HomePageActivity(
@@ -256,10 +257,6 @@ fun HomePage(
                 }
             }
         }
-    }
-
-    fun getUtente(): MutableState<UtenteDto?> {
-        return utente
     }
 }
 
