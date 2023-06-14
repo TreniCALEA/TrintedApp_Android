@@ -192,7 +192,13 @@ fun HomePage(
             if (selectedIndex.value == 0) {
                 authViewModel.checkLogin(appwrite, utenteViewModel)
                 isRedirected.value = false
-                HomePageActivity(articoloViewModel)
+                HomePageActivity(
+                    articoloViewModel,
+                    utente,
+                    selectedIndex,
+                    isRedirected,
+                    utenteViewModel
+                )
             }
             if (selectedIndex.value == 1) {
                 authViewModel.checkLogin(appwrite, utenteViewModel)

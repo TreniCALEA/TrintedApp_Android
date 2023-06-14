@@ -17,7 +17,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -38,16 +37,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.trenicalea.trintedapp.models.ArticoloDto
+import com.trenicalea.trintedapp.models.UtenteDto
 import com.trenicalea.trintedapp.viewmodels.ArticoloViewModel
+import com.trenicalea.trintedapp.viewmodels.UtenteViewModel
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ArticoloActivity(
     articoloViewModel: ArticoloViewModel,
-    idProdotto: Long?
+    idProdotto: Long?,
+    utente: MutableState<UtenteDto?>? = null,
+    selectedIndex: MutableState<Int>? = null,
+    isRedirected: MutableState<Boolean>? = null,
+    utenteViewModel: UtenteViewModel
 ) {
     val articolo: ArticoloDto = articoloViewModel.getArticoloById(idProdotto!!)
     val openProfile: MutableState<Boolean> = remember { mutableStateOf(false) }
+    val articoloOwner: UtenteDto = utenteViewModel.getUser(articolo.utenteId)
 
     Card(
         elevation = CardDefaults.cardElevation(defaultElevation = 5.dp), modifier = Modifier
@@ -87,7 +93,9 @@ fun ArticoloActivity(
             Button(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
-                    TODO()
+                    selectedIndex!!.value = 3
+                    utente!!.value = articoloOwner
+                    isRedirected!!.value = true
                 },
                 shape = RectangleShape,
                 colors = ButtonDefaults.buttonColors(
@@ -107,18 +115,17 @@ fun ArticoloActivity(
                     horizontalAlignment = Alignment.Start
                 ) {
                     Row {
-                        Text(text = "Ciao user")
+                        Text(text = articoloOwner.credenzialiUsername)
                     }
                     Row(
                         modifier = Modifier.padding(top = 5.dp)
                     ) {
-                        Icon(
-                            imageVector = Icons.Filled.Star,
-                            contentDescription = null,
-                            modifier = Modifier.size(23.dp)
+                        if (articoloOwner.ratingGenerale == null) {
+                            Text(text = "")
+                        }
+                        Text(
+                            text = "⭐ " + if (articoloOwner.ratingGenerale != null) "${articoloOwner.ratingGenerale}" else "Nessuna recensione"
                         )
-                        Text(text = "(39)")
-
                     }
                 }
             }
