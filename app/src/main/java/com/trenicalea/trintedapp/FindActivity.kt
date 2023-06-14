@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ShoppingBag
@@ -36,8 +37,10 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.trenicalea.trintedapp.models.ArticoloDto
 import com.trenicalea.trintedapp.models.UtenteBasicDto
 import com.trenicalea.trintedapp.models.UtenteDto
+import com.trenicalea.trintedapp.viewmodels.ArticoloViewModel
 import com.trenicalea.trintedapp.viewmodels.UtenteViewModel
 
 @Composable
@@ -46,101 +49,120 @@ fun FindActivity(
     selectedIndex: MutableState<Int>,
     isRedirected: MutableState<Boolean>,
     selectedHomePageIndex: MutableState<Int>,
-    user: MutableState<UtenteDto?>
+    user: MutableState<UtenteDto?>,
+    articoloViewModel: ArticoloViewModel
 ) {
     var searchValue by remember { mutableStateOf("") }
+    val idArticolo: MutableState<Long?> = remember { mutableStateOf(null) }
 
-    Column {
-        Row {
-            NavigationBar {
-                NavigationBarItem(selected = selectedIndex.value == 0,
-                    onClick = { selectedIndex.value = 0 },
-                    icon = {
-                        Row {
-                            Icon(
-                                imageVector = Icons.Default.Person,
-                                contentDescription = stringResource(R.string.utenti)
-                            )
-                            Text(text = "Utenti")
-                        }
-                    })
-                NavigationBarItem(selected = selectedIndex.value == 1,
-                    onClick = { selectedIndex.value = 1 },
-                    icon = {
-                        Row {
-                            Icon(
-                                imageVector = Icons.Default.ShoppingBag,
-                                contentDescription = stringResource(R.string.articoli)
-                            )
-                            Text(text = "Articoli")
-                        }
-                    })
-            }
-        }
-        if (selectedIndex.value == 0) {
-            Row(
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .padding(8.dp)
-                    .width(500.dp)
-            ) {
-                OutlinedTextField(value = searchValue, onValueChange = {
-                    searchValue = it
-                    userViewModel.prefix.value = searchValue
-                }, isError = searchValue == "", leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = stringResource(R.string.search)
-                    )
-                }, label = { Text(stringResource(R.string.cercaUtenti)) })
-            }
-            Row(
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Button(onClick = {
-                    if (searchValue != "") userViewModel.getUserByUsernameLike()
-                }, modifier = Modifier.padding(horizontal = 150.dp)) {
-                    Text(text = stringResource(R.string.search))
+    if (!articoloViewModel.openExternal.value) {
+        Column {
+            Row {
+                NavigationBar {
+                    NavigationBarItem(selected = selectedIndex.value == 0,
+                        onClick = { selectedIndex.value = 0 },
+                        icon = {
+                            Row {
+                                Icon(
+                                    imageVector = Icons.Default.Person,
+                                    contentDescription = stringResource(R.string.utenti)
+                                )
+                                Text(text = "Utenti")
+                            }
+                        })
+                    NavigationBarItem(selected = selectedIndex.value == 1,
+                        onClick = { selectedIndex.value = 1 },
+                        icon = {
+                            Row {
+                                Icon(
+                                    imageVector = Icons.Default.ShoppingBag,
+                                    contentDescription = stringResource(R.string.articoli)
+                                )
+                                Text(text = "Articoli")
+                            }
+                        })
                 }
             }
-            ListUsers(
-                userList = userViewModel.userList.value,
-                redirect = isRedirected,
-                utente = user,
-                selectedIndex = selectedHomePageIndex,
-                utenteViewModel = userViewModel
-            )
+            if (selectedIndex.value == 0) {
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .width(500.dp)
+                ) {
+                    OutlinedTextField(value = searchValue, onValueChange = {
+                        searchValue = it
+                        userViewModel.prefix.value = searchValue
+                    }, isError = searchValue == "", leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = stringResource(R.string.search)
+                        )
+                    }, label = { Text(stringResource(R.string.cercaUtenti)) })
+                }
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Button(onClick = {
+                        if (searchValue != "") userViewModel.getUserByUsernameLike()
+                    }, modifier = Modifier.padding(horizontal = 150.dp)) {
+                        Text(text = stringResource(R.string.search))
+                    }
+                }
+                ListUsers(
+                    userList = userViewModel.userList.value,
+                    redirect = isRedirected,
+                    utente = user,
+                    selectedIndex = selectedHomePageIndex,
+                    utenteViewModel = userViewModel
+                )
 
-        } else {
-            Row(
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .padding(8.dp)
-                    .width(500.dp)
-            ) {
-                OutlinedTextField(value = searchValue, onValueChange = {
-                    searchValue = it
-                    // Da cambiare con la ricerca degli articoli
-                    // userViewModel.prefix.value = searchValue
-                }, isError = searchValue == "", leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = stringResource(R.string.search)
-                    )
-                }, label = { Text(stringResource(R.string.cercaArticoli)) })
-
-            }
-            Button(
-                onClick = {
-                    if (searchValue != "") userViewModel.getUserByUsernameLike()
-                }, modifier = Modifier.padding(horizontal = 150.dp)
-            ) {
-                Text(text = stringResource(R.string.search))
+            } else {
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .width(500.dp)
+                ) {
+                    OutlinedTextField(value = searchValue, onValueChange = {
+                        searchValue = it
+                        articoloViewModel.prefix.value = searchValue
+                    }, isError = searchValue == "", leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = stringResource(R.string.search)
+                        )
+                    }, label = { Text(stringResource(R.string.cercaUtenti)) })
+                }
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Button(onClick = {
+                        if (searchValue != "") articoloViewModel.searchArticolo()
+                    }, modifier = Modifier.padding(horizontal = 150.dp)) {
+                        Text(text = stringResource(R.string.search))
+                    }
+                }
+                ListItems(
+                    articoloList = articoloViewModel.searchArticolo.value,
+                    openExternal = articoloViewModel.openExternal,
+                    idArticolo = idArticolo
+                )
             }
         }
+    } else if (articoloViewModel.openExternal.value) {
+        ArticoloActivity(
+            articoloViewModel = articoloViewModel,
+            idProdotto = idArticolo.value,
+            utente = user,
+            selectedIndex = selectedIndex,
+            isRedirected = isRedirected,
+            utenteViewModel = userViewModel
+        )
     }
 }
 
@@ -212,6 +234,56 @@ fun ListUsers(
                                     text = "Nessuna recensione"
                                 )
                             }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ListItems(
+    articoloList: List<ArticoloDto>,
+    openExternal: MutableState<Boolean>,
+    idArticolo: MutableState<Long?>
+) {
+    if (articoloList.isEmpty()) {
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(text = "Nessun articolo")
+        }
+    } else {
+        LazyColumn {
+            items(articoloList) { articolo ->
+                key(articolo.id) {
+                    OutlinedButton(
+                        onClick = {
+                            openExternal.value = true
+                            idArticolo.value = articolo.id
+                        },
+                        shape = RectangleShape,
+                        colors = ButtonDefaults.buttonColors(
+                            contentColor = Color.Black.copy(0.20f),
+                            containerColor = Color.Transparent
+                        )
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Image,
+                            contentDescription = stringResource(id = R.string.defaultImage),
+                            modifier = Modifier.size(60.dp),
+                            tint = Color.Black
+                        )
+                        Text(
+                            text = articolo.titolo,
+                            modifier = Modifier.weight(1f),
+                            color = Color.Black
+                        )
+                        Row(modifier = Modifier.padding(horizontal = 10.dp)) {
+                            Text(text = "${articolo.prezzo}€")
                         }
                     }
                 }

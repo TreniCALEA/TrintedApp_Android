@@ -138,4 +138,31 @@ class ArticoloControllerApi(basePath: String = Config.ip) : ApiClient(basePath) 
             )
         }
     }
+
+    fun getByTitoloContainingOrDescrizioneContaining(searchValue: String): Array<ArticoloDto> =
+        runBlocking(Dispatchers.IO) {
+            val localVariableConfig = RequestConfig(
+                RequestMethod.GET,
+                "/item-api/item/search/{searchValue}".replace(
+                    "{" + "searchValue" + "}",
+                    searchValue
+                )
+            )
+            val response = request<Array<ArticoloDto>>(
+                localVariableConfig
+            )
+
+            return@runBlocking when (response.responseType) {
+                ResponseType.Success -> (response as Success<*>).data as Array<ArticoloDto>
+                ResponseType.Informational -> TODO()
+                ResponseType.Redirection -> TODO()
+                ResponseType.ClientError -> throw ClientException(
+                    (response as ClientError<*>).body as? String ?: "Client error"
+                )
+
+                ResponseType.ServerError -> throw ServerException(
+                    (response as ServerError<*>).message ?: "Server error"
+                )
+            }
+        }
 }

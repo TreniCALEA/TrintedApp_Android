@@ -35,6 +35,9 @@ class ArticoloViewModel : ViewModel() {
 
     private val _articoloApi: ArticoloControllerApi = ArticoloControllerApi()
     var articoloList: MutableState<Array<ArticoloDto>> = mutableStateOf(arrayOf())
+    var prefix: MutableState<String> = mutableStateOf("")
+    var searchArticolo: MutableState<List<ArticoloDto>> = mutableStateOf(listOf())
+    val openExternal: MutableState<Boolean> = mutableStateOf(false)
 
     fun addArticolo(
         authViewModel: AuthViewModel,
@@ -65,6 +68,11 @@ class ArticoloViewModel : ViewModel() {
 
     fun deleteArticoloById(id: Long) {
         _articoloApi.delete3(id)
+    }
+
+    fun searchArticolo() {
+        searchArticolo.value =
+            _articoloApi.getByTitoloContainingOrDescrizioneContaining(prefix.value).toList()
     }
 
     fun getAllArticolo() {

@@ -87,42 +87,44 @@ fun ArticoloActivity(
             Divider()
 
             // Button profile infos
-            Button(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = {
-                    selectedIndex!!.value = 3
-                    utente!!.value = articoloOwner
-                    isRedirected!!.value = true
-                },
-                shape = RectangleShape,
-                colors = ButtonDefaults.buttonColors(
-                    contentColor = Color.Black.copy(alpha = 0.75f),
-                    containerColor = Color.Transparent
-                ),
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.AccountCircle,
-                    contentDescription = "Account image",
-                    modifier = Modifier.size(65.dp)
-                )
-                Column(
-                    Modifier
-                        .padding(10.dp)
-                        .fillMaxWidth(),
-                    horizontalAlignment = Alignment.Start
+            if (!articoloViewModel.openExternal.value) {
+                Button(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = {
+                        utente!!.value = articoloOwner
+                        isRedirected!!.value = true
+                        selectedIndex!!.value = 3
+                    },
+                    shape = RectangleShape,
+                    colors = ButtonDefaults.buttonColors(
+                        contentColor = Color.Black.copy(alpha = 0.75f),
+                        containerColor = Color.Transparent
+                    ),
                 ) {
-                    Row {
-                        Text(text = articoloOwner.credenzialiUsername)
-                    }
-                    Row(
-                        modifier = Modifier.padding(top = 5.dp)
+                    Icon(
+                        imageVector = Icons.Filled.AccountCircle,
+                        contentDescription = "Account image",
+                        modifier = Modifier.size(65.dp)
+                    )
+                    Column(
+                        Modifier
+                            .padding(10.dp)
+                            .fillMaxWidth(),
+                        horizontalAlignment = Alignment.Start
                     ) {
-                        if (articoloOwner.ratingGenerale == null) {
-                            Text(text = "")
+                        Row {
+                            Text(text = articoloOwner.credenzialiUsername)
                         }
-                        Text(
-                            text = "⭐ " + if (articoloOwner.ratingGenerale != null) "${articoloOwner.ratingGenerale}" else "Nessuna recensione"
-                        )
+                        Row(
+                            modifier = Modifier.padding(top = 5.dp)
+                        ) {
+                            if (articoloOwner.ratingGenerale == null) {
+                                Text(text = "")
+                            }
+                            Text(
+                                text = "⭐ " + if (articoloOwner.ratingGenerale != null) "${articoloOwner.ratingGenerale}" else "Nessuna recensione"
+                            )
+                        }
                     }
                 }
             }

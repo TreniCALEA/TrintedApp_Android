@@ -191,6 +191,7 @@ fun HomePage(
         bottomBar = { TrintedBottomBar(selectedIndex) }) {
         Box(modifier = Modifier.padding(it)) {
             if (selectedIndex.value == 0) {
+                articoloViewModel.openExternal.value = false
                 authViewModel.checkLogin(appwrite, utenteViewModel)
                 isRedirected.value = false
                 HomePageActivity(
@@ -209,7 +210,8 @@ fun HomePage(
                     selectedIndex = selectedIndexFind,
                     isRedirected = isRedirected,
                     selectedHomePageIndex = selectedIndex,
-                    user = utente
+                    user = utente,
+                    articoloViewModel
                 )
             }
             if (selectedIndex.value == 2) {
@@ -252,6 +254,10 @@ fun HomePage(
                 }
             }
         }
+    }
+
+    fun getUtente(): MutableState<UtenteDto?> {
+        return utente
     }
 }
 
