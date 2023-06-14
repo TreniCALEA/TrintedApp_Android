@@ -29,23 +29,17 @@ class OrdineControllerApi(basePath: String = Config.ip) : ApiClient(basePath) {
      * @return OrdineDto
      */
     @Suppress("UNCHECKED_CAST")
-    fun add2(acquirente: Long, articoloDto: ArticoloDto, indirizzo: Indirizzo): OrdineDto = runBlocking(Dispatchers.IO) {
-        val localVariableQuery: MultiValueMap =
-            mutableMapOf<String, List<String>>().apply {
-                put("acquirente", listOf(acquirente.toString()))
-                put("articoloDto", listOf(articoloDto.toString()))
-                put("indirizzo", listOf(indirizzo.toString()))
-            }
+    fun add2(acquirente: Long, articoloDto: ArticoloDto, indirizzo: Indirizzo): String = runBlocking(Dispatchers.IO) {
         val localVariableConfig = RequestConfig(
             RequestMethod.POST,
-            "/order-api/orders", query = localVariableQuery
+            "/order-api/orders/{acquirente}".replace("{" + "acquirente" + "}", "$acquirente")
         )
-        val response = request<OrdineDto>(
+        val response = request<String>(
             localVariableConfig
         )
 
         return@runBlocking when (response.responseType) {
-            ResponseType.Success -> (response as Success<*>).data as OrdineDto
+            ResponseType.Success -> (response as Success<*>).data as String
             ResponseType.Informational -> TODO()
             ResponseType.Redirection -> TODO()
             ResponseType.ClientError -> throw ClientException(

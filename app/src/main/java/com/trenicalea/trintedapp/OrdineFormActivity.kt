@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import com.trenicalea.trintedapp.models.ArticoloDto
 import com.trenicalea.trintedapp.models.Indirizzo
 import com.trenicalea.trintedapp.models.UtenteDto
+import com.trenicalea.trintedapp.viewmodels.AuthViewModel
 import com.trenicalea.trintedapp.viewmodels.CheckoutViewModel
 import com.trenicalea.trintedapp.viewmodels.UtenteViewModel
 
@@ -32,9 +33,10 @@ fun OrdineFormActivity(
     articoloDto: ArticoloDto,
     acquirente: Long,
     utenteViewModel: UtenteViewModel,
-    selectedIndex: MutableState<Int>
+    selectedIndex: MutableState<Int>?,
+    authViewModel: AuthViewModel
 ) {
-    val _acquirente = utenteViewModel.getUser(acquirente)
+    val _acquirente = authViewModel.loggedInUser.value
 
     val checkoutViewModel = CheckoutViewModel()
     val usaNuovoIndirizzo = remember { mutableStateOf(false) }
@@ -52,9 +54,9 @@ fun OrdineFormActivity(
         Column() {
             BasicInformations(articoloDto)
 
-            ConfirmMessage(selectedIndex = selectedIndex, openDialog = openDialog)
+            ConfirmMessage(selectedIndex = selectedIndex!!, openDialog = openDialog)
 
-            if (_acquirente.indirizzo != null)
+            if (_acquirente!!.indirizzo != null)
                 SavedAddress(
                     _acquirente,
                     usaNuovoIndirizzo,

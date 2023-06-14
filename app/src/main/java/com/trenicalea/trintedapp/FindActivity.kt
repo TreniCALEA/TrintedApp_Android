@@ -41,6 +41,7 @@ import com.trenicalea.trintedapp.models.ArticoloDto
 import com.trenicalea.trintedapp.models.UtenteBasicDto
 import com.trenicalea.trintedapp.models.UtenteDto
 import com.trenicalea.trintedapp.viewmodels.ArticoloViewModel
+import com.trenicalea.trintedapp.viewmodels.AuthViewModel
 import com.trenicalea.trintedapp.viewmodels.UtenteViewModel
 
 @Composable
@@ -50,7 +51,8 @@ fun FindActivity(
     isRedirected: MutableState<Boolean>,
     selectedHomePageIndex: MutableState<Int>,
     user: MutableState<UtenteDto?>,
-    articoloViewModel: ArticoloViewModel
+    articoloViewModel: ArticoloViewModel,
+    authViewModel: AuthViewModel
 ) {
     var searchValue by remember { mutableStateOf("") }
     val idArticolo: MutableState<Long?> = remember { mutableStateOf(null) }
@@ -161,7 +163,8 @@ fun FindActivity(
             utente = user,
             selectedIndex = selectedIndex,
             isRedirected = isRedirected,
-            utenteViewModel = userViewModel
+            utenteViewModel = userViewModel,
+            authViewModel = authViewModel
         )
     }
 }

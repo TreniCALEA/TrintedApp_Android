@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.trenicalea.trintedapp.models.UtenteDto
 import com.trenicalea.trintedapp.viewmodels.ArticoloViewModel
+import com.trenicalea.trintedapp.viewmodels.AuthViewModel
 import com.trenicalea.trintedapp.viewmodels.UtenteViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -37,7 +38,8 @@ fun HomePageActivity(
     utente: MutableState<UtenteDto?>,
     selectedIndex: MutableState<Int>,
     isRedirected: MutableState<Boolean>,
-    utenteViewModel: UtenteViewModel
+    utenteViewModel: UtenteViewModel,
+    authViewModel: AuthViewModel
 ) {
     articoloViewModel.getAllArticolo()
     val id: MutableState<Long?> = remember { mutableStateOf(null) }
@@ -121,7 +123,8 @@ fun HomePageActivity(
             utente,
             selectedIndex,
             isRedirected,
-            utenteViewModel
+            utenteViewModel,
+            authViewModel
         )
     }
 }
