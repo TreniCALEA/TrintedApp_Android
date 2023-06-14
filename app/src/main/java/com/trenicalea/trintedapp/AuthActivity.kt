@@ -7,7 +7,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
@@ -56,6 +58,7 @@ fun AuthActivity(
         modifier = Modifier
             .padding(12.dp)
             .fillMaxSize()
+            .verticalScroll(rememberScrollState())
     ) {
 
         var usernameProvider by remember { mutableStateOf("") }
