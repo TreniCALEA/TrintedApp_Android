@@ -18,6 +18,7 @@ import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -214,7 +215,7 @@ fun HomePage(
             if (selectedIndex.value == 2) {
                 authViewModel.checkLogin(appwrite, utenteViewModel)
                 isRedirected.value = false
-                AddProductActivity(authViewModel, articoloViewModel)
+                AddProductActivity(authViewModel, articoloViewModel, selectedIndex)
             }
             if (selectedIndex.value == 3) {
                 authViewModel.checkLogin(appwrite, utenteViewModel)
@@ -252,5 +253,30 @@ fun HomePage(
             }
         }
     }
+}
+
+@Composable
+fun showAlert(
+    title: String,
+    description: String,
+    onDialogClosed: () -> Unit
+) {
+    AlertDialog(onDismissRequest = {
+        onDialogClosed()
+    },
+        title = {
+            Text(text = title)
+        },
+        text = {
+            Text(text = description)
+        }, confirmButton = {
+            Button(
+                onClick = {
+                    onDialogClosed()
+                }) {
+                Text("Chiudi")
+            }
+        }
+    )
 }
 

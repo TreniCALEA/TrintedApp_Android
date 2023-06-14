@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -294,19 +293,13 @@ private fun Info(label: String, content: String) {
 @Composable
 private fun ConfirmMessage(selectedIndex: MutableState<Int>, openDialog: MutableState<Boolean>) {
     if (openDialog.value) {
-        AlertDialog(onDismissRequest = {
+        showAlert(
+            stringResource(id = R.string.OrderConfirmTitle),
+            stringResource(id = R.string.OrderConfirm)
+        ) {
             openDialog.value = false
-        },
-            title = { Text(text = stringResource(id = R.string.OrderConfirmTitle)) },
-            text = { Text(text = stringResource(id = R.string.OrderConfirm)) },
-            confirmButton = {
-                Button(onClick = {
-                    openDialog.value = false
-                    selectedIndex.value = 0
-                }) {
-                    Text(text = stringResource(id = R.string.Close))
-                }
-            })
+            selectedIndex.value = 0
+        }
     }
 }
 

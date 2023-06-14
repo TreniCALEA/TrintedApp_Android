@@ -17,8 +17,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
@@ -142,27 +140,6 @@ fun CompleteProfile(
                 )
 
             }
-            if (openDialog.value) {
-                AlertDialog(onDismissRequest = {
-                    openDialog.value = false
-                    selectedIndex.value = 0
-                },
-                    title = {
-                        Text(text = "Profilo aggiornato")
-                    },
-                    text = {
-                        Text(text = "Il profilo è stato aggiornato correttamente")
-                    }, confirmButton = {
-                        Button(
-                            onClick = {
-                                openDialog.value = false
-                                selectedIndex.value = 0
-                            }) {
-                            Text("Chiudi")
-                        }
-                    }
-                )
-            }
         }
 
         Row(
@@ -184,5 +161,14 @@ fun CompleteProfile(
             }
         }
     }
-
+    
+    if (openDialog.value) {
+        showAlert(
+            "Profilo aggiornato",
+            "Il profilo è stato aggiornato correttamente!",
+        ) {
+            openDialog.value = false
+            selectedIndex.value = 0
+        }
+    }
 }

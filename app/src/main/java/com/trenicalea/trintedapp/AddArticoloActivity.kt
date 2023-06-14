@@ -35,14 +35,14 @@ import com.trenicalea.trintedapp.viewmodels.AuthViewModel
 @Composable
 fun AddProductActivity(
     authViewModel: AuthViewModel,
-    articoloViewModel: ArticoloViewModel
+    articoloViewModel: ArticoloViewModel,
+    selectedIndex: MutableState<Int>
 ) {
     val articoloState by articoloViewModel.addArticoloState.collectAsState()
     val pattern = remember { Regex("^\\d*\\.?\\d*\$") }
     val uris: MutableState<List<Uri>> = remember { mutableStateOf(listOf()) }
     val convertImages: MutableState<Boolean> = remember { mutableStateOf(false) }
-
-    println(authViewModel.loggedInUser.value)
+    val openDialog = remember { mutableStateOf(false) }
 
     val filePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetMultipleContents()
@@ -160,8 +160,7 @@ fun AddProductActivity(
                         articoloState.prezzo,
                         articoloState.immagini,
                     )
-
-                    // dialog che se non ci stanno immagini lo dobbiamo dire porcod
+                    openDialog.value = true
                 }
             ) {
                 Text(text = "Vendi!")
@@ -172,6 +171,16 @@ fun AddProductActivity(
     if (convertImages.value) {
         articoloViewModel.updateImmagini(uris.value)
         convertImages.value = false
+    }
+
+    if (openDialog.value) {
+        showAlert(
+            "Articolo aggiunto",
+            "Il tuo articolo è stato pubblicato correttamente",
+        ) {
+            openDialog.value = false
+            selectedIndex.value = 0
+        }
     }
 
 }

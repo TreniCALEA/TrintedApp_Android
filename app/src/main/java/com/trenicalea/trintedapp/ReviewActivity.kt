@@ -9,7 +9,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenuItem
@@ -32,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.trenicalea.trintedapp.appwrite.AppwriteConfig
 import com.trenicalea.trintedapp.models.UtenteDto
+import com.trenicalea.trintedapp.showAlert
 import com.trenicalea.trintedapp.viewmodels.AuthViewModel
 import com.trenicalea.trintedapp.viewmodels.ReviewViewModel
 
@@ -98,29 +98,6 @@ fun ReviewActivity(
                                         Icon(
                                             imageVector = Icons.Filled.Delete,
                                             contentDescription = "Elimina recensione"
-                                        )
-                                    }
-                                    if (openDialog.value) {
-                                        AlertDialog(
-                                            onDismissRequest = {
-                                                openDialog.value = false
-                                                reloadPage.value = true
-                                            },
-                                            title = {
-                                                Text(text = "Recensione cancellata")
-                                            },
-                                            text = {
-                                                Text("La recensione è stata cancellata correttamente")
-                                            },
-                                            confirmButton = {
-                                                Button(
-                                                    onClick = {
-                                                        openDialog.value = false
-                                                        reloadPage.value = true
-                                                    }) {
-                                                    Text("Chiudi")
-                                                }
-                                            }
                                         )
                                     }
                                 }
@@ -206,6 +183,16 @@ fun ReviewActivity(
     if (reloadPage.value) {
         reloadPage.value = false
         ReviewActivity(appwriteConfig, reviewViewModel, utenteDto, authViewModel)
+    }
+
+    if (openDialog.value) {
+        showAlert(
+            "Recensione cancellata",
+            "La recensione è stata cancellata correttamente"
+        ) {
+            openDialog.value = false
+            reloadPage.value = true
+        }
     }
 }
 
