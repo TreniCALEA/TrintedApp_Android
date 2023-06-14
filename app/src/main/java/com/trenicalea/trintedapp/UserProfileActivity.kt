@@ -82,9 +82,9 @@ fun UserProfileActivity(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        if (user.image != null) {
+                        if (user.immagine != null) {
                             Image(
-                                bitmap = user.image.asImageBitmap(),
+                                bitmap = user.immagine.asImageBitmap(),
                                 contentDescription = "${stringResource(id = R.string.propic)} ${user.credenzialiUsername}"
                             )
                         } else {
