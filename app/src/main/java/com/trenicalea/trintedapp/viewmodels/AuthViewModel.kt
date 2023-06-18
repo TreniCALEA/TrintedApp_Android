@@ -126,13 +126,13 @@ class AuthViewModel : ViewModel() {
                     // ...otherwise, the user is just logging in using OAuth2.
                 } else {
                     println("[D] User is just logging in, proceed with populating loggedInUser.")
-                    checkLogin(appwrite, utenteViewModel)
                 }
             } catch (e: Exception) {
                 println("[i] Login/Register with $provider cancelled.")
                 isLogged.value = false
             }
         }.invokeOnCompletion {
+            checkLogin(appwrite, utenteViewModel)
             // If needed, tell checkLogged to proceed without any further issue
             providerLoginCompleted.complete(true)
         }
