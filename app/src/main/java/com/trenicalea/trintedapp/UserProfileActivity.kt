@@ -47,7 +47,7 @@ import com.trenicalea.trintedapp.appwrite.AppwriteConfig
 import com.trenicalea.trintedapp.models.OrdineDto
 import com.trenicalea.trintedapp.models.UtenteDto
 import com.trenicalea.trintedapp.viewmodels.AuthViewModel
-import com.trenicalea.trintedapp.viewmodels.OrdineListsViewModel
+import com.trenicalea.trintedapp.viewmodels.OrderViewModel
 import com.trenicalea.trintedapp.viewmodels.ReviewViewModel
 import com.trenicalea.trintedapp.viewmodels.UtenteViewModel
 
@@ -61,11 +61,11 @@ fun UserProfileActivity(
     isRedirected: MutableState<Boolean>,
     selectedIndex: MutableState<Int>
 ) {
-    val ordineListsViewModel = OrdineListsViewModel(user.id)
+    val orderViewModel = OrderViewModel()
     var showReview by remember { mutableStateOf(false) }
     var showCompleteProfile by remember { mutableStateOf(false) }
-    val purchasesList = ordineListsViewModel.ordersGetByAcquirente
-    val salesList = ordineListsViewModel.ordersGetByVenditore
+    val purchasesList = orderViewModel.ordersGetByAcquirente
+    val salesList = orderViewModel.ordersGetByVenditore
     if (!showReview) {
         if (showCompleteProfile) CompleteProfile(
             authViewModel = authViewModel,
@@ -154,8 +154,8 @@ fun UserProfileActivity(
                                 style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold)
                             )
                         }
-                        if (salesList.isNotEmpty()) Carousel(
-                            list = salesList, title = stringResource(R.string.recentSales)
+                        if (salesList.value.isNotEmpty()) Carousel(
+                            list = salesList.value, title = stringResource(R.string.recentSales)
                         )
                         else ArrayEmpty()
                     }
@@ -173,8 +173,9 @@ fun UserProfileActivity(
                                 style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold)
                             )
                         }
-                        if (purchasesList.isNotEmpty()) Carousel(
-                            list = purchasesList, title = stringResource(R.string.recentPurchases)
+                        if (purchasesList.value.isNotEmpty()) Carousel(
+                            list = purchasesList.value,
+                            title = stringResource(R.string.recentPurchases)
                         )
                         else ArrayEmpty()
                     }

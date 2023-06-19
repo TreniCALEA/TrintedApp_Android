@@ -39,6 +39,7 @@ class ArticoloViewModel : ViewModel() {
     var searchArticolo: MutableState<List<ArticoloDto>> = mutableStateOf(listOf())
     val openExternal: MutableState<Boolean> = mutableStateOf(false)
     var openIndirizzo: MutableState<Boolean> = mutableStateOf(false)
+    var articoloToBeBought: MutableState<ArticoloDto?> = mutableStateOf(null)
 
     fun addArticolo(
         authViewModel: AuthViewModel,
@@ -49,8 +50,6 @@ class ArticoloViewModel : ViewModel() {
         categoria: String? = null,
         condizioni: String? = null,
     ) {
-
-        println(authViewModel.loggedInUser.value)
         val articoloDto = ArticoloDto(
             titolo = titolo,
             descrizione = descrizione,
@@ -59,6 +58,7 @@ class ArticoloViewModel : ViewModel() {
             utenteId = authViewModel.loggedInUser.value!!.id,
             categoria = categoria,
             condizioni = condizioni,
+            acquistabile = true
         )
         _articoloApi.add3(articoloDto)
     }

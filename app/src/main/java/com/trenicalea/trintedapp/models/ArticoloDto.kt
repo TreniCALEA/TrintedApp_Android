@@ -26,7 +26,8 @@ data class ArticoloDto(
     val immagini: List<Bitmap>,
     val utenteId: Long,
     val categoria: String? = null,
-    val condizioni: String? = null
+    val condizioni: String? = null,
+    val acquistabile: Boolean
 ) {
     companion object {
         fun validateTitolo(titolo: String): Boolean {

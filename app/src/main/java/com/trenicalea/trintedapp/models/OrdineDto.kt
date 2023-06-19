@@ -26,4 +26,18 @@ data class OrdineDto(
     val acquirente: Utente? = null,
     val venditore: Utente? = null,
     val indirizzo: Indirizzo? = null
-)
+) {
+    companion object {
+        fun validateVia(via: String): Boolean {
+            return via.isEmpty() && via.length > 5
+        }
+
+        fun validateCivico(civico: String): Boolean {
+            return civico.isEmpty()
+        }
+
+        fun validatePaese(paese: String): Boolean {
+            return paese.isEmpty()
+        }
+    }
+}

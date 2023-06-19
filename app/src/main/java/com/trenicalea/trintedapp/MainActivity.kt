@@ -179,7 +179,6 @@ fun HomePage(
     utenteViewModel: UtenteViewModel = UtenteViewModel(),
     articoloViewModel: ArticoloViewModel = ArticoloViewModel()
 ) {
-    val (shownBottomSheet, setBottomSheet) = remember { mutableStateOf(false) }
     val navHostController = rememberNavController()
     val selectedIndex = remember { mutableStateOf(0) }
     val selectedIndexFind = remember { mutableStateOf(0) }

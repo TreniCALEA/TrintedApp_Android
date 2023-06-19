@@ -77,34 +77,36 @@ fun HomePageActivity(
             ) {
                 items(articoloViewModel.articoloList.value) { articolo ->
                     key(articolo.id) {
-                        Row {
-                            Card(
-                                onClick = {
-                                    id.value = articolo.id
-                                    openArticolo.value = true
-                                },
-                                elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(20.dp)
-                            ) {
-                                Column {
-                                    Image(
-                                        bitmap = articolo.immagini[0].asImageBitmap(),
-                                        contentDescription = "Image of product: ${articolo.titolo}",
-                                        contentScale = ContentScale.FillWidth,
-                                        modifier = Modifier
-                                            .aspectRatio(1f)
-                                    )
-                                    Row(
-                                        modifier = Modifier.padding(10.dp)
-                                    ) {
-                                        Column {
-                                            Text(text = articolo.titolo)
-                                        }
-                                        Spacer(modifier = Modifier.weight(1f))
-                                        Column {
-                                            Text(text = "${articolo.prezzo}€")
+                        if (articolo.acquistabile) {
+                            Row {
+                                Card(
+                                    onClick = {
+                                        id.value = articolo.id
+                                        openArticolo.value = true
+                                    },
+                                    elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(20.dp)
+                                ) {
+                                    Column {
+                                        Image(
+                                            bitmap = articolo.immagini[0].asImageBitmap(),
+                                            contentDescription = "Image of product: ${articolo.titolo}",
+                                            contentScale = ContentScale.FillWidth,
+                                            modifier = Modifier
+                                                .aspectRatio(1f)
+                                        )
+                                        Row(
+                                            modifier = Modifier.padding(10.dp)
+                                        ) {
+                                            Column {
+                                                Text(text = articolo.titolo)
+                                            }
+                                            Spacer(modifier = Modifier.weight(1f))
+                                            Column {
+                                                Text(text = "${articolo.prezzo}€")
+                                            }
                                         }
                                     }
                                 }

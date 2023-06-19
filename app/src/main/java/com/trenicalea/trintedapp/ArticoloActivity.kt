@@ -57,165 +57,171 @@ fun ArticoloActivity(
     val articoloOwner: UtenteDto = utenteViewModel.getUser(articolo.utenteId)
 
     var showOrderForm = remember { mutableStateOf(false) }
+    var showErrDialog = remember { mutableStateOf(false) }
 
-    if (!showOrderForm.value) {
-        Card(
-            elevation = CardDefaults.cardElevation(defaultElevation = 5.dp), modifier = Modifier
-                .fillMaxSize()
-                .padding(12.dp)
+    Card(
+        elevation = CardDefaults.cardElevation(defaultElevation = 5.dp), modifier = Modifier
+            .fillMaxSize()
+            .padding(12.dp)
+    ) {
+
+        val pageCount = articolo.immagini.size
+        val pagerState = rememberPagerState()
+
+        Column(
+            modifier = Modifier
+                .verticalScroll(rememberScrollState())
+                .padding(5.dp)
         ) {
-
-            val pageCount = articolo.immagini.size
-            val pagerState = rememberPagerState()
-
-            Column(
+            // Row per le immagini
+            Row(
                 modifier = Modifier
-                    .verticalScroll(rememberScrollState())
-                    .padding(5.dp)
+                    .fillMaxWidth()
+                    .height(200.dp)
             ) {
-                // Row per le immagini
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp)
-                ) {
-                    HorizontalPager(
-                        pageCount = pageCount,
-                        state = pagerState
-                    ) { page ->
-                        // Our page content
-                        Image(
-                            bitmap = articolo.immagini[page].asImageBitmap(),
-                            contentDescription = "Image $page of product: $articolo.titolo"
-                        )
-                    }
+                HorizontalPager(
+                    pageCount = pageCount,
+                    state = pagerState
+                ) { page ->
+                    // Our page content
+                    Image(
+                        bitmap = articolo.immagini[page].asImageBitmap(),
+                        contentDescription = "Image $page of product: $articolo.titolo"
+                    )
                 }
+            }
 
-                // Divider
-                Divider()
+            // Divider
+            Divider()
 
-                // Button profile infos
-                if (!articoloViewModel.openExternal.value) {
-                    Button(
-                        modifier = Modifier.fillMaxWidth(),
-                        onClick = {
-                            utente!!.value = articoloOwner
-                            isRedirected!!.value = true
-                            selectedIndex!!.value = 3
-                        },
-                        shape = RectangleShape,
-                        colors = ButtonDefaults.buttonColors(
-                            contentColor = Color.Black.copy(alpha = 0.75f),
-                            containerColor = Color.Transparent
-                        ),
+            // Button profile infos
+            if (!articoloViewModel.openExternal.value) {
+                Button(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = {
+                        utente!!.value = articoloOwner
+                        isRedirected!!.value = true
+                        selectedIndex!!.value = 3
+                    },
+                    shape = RectangleShape,
+                    colors = ButtonDefaults.buttonColors(
+                        contentColor = Color.Black.copy(alpha = 0.75f),
+                        containerColor = Color.Transparent
+                    ),
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.AccountCircle,
+                        contentDescription = "Account image",
+                        modifier = Modifier.size(65.dp)
+                    )
+                    Column(
+                        Modifier
+                            .padding(10.dp)
+                            .fillMaxWidth(),
+                        horizontalAlignment = Alignment.Start
                     ) {
-                        Icon(
-                            imageVector = Icons.Filled.AccountCircle,
-                            contentDescription = "Account image",
-                            modifier = Modifier.size(65.dp)
-                        )
-                        Column(
-                            Modifier
-                                .padding(10.dp)
-                                .fillMaxWidth(),
-                            horizontalAlignment = Alignment.Start
+                        Row {
+                            Text(text = articoloOwner.credenzialiUsername)
+                        }
+                        Row(
+                            modifier = Modifier.padding(top = 5.dp)
                         ) {
-                            Row {
-                                Text(text = articoloOwner.credenzialiUsername)
+                            if (articoloOwner.ratingGenerale == null) {
+                                Text(text = "")
                             }
-                            Row(
-                                modifier = Modifier.padding(top = 5.dp)
-                            ) {
-                                if (articoloOwner.ratingGenerale == null) {
-                                    Text(text = "")
-                                }
-                                Text(
-                                    text = "⭐ " + if (articoloOwner.ratingGenerale != null) "${articoloOwner.ratingGenerale}" else "Nessuna recensione"
-                                )
-                            }
+                            Text(
+                                text = "⭐ " + if (articoloOwner.ratingGenerale != null) "${articoloOwner.ratingGenerale}" else "Nessuna recensione"
+                            )
                         }
                     }
                 }
+            }
 
-                // Divider
-                Divider()
+            // Divider
+            Divider()
 
-                // Colonna prezzo
-                Column(
-                    modifier = Modifier
-                        .padding(top = 30.dp)
-                        .fillMaxWidth(),
-                ) {
-                    Row(
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    ) {
-                        Text(
-                            text = "Prezzo: ${articolo.prezzo}€",
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
-                        )
-                    }
-
-                    // "Acquista" button
-                    Button(
-                        onClick = {
-                            println(!authViewModel.isLogged.value)
-                            if (!authViewModel.isLogged.value) {
-                                selectedIndex!!.value = 3
-                            } else {
-                                showOrderForm.value = true
-                            }
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .width(150.dp),
-                        shape = RectangleShape,
-
-                        ) {
-                        Text("Acquista!")
-                    }
-                }
-
-                // Descrizione
+            // Colonna prezzo
+            Column(
+                modifier = Modifier
+                    .padding(top = 30.dp)
+                    .fillMaxWidth(),
+            ) {
                 Row(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 50.dp)
                 ) {
                     Text(
-                        text = "Descrizione",
+                        text = "Prezzo: ${articolo.prezzo}€",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                     )
                 }
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically,
+
+                // "Acquista" button
+                Button(
+                    onClick = {
+                        if (!authViewModel.isLogged.value) {
+                            showErrDialog.value = true
+                        } else {
+                            showOrderForm.value = true
+                        }
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 10.dp)
-                ) {
-                    Text(
-                        text = articolo.descrizione,
-                        fontSize = 18.sp,
-                    )
-                }
+                        .width(150.dp),
+                    shape = RectangleShape,
 
+                    ) {
+                    Text("Acquista!")
+                }
             }
+
+            // Descrizione
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 50.dp)
+            ) {
+                Text(
+                    text = "Descrizione",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                )
+            }
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 10.dp)
+            ) {
+                Text(
+                    text = articolo.descrizione,
+                    fontSize = 18.sp,
+                )
+            }
+
         }
-    } else {
-        OrdineFormActivity(
-            articoloDto = articolo,
-            acquirente = authViewModel.loggedInUser.value!!.id,
-            utenteViewModel = utenteViewModel,
-            selectedIndex = selectedIndex!!,
-            authViewModel = authViewModel,
-            articoloViewModel = articoloViewModel
-        )
+    }
+
+    if (showOrderForm.value) {
+        OrderFormActivity(
+            articolo,
+            authViewModel,
+            showOrderForm,
+        ) {
+            showOrderForm.value = false
+        }
+    }
+
+    if (showErrDialog.value) {
+        showAlert("Login richiesto", "Devi essere loggato per poter continuare!") {
+            showErrDialog.value = false
+            selectedIndex!!.value = 3
+        }
     }
 }
