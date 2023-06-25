@@ -53,11 +53,11 @@ class OrderViewModel : ViewModel() {
     }
 
     fun confirmOrder(acquirente: Long, articoloId: Long, indirizzo: Indirizzo) {
-        _orderApi.add2(acquirente, articoloId, indirizzo)
+        _orderApi.add(acquirente, articoloId, indirizzo)
     }
 
     fun getOrder(id: Long): OrdineDto {
-        return _orderApi.getById1(id)
+        return _orderApi.getById(id)
     }
 
     fun updateVia(via: String) {

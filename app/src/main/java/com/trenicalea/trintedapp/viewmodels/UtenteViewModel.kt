@@ -6,14 +6,18 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.trenicalea.trintedapp.apis.UtenteControllerApi
+import com.trenicalea.trintedapp.appwrite.AppwriteConfig
 import com.trenicalea.trintedapp.models.Indirizzo
 import com.trenicalea.trintedapp.models.UtenteBasicDto
 import com.trenicalea.trintedapp.models.UtenteCompletionDto
 import com.trenicalea.trintedapp.models.UtenteDto
 import com.trenicalea.trintedapp.models.UtenteRegistrationDto
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 data class UserUpdateState(
     val nome: String = "",
@@ -74,16 +78,20 @@ class UtenteViewModel : ViewModel() {
     }
 
     fun updateUser(
+        appwrite: AppwriteConfig,
         authViewModel: AuthViewModel,
         nome: String,
         cognome: String,
         image: Bitmap?,
         indirizzo: Indirizzo
     ) {
-        _userApi.update(
-            authViewModel.loggedInUser.value!!.id,
-            UtenteCompletionDto(nome, cognome, image, indirizzo)
-        )
+        CoroutineScope(Dispatchers.IO).launch {
+            _userApi.update(
+                authViewModel.loggedInUser.value!!.id,
+                UtenteCompletionDto(nome, cognome, image, indirizzo),
+                appwrite.account.createJWT().jwt
+            )
+        }
     }
 
     fun getUser(id: Long): UtenteDto {
@@ -98,8 +106,8 @@ class UtenteViewModel : ViewModel() {
         return _userApi.getByCredenzialiEmail(credenzialiEmail)
     }
 
-    fun deleteProfile(id: Long) {
-        _userApi.delete(id)
+    fun deleteProfile(id: Long, appwrite: AppwriteConfig) {
+        CoroutineScope(Dispatchers.IO).launch { _userApi.delete(id, appwrite.account.createJWT().jwt) }
     }
 
 

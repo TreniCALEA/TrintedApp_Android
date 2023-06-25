@@ -20,11 +20,11 @@ import kotlinx.coroutines.runBlocking
 class UtenteControllerApi(basePath: String = Config.ip) : ApiClient(basePath) {
 
 
-    fun update(idUser: Long, body: UtenteCompletionDto) = runBlocking(Dispatchers.IO) {
+    fun update(idUser: Long, body: UtenteCompletionDto, param: String) = runBlocking(Dispatchers.IO) {
         val localVariableBody: Any = body
         val localVariableConfig = RequestConfig(
             RequestMethod.POST,
-            "/user-api/users/{idUser}".replace("{"+"idUser"+"}", "$idUser")
+            "/user-api/users/{idUser}?jwt=$param".replace("{"+"idUser"+"}", "$idUser")
         )
         val response = request<String>(
             localVariableConfig, localVariableBody
@@ -87,10 +87,10 @@ class UtenteControllerApi(basePath: String = Config.ip) : ApiClient(basePath) {
      * @param idUser
      * @return kotlin.String
      */
-    fun delete(idUser: Long): String = runBlocking(Dispatchers.IO) {
+    fun delete(idUser: Long, param: String): String = runBlocking(Dispatchers.IO) {
         val localVariableConfig = RequestConfig(
                 RequestMethod.DELETE,
-                "/user-api/users/{idUser}".replace("{" + "idUser" + "}", "$idUser")
+                "/user-api/users/{idUser}?jwt=$param".replace("{" + "idUser" + "}", "$idUser")
         )
         val response = request<String>(
                 localVariableConfig

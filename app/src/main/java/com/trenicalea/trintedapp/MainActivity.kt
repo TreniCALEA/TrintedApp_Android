@@ -219,7 +219,7 @@ fun HomePage(
             if (selectedIndex.value == 2) {
                 authViewModel.checkLogin(appwrite, utenteViewModel)
                 isRedirected.value = false
-                AddProductActivity(authViewModel, articoloViewModel, selectedIndex)
+                AddProductActivity(appwrite, authViewModel, articoloViewModel, selectedIndex)
             }
             if (selectedIndex.value == 3) {
                 authViewModel.checkLogin(appwrite, utenteViewModel)

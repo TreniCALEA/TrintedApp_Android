@@ -26,11 +26,11 @@ class ArticoloControllerApi(basePath: String = Config.ip) : ApiClient(basePath) 
      * @return ArticoloDto
      */
     @Suppress("UNCHECKED_CAST")
-    fun add3(body: ArticoloDto): ArticoloDto = runBlocking(Dispatchers.IO) {
+    fun add(body: ArticoloDto, param: String): ArticoloDto = runBlocking(Dispatchers.IO) {
         val localVariableBody: Any = body
         val localVariableConfig = RequestConfig(
             RequestMethod.POST,
-            "/item-api/item"
+            "/item-api/item?jwt=$param"
         )
         val response = request<ArticoloDto>(
             localVariableConfig, localVariableBody
@@ -56,7 +56,7 @@ class ArticoloControllerApi(basePath: String = Config.ip) : ApiClient(basePath) 
      * @return kotlin.Array<ArticoloDto>
      */
     @Suppress("UNCHECKED_CAST")
-    fun all2(): Array<ArticoloDto> = runBlocking(Dispatchers.IO) {
+    fun all(): Array<ArticoloDto> = runBlocking(Dispatchers.IO) {
         val localVariableConfig = RequestConfig(
             RequestMethod.GET,
             "/item-api/item"
@@ -86,10 +86,10 @@ class ArticoloControllerApi(basePath: String = Config.ip) : ApiClient(basePath) 
      * @return kotlin.String
      */
     @Suppress("UNCHECKED_CAST")
-    fun delete3(idItem: Long): String = runBlocking(Dispatchers.IO) {
+    fun delete(idItem: Long, param: String): String = runBlocking(Dispatchers.IO) {
         val localVariableConfig = RequestConfig(
             RequestMethod.DELETE,
-            "/item-api/item/{idItem}".replace("{" + "idItem" + "}", "$idItem")
+            "/item-api/item/{idItem}?jwt=$param".replace("{" + "idItem" + "}", "$idItem")
         )
         val response = request<String>(
             localVariableConfig
@@ -116,7 +116,7 @@ class ArticoloControllerApi(basePath: String = Config.ip) : ApiClient(basePath) 
      * @return ArticoloDto
      */
     @Suppress("UNCHECKED_CAST")
-    fun getById2(idItem: Long): ArticoloDto = runBlocking(Dispatchers.IO) {
+    fun getById(idItem: Long): ArticoloDto = runBlocking(Dispatchers.IO) {
         val localVariableConfig = RequestConfig(
             RequestMethod.GET,
             "/item-api/item/{idItem}".replace("{" + "idItem" + "}", "$idItem")

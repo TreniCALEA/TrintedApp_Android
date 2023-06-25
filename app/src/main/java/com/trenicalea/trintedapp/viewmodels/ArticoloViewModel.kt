@@ -11,10 +11,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import com.trenicalea.trintedapp.apis.ArticoloControllerApi
+import com.trenicalea.trintedapp.appwrite.AppwriteConfig
 import com.trenicalea.trintedapp.models.ArticoloDto
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import java.io.FileNotFoundException
 
 data class AddArticoloState(
@@ -42,6 +46,7 @@ class ArticoloViewModel : ViewModel() {
     var articoloToBeBought: MutableState<ArticoloDto?> = mutableStateOf(null)
 
     fun addArticolo(
+        appwriteConfig: AppwriteConfig,
         authViewModel: AuthViewModel,
         titolo: String,
         descrizione: String,
@@ -60,15 +65,19 @@ class ArticoloViewModel : ViewModel() {
             condizioni = condizioni,
             acquistabile = true
         )
-        _articoloApi.add3(articoloDto)
+        CoroutineScope(Dispatchers.IO).launch {
+            _articoloApi.add(articoloDto, appwriteConfig.account.createJWT().jwt)
+        }
     }
 
     fun getArticoloById(id: Long): ArticoloDto {
-        return _articoloApi.getById2(id)
+        return _articoloApi.getById(id)
     }
 
-    fun deleteArticoloById(id: Long) {
-        _articoloApi.delete3(id)
+    fun deleteArticoloById(id: Long, appwriteConfig: AppwriteConfig) {
+        CoroutineScope(Dispatchers.IO).launch {
+            _articoloApi.delete(id, appwriteConfig.account.createJWT().jwt)
+        }
     }
 
     fun searchArticolo() {
@@ -78,7 +87,7 @@ class ArticoloViewModel : ViewModel() {
 
     fun getAllArticolo() {
         try {
-            articoloList.value = _articoloApi.all2()
+            articoloList.value = _articoloApi.all()
         } catch (e: Exception) {
             e.printStackTrace()
             articoloList.value = arrayOf()

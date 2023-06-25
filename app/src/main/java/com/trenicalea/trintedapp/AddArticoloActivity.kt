@@ -29,11 +29,13 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.trenicalea.trintedapp.appwrite.AppwriteConfig
 import com.trenicalea.trintedapp.viewmodels.ArticoloViewModel
 import com.trenicalea.trintedapp.viewmodels.AuthViewModel
 
 @Composable
 fun AddProductActivity(
+    appwriteConfig: AppwriteConfig,
     authViewModel: AuthViewModel,
     articoloViewModel: ArticoloViewModel,
     selectedIndex: MutableState<Int>
@@ -154,6 +156,7 @@ fun AddProductActivity(
             Button(
                 onClick = {
                     articoloViewModel.addArticolo(
+                        appwriteConfig,
                         authViewModel,
                         articoloState.titolo,
                         articoloState.descrizione,

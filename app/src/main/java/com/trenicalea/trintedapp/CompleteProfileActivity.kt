@@ -36,12 +36,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.trenicalea.trintedapp.appwrite.AppwriteConfig
 import com.trenicalea.trintedapp.models.Indirizzo
 import com.trenicalea.trintedapp.viewmodels.AuthViewModel
 import com.trenicalea.trintedapp.viewmodels.UtenteViewModel
 
 @Composable
 fun CompleteProfile(
+    appwriteConfig: AppwriteConfig,
     authViewModel: AuthViewModel,
     utenteViewModel: UtenteViewModel,
     selectedIndex: MutableState<Int>
@@ -149,6 +151,7 @@ fun CompleteProfile(
         ) {
             OutlinedButton(onClick = {
                 utenteViewModel.updateUser(
+                    appwriteConfig,
                     authViewModel,
                     userUpdateState.nome,
                     userUpdateState.cognome,

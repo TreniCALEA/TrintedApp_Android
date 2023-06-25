@@ -68,6 +68,7 @@ fun UserProfileActivity(
     val salesList = orderViewModel.ordersGetByVenditore
     if (!showReview) {
         if (showCompleteProfile) CompleteProfile(
+            appwriteConfig = appwriteConfig,
             authViewModel = authViewModel,
             utenteViewModel = utenteViewModel,
             selectedIndex = selectedIndex
@@ -194,7 +195,10 @@ fun UserProfileActivity(
                         }
                         Button(
                             onClick = {
-                                utenteViewModel.deleteProfile(authViewModel.loggedInUser.value!!.id)
+                                utenteViewModel.deleteProfile(
+                                    authViewModel.loggedInUser.value!!.id,
+                                    appwrite = appwriteConfig
+                                )
                                 authViewModel.logout(appwriteConfig)
                                 selectedIndex.value = 3
                             }
@@ -293,8 +297,7 @@ fun Carousel(list: Array<OrdineDto>, title: String) {
                                 contentDescription = null,
                                 modifier = Modifier.size(20.dp)
                             )
-                            if (order.dataAcquisto == null) Text(text = stringResource(id = R.string.unavailable))
-                            else Text(text = "${order.dataAcquisto}")
+                            Text(text = "${order.dataAcquisto}")
                         }
                     }
 
