@@ -28,12 +28,12 @@ class OrdineControllerApi(basePath: String = Config.ip) : ApiClient(basePath) {
      * @param indirizzo
      * @return OrdineDto
      */
-    fun add(acquirente: Long, articoloId: Long, body: Indirizzo): String =
+    fun add(acquirente: Long, articoloId: Long, body: Indirizzo, param: String): String =
         runBlocking(Dispatchers.IO) {
             val localVariableBody: Any = body
             val localVariableConfig = RequestConfig(
                 RequestMethod.POST,
-                "/order-api/orders/{acquirente}/{articoloId}".replace(
+                "/order-api/orders/{acquirente}/{articoloId}?jwt=$param".replace(
                     "{" + "acquirente" + "}",
                     "$acquirente"
                 ).replace(

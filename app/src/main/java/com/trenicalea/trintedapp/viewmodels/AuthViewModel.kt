@@ -68,11 +68,9 @@ class AuthViewModel : ViewModel() {
             println("")
             CoroutineScope(Dispatchers.IO).launch {
                 providerLoginCompleted.await()
-                println(appwrite.account.listSessions())
                 try {
                     println(appwrite.account.get().email)
                     println("[i] Session: \n" + appwrite.account.getSession("current"))
-                    println(appwrite.account.createJWT())
                     try {
                         loggedInUser.value =
                             utenteViewModel.getByCredenzialiEmail(appwrite.account.get().email)

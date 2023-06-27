@@ -26,11 +26,11 @@ class RecensioneControllerApi(basePath: String = Config.ip) : ApiClient(basePath
      * @return kotlin.String
      */
     @Suppress("UNCHECKED_CAST")
-    fun add(body: RecensioneDto): RecensioneDto = runBlocking(Dispatchers.IO) {
+    fun add(body: RecensioneDto, param: String): RecensioneDto = runBlocking(Dispatchers.IO) {
         val localVariableBody: Any = body
         val localVariableConfig = RequestConfig(
             RequestMethod.POST,
-            "/review-api/review"
+            "/review-api/review?jwt=$param"
         )
         val response = request<RecensioneDto>(
             localVariableConfig, localVariableBody
@@ -57,10 +57,10 @@ class RecensioneControllerApi(basePath: String = Config.ip) : ApiClient(basePath
      * @return kotlin.String
      */
     @Suppress("UNCHECKED_CAST")
-    fun delete(reviewId: Long): String = runBlocking(Dispatchers.IO) {
+    fun delete(reviewId: Long, param: String): String = runBlocking(Dispatchers.IO) {
         val localVariableConfig = RequestConfig(
             RequestMethod.DELETE,
-            "/review-api/review/{reviewId}".replace("{" + "reviewId" + "}", "$reviewId")
+            "/review-api/review/{reviewId}?jwt=$param".replace("{" + "reviewId" + "}", "$reviewId")
         )
         val response = request<String>(
             localVariableConfig
