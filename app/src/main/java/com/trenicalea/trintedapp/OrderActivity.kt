@@ -28,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.trenicalea.trintedapp.appwrite.AppwriteConfig
 import com.trenicalea.trintedapp.models.ArticoloDto
 import com.trenicalea.trintedapp.models.Indirizzo
 import com.trenicalea.trintedapp.viewmodels.AuthViewModel
@@ -36,10 +37,11 @@ import com.trenicalea.trintedapp.viewmodels.OrderViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OrderFormActivity(
+    appwriteConfig: AppwriteConfig,
     articoloDto: ArticoloDto,
     authViewModel: AuthViewModel,
     showForm: MutableState<Boolean>? = null,
-    onDismissRequest: () -> Unit,
+    onDismissRequest: () -> Unit
 ) {
     val orderViewModel = OrderViewModel()
     val sheetState = rememberModalBottomSheetState()
@@ -120,7 +122,7 @@ fun OrderFormActivity(
                 onClick = {
                     val indirizzo =
                         Indirizzo(orderState.via, orderState.civico.toInt(), orderState.paese)
-                    orderViewModel.confirmOrder(acquirente.id, articoloDto.id!!, indirizzo)
+                    orderViewModel.confirmOrder(acquirente.id, articoloDto.id!!, indirizzo, appwriteConfig)
 
                     showCompleteDialog.value = true
                 },

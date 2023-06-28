@@ -91,7 +91,7 @@ fun ReviewActivity(
                                 ) {
                                     Button(
                                         onClick = {
-                                            reviewViewModel.deleteReview(review.id!!)
+                                            reviewViewModel.deleteReview(review.id!!, appwriteConfig)
                                             openDialog.value = true
                                         },
                                     ) {
@@ -168,7 +168,8 @@ fun ReviewActivity(
                         authViewModel,
                         reviewState.description,
                         selectedRating,
-                        utenteDto
+                        utenteDto,
+                        appwriteConfig
                     )
                     reloadPage.value = true
                     reviewState.description = ""

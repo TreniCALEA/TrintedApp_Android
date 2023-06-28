@@ -200,7 +200,8 @@ fun HomePage(
                     selectedIndex,
                     isRedirected,
                     utenteViewModel,
-                    authViewModel
+                    authViewModel,
+                    appwrite
                 )
             }
             if (selectedIndex.value == 1) {
@@ -212,8 +213,9 @@ fun HomePage(
                     isRedirected = isRedirected,
                     selectedHomePageIndex = selectedIndex,
                     user = utente,
-                    articoloViewModel,
-                    authViewModel = authViewModel
+                    articoloViewModel = articoloViewModel,
+                    authViewModel = authViewModel,
+                    appwriteConfig = appwrite
                 )
             }
             if (selectedIndex.value == 2) {

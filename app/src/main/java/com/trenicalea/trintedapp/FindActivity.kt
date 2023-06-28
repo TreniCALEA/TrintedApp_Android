@@ -37,6 +37,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.trenicalea.trintedapp.appwrite.AppwriteConfig
 import com.trenicalea.trintedapp.models.ArticoloDto
 import com.trenicalea.trintedapp.models.UtenteBasicDto
 import com.trenicalea.trintedapp.models.UtenteDto
@@ -46,6 +47,7 @@ import com.trenicalea.trintedapp.viewmodels.UtenteViewModel
 
 @Composable
 fun FindActivity(
+    appwriteConfig: AppwriteConfig,
     userViewModel: UtenteViewModel,
     selectedIndex: MutableState<Int>,
     isRedirected: MutableState<Boolean>,
@@ -164,7 +166,8 @@ fun FindActivity(
             selectedIndex = selectedIndex,
             isRedirected = isRedirected,
             utenteViewModel = userViewModel,
-            authViewModel = authViewModel
+            authViewModel = authViewModel,
+            appwriteConfig = appwriteConfig
         )
     }
 }

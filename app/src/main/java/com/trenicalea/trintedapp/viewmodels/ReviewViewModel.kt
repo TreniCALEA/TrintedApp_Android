@@ -4,12 +4,16 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.trenicalea.trintedapp.apis.RecensioneControllerApi
+import com.trenicalea.trintedapp.appwrite.AppwriteConfig
 import com.trenicalea.trintedapp.models.Recensione
 import com.trenicalea.trintedapp.models.RecensioneDto
 import com.trenicalea.trintedapp.models.UtenteDto
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 data class ReviewState(
     var description: String = "",
@@ -53,19 +57,25 @@ class ReviewViewModel : ViewModel() {
         authViewModel: AuthViewModel,
         descrizione: String,
         rating: Float,
-        destinatario: UtenteDto
+        destinatario: UtenteDto,
+        appwriteConfig: AppwriteConfig
     ) {
         val recensioneDto = RecensioneDto(
             commento = descrizione, rating = rating,
             autoreCredenzialiEmail = authViewModel.loggedInUser.value!!.credenzialiEmail,
             destinatarioCredenzialiEmail = destinatario.credenzialiEmail
         )
-        _reviewApi.add(recensioneDto)
+        CoroutineScope(Dispatchers.IO).launch {
+            _reviewApi.add(recensioneDto, appwriteConfig.account.createJWT().jwt)
+        }
     }
 
     fun deleteReview(
-        id: Long
+        id: Long,
+        appwriteConfig: AppwriteConfig
     ) {
-        _reviewApi.delete(id)
+        CoroutineScope(Dispatchers.IO).launch{
+            _reviewApi.delete(id, appwriteConfig.account.createJWT().jwt)
+        }
     }
 }

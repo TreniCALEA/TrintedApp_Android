@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.trenicalea.trintedapp.appwrite.AppwriteConfig
 import com.trenicalea.trintedapp.models.UtenteDto
 import com.trenicalea.trintedapp.viewmodels.ArticoloViewModel
 import com.trenicalea.trintedapp.viewmodels.AuthViewModel
@@ -39,7 +40,8 @@ fun HomePageActivity(
     selectedIndex: MutableState<Int>,
     isRedirected: MutableState<Boolean>,
     utenteViewModel: UtenteViewModel,
-    authViewModel: AuthViewModel
+    authViewModel: AuthViewModel,
+    appwriteConfig: AppwriteConfig
 ) {
     articoloViewModel.getAllArticolo()
     val id: MutableState<Long?> = remember { mutableStateOf(null) }
@@ -126,7 +128,8 @@ fun HomePageActivity(
             selectedIndex,
             isRedirected,
             utenteViewModel,
-            authViewModel
+            authViewModel,
+            appwriteConfig
         )
     }
 }

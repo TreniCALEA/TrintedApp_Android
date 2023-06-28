@@ -4,6 +4,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.trenicalea.trintedapp.apis.OrdineControllerApi
+import com.trenicalea.trintedapp.appwrite.AppwriteConfig
 import com.trenicalea.trintedapp.models.Indirizzo
 import com.trenicalea.trintedapp.models.OrdineDto
 import kotlinx.coroutines.CoroutineScope
@@ -52,8 +53,10 @@ class OrderViewModel : ViewModel() {
         }
     }
 
-    fun confirmOrder(acquirente: Long, articoloId: Long, indirizzo: Indirizzo) {
-        _orderApi.add(acquirente, articoloId, indirizzo)
+    fun confirmOrder(acquirente: Long, articoloId: Long, indirizzo: Indirizzo, appwriteConfig: AppwriteConfig) {
+        CoroutineScope(Dispatchers.IO).launch {
+            _orderApi.add(acquirente, articoloId, indirizzo, appwriteConfig.account.createJWT().jwt)
+        }
     }
 
     fun getOrder(id: Long): OrdineDto {

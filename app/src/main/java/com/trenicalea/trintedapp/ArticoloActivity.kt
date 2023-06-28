@@ -36,6 +36,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.trenicalea.trintedapp.appwrite.AppwriteConfig
 import com.trenicalea.trintedapp.models.ArticoloDto
 import com.trenicalea.trintedapp.models.UtenteDto
 import com.trenicalea.trintedapp.viewmodels.ArticoloViewModel
@@ -51,7 +52,8 @@ fun ArticoloActivity(
     selectedIndex: MutableState<Int>? = null,
     isRedirected: MutableState<Boolean>? = null,
     utenteViewModel: UtenteViewModel,
-    authViewModel: AuthViewModel
+    authViewModel: AuthViewModel,
+    appwriteConfig: AppwriteConfig
 ) {
     val articolo: ArticoloDto = articoloViewModel.getArticoloById(idProdotto!!)
     val articoloOwner: UtenteDto = utenteViewModel.getUser(articolo.utenteId)
@@ -210,9 +212,10 @@ fun ArticoloActivity(
 
     if (showOrderForm.value) {
         OrderFormActivity(
+            appwriteConfig,
             articolo,
             authViewModel,
-            showOrderForm,
+            showOrderForm
         ) {
             showOrderForm.value = false
         }
