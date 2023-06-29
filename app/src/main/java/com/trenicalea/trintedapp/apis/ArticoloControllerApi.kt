@@ -30,7 +30,8 @@ class ArticoloControllerApi(basePath: String = Config.ip) : ApiClient(basePath) 
         val localVariableBody: Any = body
         val localVariableConfig = RequestConfig(
             RequestMethod.POST,
-            "/item-api/item?jwt=$param"
+            "/item-api/item",
+            query = mapOf(Pair("jwt", listOf(param)))
         )
         val response = request<ArticoloDto>(
             localVariableConfig, localVariableBody
@@ -89,7 +90,8 @@ class ArticoloControllerApi(basePath: String = Config.ip) : ApiClient(basePath) 
     fun delete(idItem: Long, param: String): String = runBlocking(Dispatchers.IO) {
         val localVariableConfig = RequestConfig(
             RequestMethod.DELETE,
-            "/item-api/item/{idItem}?jwt=$param".replace("{" + "idItem" + "}", "$idItem")
+            "/item-api/item/$idItem",
+            query = mapOf(Pair("jwt", listOf(param)))
         )
         val response = request<String>(
             localVariableConfig
@@ -119,7 +121,7 @@ class ArticoloControllerApi(basePath: String = Config.ip) : ApiClient(basePath) 
     fun getById(idItem: Long): ArticoloDto = runBlocking(Dispatchers.IO) {
         val localVariableConfig = RequestConfig(
             RequestMethod.GET,
-            "/item-api/item/{idItem}".replace("{" + "idItem" + "}", "$idItem")
+            "/item-api/item/$idItem"
         )
         val response = request<ArticoloDto>(
             localVariableConfig

@@ -33,13 +33,8 @@ class OrdineControllerApi(basePath: String = Config.ip) : ApiClient(basePath) {
             val localVariableBody: Any = body
             val localVariableConfig = RequestConfig(
                 RequestMethod.POST,
-                "/order-api/orders/{acquirente}/{articoloId}?jwt=$param".replace(
-                    "{" + "acquirente" + "}",
-                    "$acquirente"
-                ).replace(
-                    "{" + "articoloId" + "}",
-                    "$articoloId"
-                )
+                "/order-api/orders/$acquirente/$articoloId",
+                query = mapOf(Pair("jwt", listOf(param)))
             )
             val response = request<String>(
                 localVariableConfig, localVariableBody
@@ -98,7 +93,7 @@ class OrdineControllerApi(basePath: String = Config.ip) : ApiClient(basePath) {
     fun delete(orderId: Long): String = runBlocking(Dispatchers.IO) {
         val localVariableConfig = RequestConfig(
             RequestMethod.DELETE,
-            "/order-api/orders/{orderId}".replace("{" + "orderId" + "}", "$orderId")
+            "/order-api/orders/$orderId"
         )
         val response = request<String>(
             localVariableConfig
@@ -162,7 +157,7 @@ class OrdineControllerApi(basePath: String = Config.ip) : ApiClient(basePath) {
     fun getById(orderId: Long): OrdineDto = runBlocking(Dispatchers.IO) {
         val localVariableConfig = RequestConfig(
             RequestMethod.GET,
-            "/order-api/orders/{orderId}".replace("{" + "orderId" + "}", "$orderId")
+            "/order-api/orders/$orderId"
         )
         val response = request<OrdineDto>(
             localVariableConfig

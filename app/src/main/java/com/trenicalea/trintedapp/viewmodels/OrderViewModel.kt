@@ -7,6 +7,8 @@ import com.trenicalea.trintedapp.apis.OrdineControllerApi
 import com.trenicalea.trintedapp.appwrite.AppwriteConfig
 import com.trenicalea.trintedapp.models.Indirizzo
 import com.trenicalea.trintedapp.models.OrdineDto
+import io.appwrite.Client
+import io.appwrite.services.Account
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -54,8 +56,13 @@ class OrderViewModel : ViewModel() {
     }
 
     fun confirmOrder(acquirente: Long, articoloId: Long, indirizzo: Indirizzo, appwriteConfig: AppwriteConfig) {
+        val client: Client = Client(appwriteConfig.appContext)
+            .setEndpoint(appwriteConfig.endpoint)
+            .setProject(appwriteConfig.projectId)
+
+        val account = Account(client)
         CoroutineScope(Dispatchers.IO).launch {
-            _orderApi.add(acquirente, articoloId, indirizzo, appwriteConfig.account.createJWT().jwt)
+            _orderApi.add(acquirente, articoloId, indirizzo, account.createJWT().jwt)
         }
     }
 

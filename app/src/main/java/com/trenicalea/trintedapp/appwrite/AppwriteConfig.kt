@@ -1,18 +1,13 @@
 package com.trenicalea.trintedapp.appwrite
 
 import android.content.Context
-import io.appwrite.Client
-import io.appwrite.services.Account
-import io.appwrite.services.Databases
 
 data class AppwriteConfig(var context: Context) {
 
-    private var client = Client(context)
-        .setEndpoint("https://cloud.appwrite.io/v1")
-        .setProject("645d4c2c39e030c6f6ba")
-        .setSelfSigned(true)
+    val appContext: Context = context
 
-    var account = Account(client)
+    val endpoint: String = "https://cloud.appwrite.io/v1"
 
-    var databases = Databases(client)
+    val projectId: String = "645d4c2c39e030c6f6ba"
+
 }

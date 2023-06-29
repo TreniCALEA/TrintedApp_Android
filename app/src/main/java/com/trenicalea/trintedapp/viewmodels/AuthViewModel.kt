@@ -7,6 +7,8 @@ import androidx.lifecycle.ViewModel
 import com.trenicalea.trintedapp.appwrite.AppwriteConfig
 import com.trenicalea.trintedapp.models.UtenteDto
 import com.trenicalea.trintedapp.models.UtenteRegistrationDto
+import io.appwrite.Client
+import io.appwrite.services.Account
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -14,6 +16,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.util.concurrent.CompletableFuture
 
 data class AuthState(
     val username: String = "",
@@ -40,8 +43,13 @@ class AuthViewModel : ViewModel() {
 
 
     fun logout(appwrite: AppwriteConfig) {
+        val client: Client = Client(appwrite.appContext)
+            .setEndpoint(appwrite.endpoint)
+            .setProject(appwrite.projectId)
+
+        val account = Account(client)
         CoroutineScope(Dispatchers.IO).launch {
-            appwrite.account.deleteSession("current")
+            account.deleteSession("current")
         }.invokeOnCompletion { isLogged.value = false }
     }
 
@@ -51,9 +59,14 @@ class AuthViewModel : ViewModel() {
         appwrite: AppwriteConfig,
         utenteViewModel: UtenteViewModel
     ) {
+        val client: Client = Client(appwrite.appContext)
+            .setEndpoint(appwrite.endpoint)
+            .setProject(appwrite.projectId)
+
+        val account = Account(client)
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                appwrite.account.createEmailSession(email, password)
+                account.createEmailSession(email, password)
                 loggedInUser.value = utenteViewModel.getByCredenzialiEmail(email)
                 println("Utente emailLogin: ${loggedInUser.value!!.nome}")
                 isLogged.value = true
@@ -63,17 +76,36 @@ class AuthViewModel : ViewModel() {
         }.invokeOnCompletion { login.value = true }
     }
 
+    fun isVerified(appwrite: AppwriteConfig) : Boolean {
+        val client: Client = Client(appwrite.appContext)
+            .setEndpoint(appwrite.endpoint)
+            .setProject(appwrite.projectId)
+
+        val account = Account(client)
+        val verified: CompletableFuture<Boolean> = CompletableFuture()
+        CoroutineScope(Dispatchers.IO).launch {
+             verified.complete(account.get().emailVerification)
+        }
+        return verified.join()
+    }
+
     fun checkLogin(appwrite: AppwriteConfig, utenteViewModel: UtenteViewModel) {
+        val client: Client = Client(appwrite.appContext)
+                        .setEndpoint(appwrite.endpoint)
+                        .setProject(appwrite.projectId)
+
+        val account: Account = Account(client)
+
         if (!isLogged.value) {
             println("")
             CoroutineScope(Dispatchers.IO).launch {
                 providerLoginCompleted.await()
                 try {
-                    println(appwrite.account.get().email)
-                    println("[i] Session: \n" + appwrite.account.getSession("current"))
+                    println(account.get().email)
+                    println("[i] Session: \n" + account.getSession("current"))
                     try {
                         loggedInUser.value =
-                            utenteViewModel.getByCredenzialiEmail(appwrite.account.get().email)
+                            utenteViewModel.getByCredenzialiEmail(account.get().email)
                         println("Utente checkLogged: ${loggedInUser.value!!.credenzialiEmail}")
                     } catch (e: Exception) {
                         e.printStackTrace()
@@ -96,6 +128,11 @@ class AuthViewModel : ViewModel() {
         utenteViewModel: UtenteViewModel,
         usernameProvider: String? = null
     ) {
+        val client: Client = Client(appwrite.appContext)
+            .setEndpoint(appwrite.endpoint)
+            .setProject(appwrite.projectId)
+
+        val account: Account = Account(client)
         // Show loading screen
         loading.value = true
 
@@ -105,7 +142,7 @@ class AuthViewModel : ViewModel() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 // Create OAuth2 Session on Appwrite
-                appwrite.account.createOAuth2Session(
+                account.createOAuth2Session(
                     activity,
                     provider,
                     "appwrite-callback-645d4c2c39e030c6f6ba://cloud.appwrite.io/auth/oauth2/success",
@@ -117,8 +154,8 @@ class AuthViewModel : ViewModel() {
                     try {
                         registerWithCredentials(
                             usernameProvider,
-                            appwrite.account.get().email,
-                            appwrite.account.get().id
+                            account.get().email,
+                            account.get().id
                         )
                     } catch (e: Exception) {
                         e.printStackTrace()

@@ -12,6 +12,8 @@ import com.trenicalea.trintedapp.models.UtenteBasicDto
 import com.trenicalea.trintedapp.models.UtenteCompletionDto
 import com.trenicalea.trintedapp.models.UtenteDto
 import com.trenicalea.trintedapp.models.UtenteRegistrationDto
+import io.appwrite.Client
+import io.appwrite.services.Account
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -85,11 +87,16 @@ class UtenteViewModel : ViewModel() {
         image: Bitmap?,
         indirizzo: Indirizzo
     ) {
+        val client: Client = Client(appwrite.appContext)
+            .setEndpoint(appwrite.endpoint)
+            .setProject(appwrite.projectId)
+
+        val account = Account(client)
         CoroutineScope(Dispatchers.IO).launch {
             _userApi.update(
                 authViewModel.loggedInUser.value!!.id,
                 UtenteCompletionDto(nome, cognome, image, indirizzo),
-                appwrite.account.createJWT().jwt
+                account.createJWT().jwt
             )
         }
     }
@@ -107,7 +114,12 @@ class UtenteViewModel : ViewModel() {
     }
 
     fun deleteProfile(id: Long, appwrite: AppwriteConfig) {
-        CoroutineScope(Dispatchers.IO).launch { _userApi.delete(id, appwrite.account.createJWT().jwt) }
+        val client: Client = Client(appwrite.appContext)
+            .setEndpoint(appwrite.endpoint)
+            .setProject(appwrite.projectId)
+
+        val account = Account(client)
+        CoroutineScope(Dispatchers.IO).launch { _userApi.delete(id, account.createJWT().jwt) }
     }
 
 

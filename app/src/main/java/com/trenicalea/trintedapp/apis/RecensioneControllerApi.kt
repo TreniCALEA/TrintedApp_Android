@@ -60,7 +60,8 @@ class RecensioneControllerApi(basePath: String = Config.ip) : ApiClient(basePath
     fun delete(reviewId: Long, param: String): String = runBlocking(Dispatchers.IO) {
         val localVariableConfig = RequestConfig(
             RequestMethod.DELETE,
-            "/review-api/review/{reviewId}?jwt=$param".replace("{" + "reviewId" + "}", "$reviewId")
+            "/review-api/review/$reviewId",
+            query = mapOf(Pair("jwt", listOf(param)))
         )
         val response = request<String>(
             localVariableConfig
@@ -90,7 +91,7 @@ class RecensioneControllerApi(basePath: String = Config.ip) : ApiClient(basePath
     fun findAll(userId: Long): Array<Recensione> = runBlocking(Dispatchers.IO) {
         val localVariableConfig = RequestConfig(
             RequestMethod.GET,
-            "/review-api/review/{userId}".replace("{" + "userId" + "}", "$userId")
+            "/review-api/review/$userId"
         )
         val response = request<Array<Recensione>>(
             localVariableConfig
@@ -120,7 +121,7 @@ class RecensioneControllerApi(basePath: String = Config.ip) : ApiClient(basePath
     fun getAllPaged(review: Int): PageRecensioneDto = runBlocking(Dispatchers.IO) {
         val localVariableConfig = RequestConfig(
             RequestMethod.GET,
-            "/review-api/review/all/{review}".replace("{" + "review" + "}", "$review")
+            "/review-api/review/all/$review"
         )
         val response = request<PageRecensioneDto>(
             localVariableConfig

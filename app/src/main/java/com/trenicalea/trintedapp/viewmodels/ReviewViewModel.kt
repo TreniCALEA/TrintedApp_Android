@@ -8,6 +8,8 @@ import com.trenicalea.trintedapp.appwrite.AppwriteConfig
 import com.trenicalea.trintedapp.models.Recensione
 import com.trenicalea.trintedapp.models.RecensioneDto
 import com.trenicalea.trintedapp.models.UtenteDto
+import io.appwrite.Client
+import io.appwrite.services.Account
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -65,8 +67,13 @@ class ReviewViewModel : ViewModel() {
             autoreCredenzialiEmail = authViewModel.loggedInUser.value!!.credenzialiEmail,
             destinatarioCredenzialiEmail = destinatario.credenzialiEmail
         )
+        val client: Client = Client(appwriteConfig.appContext)
+            .setEndpoint(appwriteConfig.endpoint)
+            .setProject(appwriteConfig.projectId)
+
+        val account = Account(client)
         CoroutineScope(Dispatchers.IO).launch {
-            _reviewApi.add(recensioneDto, appwriteConfig.account.createJWT().jwt)
+            _reviewApi.add(recensioneDto, account.createJWT().jwt)
         }
     }
 
@@ -74,8 +81,13 @@ class ReviewViewModel : ViewModel() {
         id: Long,
         appwriteConfig: AppwriteConfig
     ) {
-        CoroutineScope(Dispatchers.IO).launch{
-            _reviewApi.delete(id, appwriteConfig.account.createJWT().jwt)
+        val client: Client = Client(appwriteConfig.appContext)
+            .setEndpoint(appwriteConfig.endpoint)
+            .setProject(appwriteConfig.projectId)
+
+        val account = Account(client)
+        CoroutineScope(Dispatchers.IO).launch {
+            _reviewApi.delete(id, account.createJWT().jwt)
         }
     }
 }

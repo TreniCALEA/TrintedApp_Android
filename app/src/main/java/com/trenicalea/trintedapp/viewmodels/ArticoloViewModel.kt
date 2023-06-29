@@ -13,6 +13,8 @@ import androidx.lifecycle.ViewModel
 import com.trenicalea.trintedapp.apis.ArticoloControllerApi
 import com.trenicalea.trintedapp.appwrite.AppwriteConfig
 import com.trenicalea.trintedapp.models.ArticoloDto
+import io.appwrite.Client
+import io.appwrite.services.Account
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -65,8 +67,13 @@ class ArticoloViewModel : ViewModel() {
             condizioni = condizioni,
             acquistabile = true
         )
+        val client: Client = Client(appwriteConfig.appContext)
+            .setEndpoint(appwriteConfig.endpoint)
+            .setProject(appwriteConfig.projectId)
+
+        val account = Account(client)
         CoroutineScope(Dispatchers.IO).launch {
-            _articoloApi.add(articoloDto, appwriteConfig.account.createJWT().jwt)
+            _articoloApi.add(articoloDto, account.createJWT().jwt)
         }
     }
 
@@ -75,8 +82,13 @@ class ArticoloViewModel : ViewModel() {
     }
 
     fun deleteArticoloById(id: Long, appwriteConfig: AppwriteConfig) {
+        val client: Client = Client(appwriteConfig.appContext)
+            .setEndpoint(appwriteConfig.endpoint)
+            .setProject(appwriteConfig.projectId)
+
+        val account = Account(client)
         CoroutineScope(Dispatchers.IO).launch {
-            _articoloApi.delete(id, appwriteConfig.account.createJWT().jwt)
+            _articoloApi.delete(id, account.createJWT().jwt)
         }
     }
 
@@ -87,7 +99,8 @@ class ArticoloViewModel : ViewModel() {
 
     fun getAllArticolo() {
         try {
-            articoloList.value = _articoloApi.all()
+            if (articoloList.value.isEmpty())
+                articoloList.value = _articoloApi.all()
         } catch (e: Exception) {
             e.printStackTrace()
             articoloList.value = arrayOf()
