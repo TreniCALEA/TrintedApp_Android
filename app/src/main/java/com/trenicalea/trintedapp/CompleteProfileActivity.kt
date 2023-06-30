@@ -25,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,7 +47,7 @@ fun CompleteProfile(
     appwriteConfig: AppwriteConfig,
     authViewModel: AuthViewModel,
     utenteViewModel: UtenteViewModel,
-    selectedIndex: MutableState<Int>
+    selectedIndex: MutableState<Int>,
 ) {
 
     val userUpdateState by utenteViewModel.userUpdateState.collectAsState()
@@ -54,6 +55,23 @@ fun CompleteProfile(
         utenteViewModel.updateImmagine(it)
     }
     val openDialog = remember { mutableStateOf(false) }
+
+    val openErrorDialog = remember { mutableStateOf(false) }
+
+    val addressError by remember {
+        derivedStateOf {
+            userUpdateState.citta.isEmpty() ||
+                    userUpdateState.via.isEmpty() ||
+                    userUpdateState.civico == 0
+        }
+    }
+
+    val fullNameError by remember {
+        derivedStateOf {
+            userUpdateState.nome.isEmpty() ||
+                    userUpdateState.cognome.isEmpty()
+        }
+    }
 
     Column {
         Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
@@ -150,21 +168,49 @@ fun CompleteProfile(
             horizontalArrangement = Arrangement.Center
         ) {
             OutlinedButton(onClick = {
-                utenteViewModel.updateUser(
-                    appwriteConfig,
-                    authViewModel,
-                    userUpdateState.nome,
-                    userUpdateState.cognome,
-                    userUpdateState.immagine,
-                    Indirizzo(userUpdateState.via, userUpdateState.civico, userUpdateState.citta)
-                )
-                openDialog.value = true
+                if (fullNameError && addressError) {
+                    openErrorDialog.value = true
+                } else if (fullNameError) {
+                    utenteViewModel.updateUser(
+                        appwriteConfig,
+                        authViewModel,
+                        userUpdateState.nome,
+                        userUpdateState.cognome,
+                        userUpdateState.immagine,
+                        Indirizzo(
+                            userUpdateState.via,
+                            userUpdateState.civico,
+                            userUpdateState.citta
+                        )
+                    )
+                    openDialog.value = true
+                } else if (addressError) {
+                    utenteViewModel.updateUser(
+                        appwriteConfig,
+                        authViewModel,
+                        userUpdateState.nome,
+                        userUpdateState.cognome,
+                        userUpdateState.immagine,
+                        null
+                    )
+                }
             }) {
                 Text("Aggiorna il profilo")
             }
         }
     }
-    
+
+    if (openErrorDialog.value) {
+        showAlert(
+            title = "Campi non correttamente riempiti",
+            description = "Tutti i campi devono essere compilati correttamente. " +
+                    "Non si possono lasciare in bianco campi correlati ad altri già compilati," +
+                    " inoltre il numero civico non può essere 0!"
+        ) {
+            openErrorDialog.value = false
+        }
+    }
+
     if (openDialog.value) {
         showAlert(
             "Profilo aggiornato",

@@ -195,13 +195,13 @@ fun HomePage(
                 authViewModel.checkLogin(appwrite, utenteViewModel)
                 isRedirected.value = false
                 HomePageActivity(
-                    articoloViewModel,
-                    utente,
-                    selectedIndex,
-                    isRedirected,
-                    utenteViewModel,
-                    authViewModel,
-                    appwrite
+                    articoloViewModel = articoloViewModel,
+                    utente = utente,
+                    selectedIndex = selectedIndex,
+                    isRedirected = isRedirected,
+                    utenteViewModel = utenteViewModel,
+                    authViewModel = authViewModel,
+                    appwriteConfig = appwrite
                 )
             }
             if (selectedIndex.value == 1) {
@@ -221,7 +221,12 @@ fun HomePage(
             if (selectedIndex.value == 2) {
                 authViewModel.checkLogin(appwrite, utenteViewModel)
                 isRedirected.value = false
-                AddProductActivity(appwrite, authViewModel, articoloViewModel, selectedIndex)
+                AddProductActivity(
+                    appwriteConfig = appwrite,
+                    authViewModel = authViewModel,
+                    articoloViewModel = articoloViewModel,
+                    selectedIndex = selectedIndex
+                )
             }
             if (selectedIndex.value == 3) {
                 authViewModel.checkLogin(appwrite, utenteViewModel)
@@ -231,18 +236,18 @@ fun HomePage(
                     AuthActivity(
                         activity = activity,
                         appwrite = appwrite,
-                        authViewModel,
-                        utenteViewModel
+                        authViewModel = authViewModel,
+                        utenteViewModel = utenteViewModel
                     )
                 } else if (authViewModel.isLogged.value) {
                     if (!isRedirected.value) {
                         UserProfileActivity(
-                            authViewModel.loggedInUser.value!!,
-                            authViewModel,
-                            appwrite,
-                            utenteViewModel,
-                            isRedirected,
-                            selectedIndex
+                            user = authViewModel.loggedInUser.value!!,
+                            authViewModel = authViewModel,
+                            appwriteConfig = appwrite,
+                            utenteViewModel = utenteViewModel,
+                            isRedirected = isRedirected,
+                            selectedIndex = selectedIndex,
                         )
                     } else {
                         println(utente.value!!)
@@ -251,8 +256,8 @@ fun HomePage(
                             authViewModel = authViewModel,
                             appwriteConfig = appwrite,
                             utenteViewModel = utenteViewModel,
-                            isRedirected,
-                            selectedIndex
+                            isRedirected = isRedirected,
+                            selectedIndex = selectedIndex,
                         )
                     }
                 }

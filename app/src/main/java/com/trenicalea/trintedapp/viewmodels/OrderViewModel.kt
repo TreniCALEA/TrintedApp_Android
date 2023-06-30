@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.util.Base64
 
 data class OrdineInfos(
     val via: String = "",
@@ -55,14 +56,21 @@ class OrderViewModel : ViewModel() {
         }
     }
 
-    fun confirmOrder(acquirente: Long, articoloId: Long, indirizzo: Indirizzo, appwriteConfig: AppwriteConfig) {
+    fun confirmOrder(
+        acquirente: Long,
+        articoloId: Long,
+        indirizzo: Indirizzo,
+        appwriteConfig: AppwriteConfig
+    ) {
         val client: Client = Client(appwriteConfig.appContext)
             .setEndpoint(appwriteConfig.endpoint)
             .setProject(appwriteConfig.projectId)
 
         val account = Account(client)
         CoroutineScope(Dispatchers.IO).launch {
-            _orderApi.add(acquirente, articoloId, indirizzo, account.createJWT().jwt)
+            val encodedString: String =
+                Base64.getEncoder().encodeToString(account.createJWT().jwt.toByteArray())
+            _orderApi.add(acquirente, articoloId, indirizzo, encodedString)
         }
     }
 

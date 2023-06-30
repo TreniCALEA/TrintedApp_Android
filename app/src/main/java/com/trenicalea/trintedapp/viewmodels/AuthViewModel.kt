@@ -76,7 +76,7 @@ class AuthViewModel : ViewModel() {
         }.invokeOnCompletion { login.value = true }
     }
 
-    fun isVerified(appwrite: AppwriteConfig) : Boolean {
+    fun isVerified(appwrite: AppwriteConfig): Boolean {
         val client: Client = Client(appwrite.appContext)
             .setEndpoint(appwrite.endpoint)
             .setProject(appwrite.projectId)
@@ -84,17 +84,17 @@ class AuthViewModel : ViewModel() {
         val account = Account(client)
         val verified: CompletableFuture<Boolean> = CompletableFuture()
         CoroutineScope(Dispatchers.IO).launch {
-             verified.complete(account.get().emailVerification)
+            verified.complete(account.get().emailVerification)
         }
         return verified.join()
     }
 
     fun checkLogin(appwrite: AppwriteConfig, utenteViewModel: UtenteViewModel) {
         val client: Client = Client(appwrite.appContext)
-                        .setEndpoint(appwrite.endpoint)
-                        .setProject(appwrite.projectId)
+            .setEndpoint(appwrite.endpoint)
+            .setProject(appwrite.projectId)
 
-        val account: Account = Account(client)
+        val account = Account(client)
 
         if (!isLogged.value) {
             println("")

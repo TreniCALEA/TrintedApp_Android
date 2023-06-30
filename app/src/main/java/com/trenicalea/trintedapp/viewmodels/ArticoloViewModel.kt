@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.io.FileNotFoundException
+import java.util.Base64
 
 data class AddArticoloState(
     val titolo: String = "",
@@ -73,7 +74,10 @@ class ArticoloViewModel : ViewModel() {
 
         val account = Account(client)
         CoroutineScope(Dispatchers.IO).launch {
-            _articoloApi.add(articoloDto, account.createJWT().jwt)
+            val encodedString: String =
+                Base64.getEncoder().encodeToString(account.createJWT().jwt.toByteArray())
+            _articoloApi.add(articoloDto, encodedString)
+            getAllArticolo()
         }
     }
 
@@ -88,7 +92,9 @@ class ArticoloViewModel : ViewModel() {
 
         val account = Account(client)
         CoroutineScope(Dispatchers.IO).launch {
-            _articoloApi.delete(id, account.createJWT().jwt)
+            val encodedString: String =
+                Base64.getEncoder().encodeToString(account.createJWT().jwt.toByteArray())
+            _articoloApi.delete(id, encodedString)
         }
     }
 
@@ -99,8 +105,7 @@ class ArticoloViewModel : ViewModel() {
 
     fun getAllArticolo() {
         try {
-            if (articoloList.value.isEmpty())
-                articoloList.value = _articoloApi.all()
+            if (articoloList.value.isEmpty()) articoloList.value = _articoloApi.all()
         } catch (e: Exception) {
             e.printStackTrace()
             articoloList.value = arrayOf()

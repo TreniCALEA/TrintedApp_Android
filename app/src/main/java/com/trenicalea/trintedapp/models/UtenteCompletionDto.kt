@@ -6,10 +6,10 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 class UtenteCompletionDto(
-  val nome: String? = null,
-  val cognome: String? = null,
-  @Json(name="immagine")
-  val immagine: Bitmap? = null,
-  val indirizzo: Indirizzo? = null
+    val nome: String? = null,
+    val cognome: String? = null,
+    @Json(name = "immagine")
+    val immagine: Bitmap? = null,
+    val indirizzo: Indirizzo? = null
 ) {
 }

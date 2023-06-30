@@ -30,7 +30,8 @@ class RecensioneControllerApi(basePath: String = Config.ip) : ApiClient(basePath
         val localVariableBody: Any = body
         val localVariableConfig = RequestConfig(
             RequestMethod.POST,
-            "/review-api/review?jwt=$param"
+            "/review-api/review",
+            query = mapOf(Pair("jwt", listOf(param)))
         )
         val response = request<RecensioneDto>(
             localVariableConfig, localVariableBody

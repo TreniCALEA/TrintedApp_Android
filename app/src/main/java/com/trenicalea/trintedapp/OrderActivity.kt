@@ -122,7 +122,12 @@ fun OrderFormActivity(
                 onClick = {
                     val indirizzo =
                         Indirizzo(orderState.via, orderState.civico.toInt(), orderState.paese)
-                    orderViewModel.confirmOrder(acquirente.id, articoloDto.id!!, indirizzo, appwriteConfig)
+                    orderViewModel.confirmOrder(
+                        acquirente.id,
+                        articoloDto.id!!,
+                        indirizzo,
+                        appwriteConfig
+                    )
 
                     showCompleteDialog.value = true
                 },

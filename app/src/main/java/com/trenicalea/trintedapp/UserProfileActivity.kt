@@ -23,6 +23,7 @@ import androidx.compose.material.icons.filled.Mail
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.ProductionQuantityLimits
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
@@ -36,6 +37,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -59,7 +61,7 @@ fun UserProfileActivity(
     appwriteConfig: AppwriteConfig,
     utenteViewModel: UtenteViewModel,
     isRedirected: MutableState<Boolean>,
-    selectedIndex: MutableState<Int>
+    selectedIndex: MutableState<Int>,
 ) {
     val orderViewModel = OrderViewModel()
     var showReview by remember { mutableStateOf(false) }
@@ -71,7 +73,7 @@ fun UserProfileActivity(
             appwriteConfig = appwriteConfig,
             authViewModel = authViewModel,
             utenteViewModel = utenteViewModel,
-            selectedIndex = selectedIndex
+            selectedIndex = selectedIndex,
         )
         else {
             Card(
@@ -182,16 +184,17 @@ fun UserProfileActivity(
                     }
                 }
                 if (!isRedirected.value) {
-                    Row(
+                    Column(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Button(
                             onClick = { showCompleteProfile = true },
-                            modifier = Modifier.padding(start = 13.dp)
+                            modifier = Modifier.padding(start = 13.dp),
+                            colors = ButtonDefaults.buttonColors(Color.Blue),
                         ) {
-                            Text(text = "Completa profilo")
+                            Text(text = "Completa o modifica il tuo profilo", color = Color.White)
                         }
                         Button(
                             onClick = {
@@ -206,18 +209,17 @@ fun UserProfileActivity(
                             Text(text = "Elimina il profilo")
                         }
                     }
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 14.dp),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Button(
                             onClick = { authViewModel.logout(appwriteConfig) },
-                            modifier = Modifier.width(150.dp)
+                            modifier = Modifier.width(150.dp),
+                            colors = ButtonDefaults.buttonColors(Color.Red)
                         ) {
-                            Text(text = "Logout")
+                            Text(text = "Logout", color = Color.White)
                         }
                     }
                 }

@@ -19,11 +19,12 @@ object ApplicationDelegates {
             return value ?: throw IllegalStateException("${property.name} not initialized")
         }
 
-        override fun setValue(thisRef: Any?, property: KProperty<*>, value: T) = synchronized(this) {
-            if (!isSet) {
-                this.value = value
-                isSet = true
+        override fun setValue(thisRef: Any?, property: KProperty<*>, value: T) =
+            synchronized(this) {
+                if (!isSet) {
+                    this.value = value
+                    isSet = true
+                }
             }
-        }
     }
 }

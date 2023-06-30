@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.util.Base64
 
 data class ReviewState(
     var description: String = "",
@@ -73,7 +74,10 @@ class ReviewViewModel : ViewModel() {
 
         val account = Account(client)
         CoroutineScope(Dispatchers.IO).launch {
-            _reviewApi.add(recensioneDto, account.createJWT().jwt)
+            val encodedString: String =
+                Base64.getEncoder().encodeToString(account.createJWT().jwt.toByteArray())
+            _reviewApi.add(recensioneDto, encodedString)
+            getUserReview(destinatario)
         }
     }
 
@@ -87,7 +91,9 @@ class ReviewViewModel : ViewModel() {
 
         val account = Account(client)
         CoroutineScope(Dispatchers.IO).launch {
-            _reviewApi.delete(id, account.createJWT().jwt)
+            val encodedString: String =
+                Base64.getEncoder().encodeToString(account.createJWT().jwt.toByteArray())
+            _reviewApi.delete(id, encodedString)
         }
     }
 }

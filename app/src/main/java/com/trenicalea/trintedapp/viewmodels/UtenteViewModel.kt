@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.util.Base64
 
 data class UserUpdateState(
     val nome: String = "",
@@ -85,7 +86,7 @@ class UtenteViewModel : ViewModel() {
         nome: String,
         cognome: String,
         image: Bitmap?,
-        indirizzo: Indirizzo
+        indirizzo: Indirizzo?
     ) {
         val client: Client = Client(appwrite.appContext)
             .setEndpoint(appwrite.endpoint)
@@ -93,11 +94,14 @@ class UtenteViewModel : ViewModel() {
 
         val account = Account(client)
         CoroutineScope(Dispatchers.IO).launch {
+            val encodedString: String =
+                Base64.getEncoder().encodeToString(account.createJWT().jwt.toByteArray())
             _userApi.update(
                 authViewModel.loggedInUser.value!!.id,
                 UtenteCompletionDto(nome, cognome, image, indirizzo),
-                account.createJWT().jwt
+                encodedString
             )
+            authViewModel.loggedInUser.value = getByCredenzialiEmail(account.get().email)
         }
     }
 
@@ -119,7 +123,11 @@ class UtenteViewModel : ViewModel() {
             .setProject(appwrite.projectId)
 
         val account = Account(client)
-        CoroutineScope(Dispatchers.IO).launch { _userApi.delete(id, account.createJWT().jwt) }
+        CoroutineScope(Dispatchers.IO).launch {
+            val encodedString: String =
+                Base64.getEncoder().encodeToString(account.createJWT().jwt.toByteArray())
+            _userApi.delete(id, encodedString)
+        }
     }
 
 

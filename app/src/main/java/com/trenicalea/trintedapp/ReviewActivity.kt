@@ -91,7 +91,10 @@ fun ReviewActivity(
                                 ) {
                                     Button(
                                         onClick = {
-                                            reviewViewModel.deleteReview(review.id!!, appwriteConfig)
+                                            reviewViewModel.deleteReview(
+                                                review.id!!,
+                                                appwriteConfig
+                                            )
                                             openDialog.value = true
                                         },
                                     ) {
