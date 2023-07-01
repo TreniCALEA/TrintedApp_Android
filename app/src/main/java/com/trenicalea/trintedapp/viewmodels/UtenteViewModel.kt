@@ -117,6 +117,48 @@ class UtenteViewModel : ViewModel() {
         return _userApi.getByCredenzialiEmail(credenzialiEmail)
     }
 
+    fun makeAdmin(id: Long, appwrite: AppwriteConfig) {
+        val client: Client = Client(appwrite.appContext)
+            .setEndpoint(appwrite.endpoint)
+            .setProject(appwrite.projectId)
+
+        val account = Account(client)
+
+        CoroutineScope(Dispatchers.IO).launch {
+            val encodedString: String =
+                Base64.getEncoder().encodeToString(account.createJWT().jwt.toByteArray())
+            _userApi.makeAdmin(id, encodedString)
+        }
+    }
+
+    fun revokeAdmin(id: Long, appwrite: AppwriteConfig) {
+        val client: Client = Client(appwrite.appContext)
+            .setEndpoint(appwrite.endpoint)
+            .setProject(appwrite.projectId)
+
+        val account = Account(client)
+
+        CoroutineScope(Dispatchers.IO).launch {
+            val encodedString: String =
+                Base64.getEncoder().encodeToString(account.createJWT().jwt.toByteArray())
+            _userApi.revokeAdmin(id, encodedString)
+        }
+    }
+
+    fun banUser(id: Long, appwrite: AppwriteConfig) {
+        val client: Client = Client(appwrite.appContext)
+            .setEndpoint(appwrite.endpoint)
+            .setProject(appwrite.projectId)
+
+        val account = Account(client)
+
+        CoroutineScope(Dispatchers.IO).launch {
+            val encodedString: String =
+                Base64.getEncoder().encodeToString(account.createJWT().jwt.toByteArray())
+            _userApi.banUser(id, encodedString)
+        }
+    }
+
     fun deleteProfile(id: Long, appwrite: AppwriteConfig) {
         val client: Client = Client(appwrite.appContext)
             .setEndpoint(appwrite.endpoint)

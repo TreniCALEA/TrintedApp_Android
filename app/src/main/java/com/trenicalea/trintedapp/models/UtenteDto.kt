@@ -24,6 +24,7 @@ data class UtenteDto(
     val credenzialiEmail: String,
     val credenzialiUsername: String,
     val isAdmin: Boolean? = null,
+    val isOwner: Boolean? = null,
     val ratingGenerale: Float? = null,
     @Json(name = "immagine")
     val immagine: Bitmap? = null,

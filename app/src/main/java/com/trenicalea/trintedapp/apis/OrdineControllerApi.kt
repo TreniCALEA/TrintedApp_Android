@@ -60,10 +60,11 @@ class OrdineControllerApi(basePath: String = Config.ip) : ApiClient(basePath) {
      * @return kotlin.Array<OrdineDto>
      */
     @Suppress("UNCHECKED_CAST")
-    fun all(): Array<OrdineDto> = runBlocking(Dispatchers.IO) {
+    fun all(param: String): Array<OrdineDto> = runBlocking(Dispatchers.IO) {
         val localVariableConfig = RequestConfig(
             RequestMethod.GET,
-            "/order-api/orders"
+            "/order-api/orders",
+            query = mapOf(Pair("jwt", listOf(param)))
         )
         val response = request<Array<OrdineDto>>(
             localVariableConfig

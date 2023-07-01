@@ -145,10 +145,7 @@ class ArticoloControllerApi(basePath: String = Config.ip) : ApiClient(basePath) 
         runBlocking(Dispatchers.IO) {
             val localVariableConfig = RequestConfig(
                 RequestMethod.GET,
-                "/item-api/item/search/{searchValue}".replace(
-                    "{" + "searchValue" + "}",
-                    searchValue
-                )
+                "/item-api/item/search/$searchValue"
             )
             val response = request<Array<ArticoloDto>>(
                 localVariableConfig

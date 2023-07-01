@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Mail
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.ProductionQuantityLimits
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -64,8 +65,15 @@ fun UserProfileActivity(
     selectedIndex: MutableState<Int>,
 ) {
     val orderViewModel = OrderViewModel()
+    orderViewModel.getByAcquirente(user.id)
+    orderViewModel.getByVenditore(user.id)
+
     var showReview by remember { mutableStateOf(false) }
     var showCompleteProfile by remember { mutableStateOf(false) }
+    val eraseProfile = remember { mutableStateOf(false) }
+    val makeAdmin = remember { mutableStateOf(false) }
+    val revokeAdmin = remember { mutableStateOf(false) }
+
     val purchasesList = orderViewModel.ordersGetByAcquirente
     val salesList = orderViewModel.ordersGetByVenditore
     if (!showReview) {
@@ -119,9 +127,7 @@ fun UserProfileActivity(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Button(
-                            onClick = { showReview = true }
-                        ) {
+                        Button(onClick = { showReview = true }) {
                             Text(text = "Rating: " + (user.ratingGenerale ?: 0).toString())
                         }
                     }
@@ -145,6 +151,44 @@ fun UserProfileActivity(
                     }
 
                     Divider()
+
+                    if (isRedirected.value && authViewModel.loggedInUser.value!!.isAdmin!! && !user.isAdmin!!) {
+                        Column(
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Button(
+                                onClick = {
+                                    utenteViewModel.makeAdmin(
+                                        user.id, appwriteConfig
+                                    )
+                                    makeAdmin.value = true
+                                }, colors = ButtonDefaults.buttonColors(Color.Green)
+                            ) {
+                                Text(text = "Rendi Admin!", color = Color.White)
+                            }
+                        }
+                    }
+
+                    if (isRedirected.value && authViewModel.loggedInUser.value!!.isAdmin!! && user.isAdmin!! && !user.isOwner!!) {
+                        Column(
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.fillMaxWidth()
+                        ){
+                            Button(
+                                onClick = {
+                                    utenteViewModel.revokeAdmin(
+                                        user.id, appwriteConfig
+                                    )
+                                    revokeAdmin.value = true
+                                }, colors = ButtonDefaults.buttonColors(Color.Red)
+                            ) {
+                                Text(text = "Togli i diritti di Admin", color = Color.White)
+                            }
+                        }
+                    }
 
                     if (!isRedirected.value) {
                         Row(
@@ -196,16 +240,9 @@ fun UserProfileActivity(
                         ) {
                             Text(text = "Completa o modifica il tuo profilo", color = Color.White)
                         }
-                        Button(
-                            onClick = {
-                                utenteViewModel.deleteProfile(
-                                    authViewModel.loggedInUser.value!!.id,
-                                    appwrite = appwriteConfig
-                                )
-                                authViewModel.logout(appwriteConfig)
-                                selectedIndex.value = 3
-                            }
-                        ) {
+                        Button(onClick = {
+                            eraseProfile.value = true
+                        }) {
                             Text(text = "Elimina il profilo")
                         }
                     }
@@ -227,6 +264,67 @@ fun UserProfileActivity(
 
             }
         }
+        if (eraseProfile.value) {
+            AlertDialog(onDismissRequest = { eraseProfile.value = false },
+                title = { Text(text = "Sei sicuro?") },
+                text = { Text(text = "Sei assolutamente certo di voler eliminare il profilo? Questa azione è irreversibile.") },
+                confirmButton = {
+                    Button(onClick = {
+                        eraseProfile.value = false
+                        utenteViewModel.deleteProfile(user.id, appwriteConfig)
+                        selectedIndex.value = 3
+                    }) {
+                        Text(text = "Sì")
+                    }
+                },
+                dismissButton = {
+                    Button(onClick = { eraseProfile.value = false }) {
+                        Text(text = "No")
+                    }
+                })
+        }
+
+        if (makeAdmin.value) {
+            AlertDialog(onDismissRequest = { makeAdmin.value = false },
+                title = { Text(text = "Sei sicuro?") },
+                text = { Text(text = "Cliccando su 'Sì' si accetta che questo utente diventi un admin") },
+                confirmButton = {
+                    Button(onClick = {
+                        makeAdmin.value = false
+                        utenteViewModel.makeAdmin(user.id, appwriteConfig)
+                        selectedIndex.value = 3
+
+                    }) {
+                        Text(text = "Sì")
+                    }
+                },
+                dismissButton = {
+                    Button(onClick = { eraseProfile.value = false }) {
+                        Text(text = "No")
+                    }
+                })
+        }
+
+        if (revokeAdmin.value) {
+            AlertDialog(onDismissRequest = { makeAdmin.value = false },
+                title = { Text(text = "Sei sicuro?") },
+                text = { Text(text = "Cliccando su 'Sì' si accetta che a questo utente vengano tolti i diritti di admin") },
+                confirmButton = {
+                    Button(onClick = {
+                        revokeAdmin.value = false
+                        utenteViewModel.revokeAdmin(user.id, appwriteConfig)
+                        selectedIndex.value = 3
+                    }) {
+                        Text(text = "Sì")
+                    }
+                },
+                dismissButton = {
+                    Button(onClick = { eraseProfile.value = false }) {
+                        Text(text = "No")
+                    }
+                })
+        }
+
     } else ReviewActivity(
         appwriteConfig = appwriteConfig,
         authViewModel = authViewModel,

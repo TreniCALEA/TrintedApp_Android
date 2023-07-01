@@ -20,7 +20,7 @@ import kotlinx.coroutines.runBlocking
 class UtenteControllerApi(basePath: String = Config.ip) : ApiClient(basePath) {
 
 
-    fun update(idUser: Long, body: UtenteCompletionDto, param: String) =
+    fun update(idUser: Long, body: UtenteCompletionDto, param: String) : String =
         runBlocking(Dispatchers.IO) {
             val localVariableBody: Any = body
             val localVariableConfig = RequestConfig(
@@ -228,10 +228,7 @@ class UtenteControllerApi(basePath: String = Config.ip) : ApiClient(basePath) {
     fun getByCredenzialiEmail(credenzialiEmail: String): UtenteDto = runBlocking(Dispatchers.IO) {
         val localVariableConfig = RequestConfig(
             RequestMethod.GET,
-            "/user-api/users/email/{credenzialiEmail}".replace(
-                "{" + "credenzialiEmail" + "}",
-                credenzialiEmail
-            )
+            "/user-api/users/email/$credenzialiEmail",
         )
         val response = request<UtenteDto>(
             localVariableConfig
@@ -250,4 +247,80 @@ class UtenteControllerApi(basePath: String = Config.ip) : ApiClient(basePath) {
             )
         }
     }
+
+    fun makeAdmin(idUser: Long, param: String) : String = runBlocking(Dispatchers.IO) {
+        val localVariableConfig = RequestConfig(
+            RequestMethod.PATCH,
+            "/user-api/users/makeAdmin/$idUser",
+            query = mapOf(Pair("jwt", listOf(param)))
+        )
+
+        val response = request<String>(
+            localVariableConfig
+        )
+
+        return@runBlocking when (response.responseType) {
+            ResponseType.Success -> (response as Success<*>).data as String
+            ResponseType.Informational -> TODO()
+            ResponseType.Redirection -> TODO()
+            ResponseType.ClientError -> throw ClientException(
+                (response as ClientError<*>).body as? String ?: "Client error"
+            )
+
+            ResponseType.ServerError -> throw ServerException(
+                (response as ServerError<*>).message ?: "Server error"
+            )
+        }
+    }
+
+    fun revokeAdmin(idUser: Long, param: String) : String = runBlocking(Dispatchers.IO) {
+        val localVariableConfig = RequestConfig(
+            RequestMethod.PATCH,
+            "/user-api/users/revokeAdmin/$idUser",
+            query = mapOf(Pair("jwt", listOf(param)))
+        )
+
+        val response = request<String>(
+            localVariableConfig
+        )
+
+        return@runBlocking when (response.responseType) {
+            ResponseType.Success -> (response as Success<*>).data as String
+            ResponseType.Informational -> TODO()
+            ResponseType.Redirection -> TODO()
+            ResponseType.ClientError -> throw ClientException(
+                (response as ClientError<*>).body as? String ?: "Client error"
+            )
+
+            ResponseType.ServerError -> throw ServerException(
+                (response as ServerError<*>).message ?: "Server error"
+            )
+        }
+    }
+
+    fun banUser(idUser: Long, param: String) : String = runBlocking(Dispatchers.IO) {
+        val localVariableConfig = RequestConfig(
+            RequestMethod.PATCH,
+            "/user-api/users/banUser/$idUser",
+            query = mapOf(Pair("jwt", listOf(param)))
+        )
+
+        val response = request<String>(
+            localVariableConfig
+        )
+
+        return@runBlocking when (response.responseType) {
+            ResponseType.Success -> (response as Success<*>).data as String
+            ResponseType.Informational -> TODO()
+            ResponseType.Redirection -> TODO()
+            ResponseType.ClientError -> throw ClientException(
+                (response as ClientError<*>).body as? String ?: "Client error"
+            )
+
+            ResponseType.ServerError -> throw ServerException(
+                (response as ServerError<*>).message ?: "Server error"
+            )
+        }
+    }
+
 }
