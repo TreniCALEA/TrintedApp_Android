@@ -34,10 +34,18 @@ class OrderViewModel : ViewModel() {
     var ordersGetByVenditore: MutableState<Array<OrdineDto>> = mutableStateOf(emptyArray())
     var ordersGetByAcquirente: MutableState<Array<OrdineDto>> = mutableStateOf(emptyArray())
 
-    fun getByVenditore(id: Long) {
+    fun getByVenditore(id: Long, appwrite: AppwriteConfig) {
+        val client: Client = Client(appwrite.appContext)
+            .setEndpoint(appwrite.endpoint)
+            .setProject(appwrite.projectId)
+
+        val account = Account(client)
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                ordersGetByVenditore.value = _orderApi.getByVenditore(id)
+                val encodedString =
+                    Base64.getEncoder().encodeToString(account.createJWT().jwt.toByteArray())
+                println(encodedString)
+                ordersGetByVenditore.value = _orderApi.getByVenditore(id, encodedString)
             } catch (e: Exception) {
                 e.printStackTrace()
                 println("[D] Unable to retrieve sold items!")
@@ -45,10 +53,17 @@ class OrderViewModel : ViewModel() {
         }
     }
 
-    fun getByAcquirente(id: Long) {
+    fun getByAcquirente(id: Long, appwrite: AppwriteConfig) {
+        val client: Client = Client(appwrite.appContext)
+            .setEndpoint(appwrite.endpoint)
+            .setProject(appwrite.projectId)
+
+        val account = Account(client)
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                ordersGetByAcquirente.value = _orderApi.getByAcquirente(id)
+                val encodedString =
+                    Base64.getEncoder().encodeToString(account.createJWT().jwt.toByteArray())
+                ordersGetByAcquirente.value = _orderApi.getByAcquirente(id, encodedString)
             } catch (e: Exception) {
                 e.printStackTrace()
                 println("[D] Unable to retrieve bought items")

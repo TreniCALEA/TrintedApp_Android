@@ -17,8 +17,10 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -48,15 +50,19 @@ fun CompleteProfile(
     authViewModel: AuthViewModel,
     utenteViewModel: UtenteViewModel,
     selectedIndex: MutableState<Int>,
+    onClose: () -> Unit
 ) {
 
     val userUpdateState by utenteViewModel.userUpdateState.collectAsState()
     val immagine = rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) {
         utenteViewModel.updateImmagine(it)
     }
+
     val openDialog = remember { mutableStateOf(false) }
 
     val openErrorDialog = remember { mutableStateOf(false) }
+
+    val imageEmpty = remember { mutableStateOf(true) }
 
     val addressError by remember {
         derivedStateOf {
@@ -74,8 +80,23 @@ fun CompleteProfile(
     }
 
     Column {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                Icons.Filled.Close,
+
+                contentDescription = "Close",
+                modifier = Modifier
+                    .clickable { onClose() } // Chiude la card
+                    .padding(8.dp)
+            )
+        }
         Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
             userUpdateState.immagine?.let {
+                imageEmpty.value = false
                 Image(
                     bitmap = it.asImageBitmap(),
                     contentDescription = stringResource(R.string.accountImage),
@@ -168,7 +189,7 @@ fun CompleteProfile(
             horizontalArrangement = Arrangement.Center
         ) {
             OutlinedButton(onClick = {
-                if (fullNameError && addressError) {
+                if (fullNameError && addressError && imageEmpty.value) {
                     openErrorDialog.value = true
                 } else if (fullNameError) {
                     utenteViewModel.updateUser(

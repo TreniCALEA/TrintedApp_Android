@@ -65,8 +65,8 @@ fun UserProfileActivity(
     selectedIndex: MutableState<Int>,
 ) {
     val orderViewModel = OrderViewModel()
-    orderViewModel.getByAcquirente(user.id)
-    orderViewModel.getByVenditore(user.id)
+    orderViewModel.getByAcquirente(user.id, appwriteConfig)
+    orderViewModel.getByVenditore(user.id, appwriteConfig)
 
     var showReview by remember { mutableStateOf(false) }
     var showCompleteProfile by remember { mutableStateOf(false) }
@@ -82,6 +82,7 @@ fun UserProfileActivity(
             authViewModel = authViewModel,
             utenteViewModel = utenteViewModel,
             selectedIndex = selectedIndex,
+            onClose = { showCompleteProfile = false }
         )
         else {
             Card(
