@@ -229,6 +229,21 @@ fun UserProfileActivity(
                     }
                 }
                 if (!isRedirected.value) {
+                    if (!authViewModel.isVerified.value) {
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Button(
+                                onClick = { authViewModel.verifyEmail(appwriteConfig) },
+                                colors = ButtonDefaults.buttonColors(Color.Green),
+                                modifier = Modifier.padding(start = 13.dp)
+                            ) {
+                                Text(text = "Verifica la tua e-mail!", color = Color.White)
+                            }
+                        }
+                    }
                     Column(
                         modifier = Modifier.fillMaxWidth(),
                         verticalArrangement = Arrangement.Center,

@@ -1,5 +1,6 @@
 package com.trenicalea.trintedapp.viewmodels
 
+import android.graphics.Bitmap.Config
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -40,6 +41,7 @@ class AuthViewModel : ViewModel() {
     private val providerLoginCompleted = CompletableDeferred(true)
     val login: MutableState<Boolean> = mutableStateOf(false)
     val loggedInUser: MutableState<UtenteDto?> = mutableStateOf(null)
+    val isVerified: MutableState<Boolean> = mutableStateOf(false)
 
 
     fun logout(appwrite: AppwriteConfig) {
@@ -89,6 +91,18 @@ class AuthViewModel : ViewModel() {
         return verified.join()
     }
 
+    fun verifyEmail(appwrite: AppwriteConfig) {
+        val client: Client = Client(appwrite.appContext)
+            .setEndpoint(appwrite.endpoint)
+            .setProject(appwrite.projectId)
+
+        val account = Account(client)
+
+        CoroutineScope(Dispatchers.IO).launch {
+            account.createVerification("http://localhost")
+        }.invokeOnCompletion { isVerified.value = true }
+    }
+
     fun checkLogin(appwrite: AppwriteConfig, utenteViewModel: UtenteViewModel) {
         val client: Client = Client(appwrite.appContext)
             .setEndpoint(appwrite.endpoint)
@@ -104,6 +118,7 @@ class AuthViewModel : ViewModel() {
                     println(account.get().email)
                     println("[i] Session: \n" + account.getSession("current"))
                     try {
+                        isVerified.value = account.get().emailVerification
                         loggedInUser.value =
                             utenteViewModel.getByCredenzialiEmail(account.get().email)
                         println("Utente checkLogged: ${loggedInUser.value!!.credenzialiEmail}")
