@@ -61,7 +61,7 @@ fun HomePageActivity(
                     .fillMaxWidth()
                     .padding(top = 15.dp)
             ) {
-                Text(text = "Nessun articolo presente.")
+                Text(if (!articoloViewModel.loading.value) "Nessun articolo presente." else "Caricamento articoli...")
             }
         } else {
             Row(

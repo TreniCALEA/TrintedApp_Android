@@ -1,10 +1,10 @@
 package com.trenicalea.trintedapp.viewmodels
 
-import android.graphics.Bitmap.Config
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import com.trenicalea.trintedapp.apis.UtenteControllerApi
 import com.trenicalea.trintedapp.appwrite.AppwriteConfig
 import com.trenicalea.trintedapp.models.UtenteDto
 import com.trenicalea.trintedapp.models.UtenteRegistrationDto
@@ -36,6 +36,8 @@ class AuthViewModel : ViewModel() {
     private val _authState = MutableStateFlow(AuthState())
     val authState: StateFlow<AuthState> = _authState.asStateFlow()
 
+    private val _userApi: UtenteControllerApi = UtenteControllerApi()
+
     val isLogged: MutableState<Boolean> = mutableStateOf(false)
     val loading: MutableState<Boolean> = mutableStateOf(true)
     private val providerLoginCompleted = CompletableDeferred(true)
@@ -59,8 +61,13 @@ class AuthViewModel : ViewModel() {
         email: String,
         password: String,
         appwrite: AppwriteConfig,
-        utenteViewModel: UtenteViewModel
+        utenteViewModel: UtenteViewModel,
+        banned: MutableState<Boolean>
     ) {
+        if (checkBan(banned, email)) {
+            return
+        }
+
         val client: Client = Client(appwrite.appContext)
             .setEndpoint(appwrite.endpoint)
             .setProject(appwrite.projectId)
@@ -75,7 +82,9 @@ class AuthViewModel : ViewModel() {
             } catch (e: Exception) {
                 isLogged.value = false
             }
-        }.invokeOnCompletion { login.value = true }
+        }.invokeOnCompletion {
+            login.value = true
+        }
     }
 
     fun isVerified(appwrite: AppwriteConfig): Boolean {
@@ -103,7 +112,11 @@ class AuthViewModel : ViewModel() {
         }.invokeOnCompletion { isVerified.value = true }
     }
 
-    fun checkLogin(appwrite: AppwriteConfig, utenteViewModel: UtenteViewModel) {
+    fun checkLogin(
+        appwrite: AppwriteConfig,
+        utenteViewModel: UtenteViewModel,
+        banned: MutableState<Boolean>
+    ) {
         val client: Client = Client(appwrite.appContext)
             .setEndpoint(appwrite.endpoint)
             .setProject(appwrite.projectId)
@@ -122,6 +135,11 @@ class AuthViewModel : ViewModel() {
                         loggedInUser.value =
                             utenteViewModel.getByCredenzialiEmail(account.get().email)
                         println("Utente checkLogged: ${loggedInUser.value!!.credenzialiEmail}")
+                        println("Controllo per il ban")
+                        checkBan(
+                            banned,
+                            loggedInUser.value!!.credenzialiEmail
+                        )
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
@@ -130,7 +148,9 @@ class AuthViewModel : ViewModel() {
                     println("[i] Session invalid!")
                     isLogged.value = false
                 }
-            }.invokeOnCompletion { loading.value = false }
+            }.invokeOnCompletion {
+                loading.value = false
+            }
         } else {
             println("[D] User is already logged in as ${loggedInUser.value!!.credenzialiEmail}, no need to re-check.")
         }
@@ -141,7 +161,8 @@ class AuthViewModel : ViewModel() {
         activity: ComponentActivity,
         provider: String,
         utenteViewModel: UtenteViewModel,
-        usernameProvider: String? = null
+        usernameProvider: String? = null,
+        banned: MutableState<Boolean>
     ) {
         val client: Client = Client(appwrite.appContext)
             .setEndpoint(appwrite.endpoint)
@@ -170,7 +191,8 @@ class AuthViewModel : ViewModel() {
                         registerWithCredentials(
                             usernameProvider,
                             account.get().email,
-                            account.get().id
+                            account.get().id,
+                            banned
                         )
                     } catch (e: Exception) {
                         e.printStackTrace()
@@ -184,13 +206,18 @@ class AuthViewModel : ViewModel() {
                 isLogged.value = false
             }
         }.invokeOnCompletion {
-            checkLogin(appwrite, utenteViewModel)
+            checkLogin(appwrite, utenteViewModel, banned)
             // If needed, tell checkLogged to proceed without any further issue
             providerLoginCompleted.complete(true)
         }
     }
 
-    fun registerWithCredentials(username: String, email: String, password: String) {
+    fun registerWithCredentials(
+        username: String,
+        email: String,
+        password: String,
+        banned: MutableState<Boolean>
+    ) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val user = UtenteViewModel()
@@ -200,7 +227,9 @@ class AuthViewModel : ViewModel() {
                 println("[i] Exception: $e")
                 isLogged.value = false
             }
-        }.invokeOnCompletion { loading.value = true }
+        }.invokeOnCompletion {
+            loading.value = true
+        }
     }
 
     fun updateUsername(username: String) {
@@ -233,5 +262,16 @@ class AuthViewModel : ViewModel() {
             usernameProvider = usernameProvider,
             usernameProviderHasError = hasError
         )
+    }
+
+    fun checkBan(banned: MutableState<Boolean>, email: String): Boolean {
+        try {
+            banned.value = _userApi.checkBan(email) == "OK"
+            println("Banned value: $banned.value")
+            return banned.value
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return false
     }
 }

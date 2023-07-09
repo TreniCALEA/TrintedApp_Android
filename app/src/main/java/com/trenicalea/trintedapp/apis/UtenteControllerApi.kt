@@ -20,7 +20,7 @@ import kotlinx.coroutines.runBlocking
 class UtenteControllerApi(basePath: String = Config.ip) : ApiClient(basePath) {
 
 
-    fun update(idUser: Long, body: UtenteCompletionDto, param: String) : String =
+    fun update(idUser: Long, body: UtenteCompletionDto, param: String): String =
         runBlocking(Dispatchers.IO) {
             val localVariableBody: Any = body
             val localVariableConfig = RequestConfig(
@@ -248,7 +248,7 @@ class UtenteControllerApi(basePath: String = Config.ip) : ApiClient(basePath) {
         }
     }
 
-    fun makeAdmin(idUser: Long, param: String) : String = runBlocking(Dispatchers.IO) {
+    fun makeAdmin(idUser: Long, param: String): String = runBlocking(Dispatchers.IO) {
         val localVariableConfig = RequestConfig(
             RequestMethod.PATCH,
             "/user-api/users/makeAdmin/$idUser",
@@ -273,7 +273,7 @@ class UtenteControllerApi(basePath: String = Config.ip) : ApiClient(basePath) {
         }
     }
 
-    fun revokeAdmin(idUser: Long, param: String) : String = runBlocking(Dispatchers.IO) {
+    fun revokeAdmin(idUser: Long, param: String): String = runBlocking(Dispatchers.IO) {
         val localVariableConfig = RequestConfig(
             RequestMethod.PATCH,
             "/user-api/users/revokeAdmin/$idUser",
@@ -298,11 +298,36 @@ class UtenteControllerApi(basePath: String = Config.ip) : ApiClient(basePath) {
         }
     }
 
-    fun banUser(idUser: Long, param: String) : String = runBlocking(Dispatchers.IO) {
+    fun banUser(idUser: Long, param: String): Boolean = runBlocking(Dispatchers.IO) {
         val localVariableConfig = RequestConfig(
-            RequestMethod.PATCH,
+            RequestMethod.POST,
             "/user-api/users/banUser/$idUser",
             query = mapOf(Pair("jwt", listOf(param)))
+        )
+
+        val response = request<String>(
+            localVariableConfig
+        )
+
+        return@runBlocking when (response.responseType) {
+            ResponseType.Success -> true
+            ResponseType.Informational -> TODO()
+            ResponseType.Redirection -> TODO()
+            ResponseType.ClientError -> throw ClientException(
+                (response as ClientError<*>).body as? String ?: "Client error"
+            )
+
+            ResponseType.ServerError -> throw ServerException(
+                (response as ServerError<*>).message ?: "Server error"
+            )
+        }
+    }
+
+    fun checkBan(credenzialiEmail: String): String = runBlocking(Dispatchers.IO) {
+        val localVariableConfig = RequestConfig(
+            RequestMethod.GET,
+            "/user-api/users/banned",
+            query = mapOf(Pair("email", listOf(credenzialiEmail)))
         )
 
         val response = request<String>(
@@ -313,9 +338,9 @@ class UtenteControllerApi(basePath: String = Config.ip) : ApiClient(basePath) {
             ResponseType.Success -> (response as Success<*>).data as String
             ResponseType.Informational -> TODO()
             ResponseType.Redirection -> TODO()
-            ResponseType.ClientError -> throw ClientException(
+            ResponseType.ClientError -> {
                 (response as ClientError<*>).body as? String ?: "Client error"
-            )
+            }
 
             ResponseType.ServerError -> throw ServerException(
                 (response as ServerError<*>).message ?: "Server error"

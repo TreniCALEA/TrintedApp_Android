@@ -18,15 +18,15 @@ class UtenteRegistrationDto(
 ) {
     companion object {
         fun validateCredenzialiUsername(username: String): Boolean {
-            return username != "";
+            return username.isNotEmpty()
         }
 
         fun validateCredenzialiEmail(email: String): Boolean {
-            return email != "" && email.contains("@") && email.contains(".");
+            return email.isNotEmpty() && email.contains("@") && email.contains(".")
         }
 
         fun validateCredenzialiPassword(password: String): Boolean {
-            return password != "" && password.length > 8;
+            return password.isNotEmpty() && password.length > 8
         }
     }
 }

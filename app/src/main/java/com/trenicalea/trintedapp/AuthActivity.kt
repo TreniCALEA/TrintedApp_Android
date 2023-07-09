@@ -67,6 +67,7 @@ fun AuthActivity(
         val authState by authViewModel.authState.collectAsState()
         val registrationError by remember { derivedStateOf { authState.emailHasError || authState.usernameHasError || authState.passwordHasError } }
         val loginError by remember { derivedStateOf { authState.emailHasError || authState.passwordHasError } }
+        val userBanned = remember { mutableStateOf(false) }
 
         Column {
 
@@ -170,11 +171,15 @@ fun AuthActivity(
                 Button(onClick = {
                     if (!authViewModel.login.value) {
                         if (!registrationError) authViewModel.registerWithCredentials(
-                            authState.username, authState.email, authState.password
+                            authState.username, authState.email, authState.password, userBanned
                         )
                     } else {
                         if (!loginError) authViewModel.emailLogin(
-                            authState.email, authState.password, appwrite, utenteViewModel
+                            authState.email,
+                            authState.password,
+                            appwrite,
+                            utenteViewModel,
+                            userBanned
                         )
                     }
                 }) {
@@ -259,13 +264,14 @@ fun AuthActivity(
                                     activity,
                                     "facebook",
                                     utenteViewModel,
-                                    authState.usernameProvider
+                                    authState.usernameProvider,
+                                    userBanned
                                 )
                             }
                         }
                         if (authViewModel.login.value) {
                             authViewModel.providerLogin(
-                                appwrite, activity, "facebook", utenteViewModel
+                                appwrite, activity, "facebook", utenteViewModel, banned = userBanned
                             )
                         }
                     }) {
@@ -290,13 +296,14 @@ fun AuthActivity(
                                     activity,
                                     "google",
                                     utenteViewModel,
-                                    authState.usernameProvider
+                                    authState.usernameProvider,
+                                    userBanned
                                 )
                             }
                         }
                         if (authViewModel.login.value) {
                             authViewModel.providerLogin(
-                                appwrite, activity, "google", utenteViewModel
+                                appwrite, activity, "google", utenteViewModel, banned = userBanned
                             )
                         }
                     }) {
@@ -305,6 +312,15 @@ fun AuthActivity(
                         modifier = Modifier.padding(horizontal = 7.dp)
                     )
                 }
+            }
+        }
+
+        if (userBanned.value) {
+            showAlert(
+                "Utente bannato",
+                "L'email corrente risulta bannata. Contatta gli amministratori."
+            ) {
+                userBanned.value = false
             }
         }
     }

@@ -28,7 +28,7 @@ data class RecensioneDto(
 ) {
     companion object {
         fun validateDescrizione(descrizione: String): Boolean {
-            return descrizione != "";
+            return descrizione.isNotEmpty()
         }
     }
 }

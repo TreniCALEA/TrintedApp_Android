@@ -73,6 +73,10 @@ fun UserProfileActivity(
     val eraseProfile = remember { mutableStateOf(false) }
     val makeAdmin = remember { mutableStateOf(false) }
     val revokeAdmin = remember { mutableStateOf(false) }
+    val banUser = remember { mutableStateOf(false) }
+    val isUserBanned = remember { mutableStateOf(false) }
+    val confirmationEmailDialog = remember { mutableStateOf(false) }
+    val completedDialog = remember { mutableStateOf(false) }
 
     val purchasesList = orderViewModel.ordersGetByAcquirente
     val salesList = orderViewModel.ordersGetByVenditore
@@ -161,9 +165,6 @@ fun UserProfileActivity(
                         ) {
                             Button(
                                 onClick = {
-                                    utenteViewModel.makeAdmin(
-                                        user.id, appwriteConfig
-                                    )
                                     makeAdmin.value = true
                                 }, colors = ButtonDefaults.buttonColors(Color.Green)
                             ) {
@@ -177,16 +178,34 @@ fun UserProfileActivity(
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally,
                             modifier = Modifier.fillMaxWidth()
-                        ){
+                        ) {
                             Button(
                                 onClick = {
-                                    utenteViewModel.revokeAdmin(
-                                        user.id, appwriteConfig
-                                    )
                                     revokeAdmin.value = true
-                                }, colors = ButtonDefaults.buttonColors(Color.Red)
+                                },
+                                colors = ButtonDefaults.buttonColors(Color.Red)
                             ) {
                                 Text(text = "Togli i diritti di Admin", color = Color.White)
+                            }
+                        }
+                    }
+
+                    if (isRedirected.value && isRedirected.value && authViewModel.loggedInUser.value!!.isAdmin!! && !user.isOwner!!) {
+                        authViewModel.checkBan(isUserBanned, user.credenzialiEmail)
+                        if (!isUserBanned.value) {
+                            Column(
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Button(
+                                    onClick = {
+                                        banUser.value = true
+                                    },
+                                    colors = ButtonDefaults.buttonColors(Color.Red)
+                                ) {
+                                    Text(text = "Banna l'utente", color = Color.White)
+                                }
                             }
                         }
                     }
@@ -236,7 +255,10 @@ fun UserProfileActivity(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Button(
-                                onClick = { authViewModel.verifyEmail(appwriteConfig) },
+                                onClick = {
+                                    confirmationEmailDialog.value = true
+                                    authViewModel.verifyEmail(appwriteConfig)
+                                },
                                 colors = ButtonDefaults.buttonColors(Color.Green),
                                 modifier = Modifier.padding(start = 13.dp)
                             ) {
@@ -288,7 +310,7 @@ fun UserProfileActivity(
                     Button(onClick = {
                         eraseProfile.value = false
                         utenteViewModel.deleteProfile(user.id, appwriteConfig)
-                        selectedIndex.value = 3
+                        completedDialog.value = true
                     }) {
                         Text(text = "Sì")
                     }
@@ -308,8 +330,7 @@ fun UserProfileActivity(
                     Button(onClick = {
                         makeAdmin.value = false
                         utenteViewModel.makeAdmin(user.id, appwriteConfig)
-                        selectedIndex.value = 3
-
+                        completedDialog.value = true
                     }) {
                         Text(text = "Sì")
                     }
@@ -329,7 +350,7 @@ fun UserProfileActivity(
                     Button(onClick = {
                         revokeAdmin.value = false
                         utenteViewModel.revokeAdmin(user.id, appwriteConfig)
-                        selectedIndex.value = 3
+                        completedDialog.value = true
                     }) {
                         Text(text = "Sì")
                     }
@@ -339,6 +360,44 @@ fun UserProfileActivity(
                         Text(text = "No")
                     }
                 })
+        }
+
+        if (banUser.value) {
+            AlertDialog(onDismissRequest = { banUser.value = false },
+                title = { Text(text = "Sei sicuro?") },
+                text = { Text(text = "Cliccando su 'Sì' si accetta che questo utente verrà bannato") },
+                confirmButton = {
+                    Button(onClick = {
+                        banUser.value = false
+                        utenteViewModel.banUser(user.id, appwriteConfig)
+                        completedDialog.value = true
+                    }) {
+                        Text(text = "Sì")
+                    }
+                },
+                dismissButton = {
+                    Button(onClick = { banUser.value = false }) {
+                        Text(text = "No")
+                    }
+                })
+        }
+
+        if (confirmationEmailDialog.value) {
+            showAlert(
+                "Email inviata",
+                "È stata inviata una mail di verifica al tuo indirizzo di posta!"
+            ) {
+                confirmationEmailDialog.value = false
+            }
+        }
+
+        if (completedDialog.value) {
+            showAlert(
+                "Operazione completata!", ""
+            ) {
+                completedDialog.value = false
+                selectedIndex.value = 1
+            }
         }
 
     } else ReviewActivity(

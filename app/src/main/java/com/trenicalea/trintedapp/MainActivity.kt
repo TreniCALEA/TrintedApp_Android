@@ -184,6 +184,14 @@ fun HomePage(
     val selectedIndexFind = remember { mutableStateOf(0) }
     val isRedirected = remember { mutableStateOf(false) }
     val utente: MutableState<UtenteDto?> = remember { mutableStateOf(null) }
+    val banned = remember { mutableStateOf(false) }
+
+    if (banned.value) {
+        showAlert("Utente bannato", "L'utente loggato risulta bannato.") {
+            authViewModel.logout(appwrite)
+            banned.value = false
+        }
+    }
 
     Scaffold(
         topBar = { TrintedTopBar(navHostController, selectedIndex) },
@@ -192,7 +200,7 @@ fun HomePage(
             if (selectedIndex.value == 0) {
                 articoloViewModel.openExternal.value = false
                 articoloViewModel.openIndirizzo.value = false
-                authViewModel.checkLogin(appwrite, utenteViewModel)
+                authViewModel.checkLogin(appwrite, utenteViewModel, banned)
                 isRedirected.value = false
                 HomePageActivity(
                     articoloViewModel = articoloViewModel,
@@ -205,7 +213,7 @@ fun HomePage(
                 )
             }
             if (selectedIndex.value == 1) {
-                authViewModel.checkLogin(appwrite, utenteViewModel)
+                authViewModel.checkLogin(appwrite, utenteViewModel, banned)
                 isRedirected.value = false
                 FindActivity(
                     userViewModel = utenteViewModel,
@@ -219,8 +227,16 @@ fun HomePage(
                 )
             }
             if (selectedIndex.value == 2) {
-                authViewModel.checkLogin(appwrite, utenteViewModel)
+                authViewModel.checkLogin(appwrite, utenteViewModel, banned)
                 isRedirected.value = false
+                if (!authViewModel.isLogged.value) {
+                    showAlert(
+                        "Login richiesto",
+                        "Devi effettuare il login prima di poter vendere!"
+                    ) {
+                        selectedIndex.value = 3
+                    }
+                }
                 AddProductActivity(
                     appwriteConfig = appwrite,
                     authViewModel = authViewModel,
@@ -229,7 +245,7 @@ fun HomePage(
                 )
             }
             if (selectedIndex.value == 3) {
-                authViewModel.checkLogin(appwrite, utenteViewModel)
+                authViewModel.checkLogin(appwrite, utenteViewModel, banned)
                 if (authViewModel.loading.value) {
                     Text(text = "Loading...")
                 } else if (!authViewModel.isLogged.value) {

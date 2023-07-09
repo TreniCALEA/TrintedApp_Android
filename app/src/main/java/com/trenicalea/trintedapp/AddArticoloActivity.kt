@@ -45,6 +45,7 @@ fun AddProductActivity(
     val uris: MutableState<List<Uri>> = remember { mutableStateOf(listOf()) }
     val convertImages: MutableState<Boolean> = remember { mutableStateOf(false) }
     val openDialog = remember { mutableStateOf(false) }
+    val openErrorDialog = remember { mutableStateOf(false) }
 
     val filePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetMultipleContents()
@@ -80,6 +81,7 @@ fun AddProductActivity(
             modifier = Modifier.fillMaxWidth()
         ) {
             OutlinedTextField(
+                isError = articoloState.titoloHasError,
                 value = articoloState.titolo,
                 label = { Text(text = "Titolo dell'articolo") },
                 onValueChange = { articoloViewModel.updateTitolo(it) }
@@ -93,6 +95,7 @@ fun AddProductActivity(
             modifier = Modifier.fillMaxWidth()
         ) {
             OutlinedTextField(
+                isError = articoloState.descrizioneHasError,
                 value = articoloState.descrizione,
                 label = { Text(text = "Descrizione dell'articolo") },
                 onValueChange = { articoloViewModel.updateDescrizione(it) }
@@ -106,6 +109,7 @@ fun AddProductActivity(
             modifier = Modifier.fillMaxWidth()
         ) {
             OutlinedTextField(
+                isError = articoloState.prezzoHasError,
                 value = "${articoloState.prezzo}",
                 label = { Text(text = "Prezzo dell'articolo") },
                 onValueChange = {
@@ -114,6 +118,18 @@ fun AddProductActivity(
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
+        }
+
+        if (articoloState.immagini.isEmpty()) {
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp)
+            ) {
+                Text(text = "Aggiungi delle immagini per continuare!")
+            }
         }
 
         // Add the "Choose Images" button
@@ -155,15 +171,19 @@ fun AddProductActivity(
         ) {
             Button(
                 onClick = {
-                    articoloViewModel.addArticolo(
-                        appwriteConfig,
-                        authViewModel,
-                        articoloState.titolo,
-                        articoloState.descrizione,
-                        articoloState.prezzo,
-                        articoloState.immagini,
-                    )
-                    openDialog.value = true
+                    if (articoloState.immagini.isNotEmpty() && !articoloState.descrizioneHasError && !articoloState.prezzoHasError && !articoloState.titoloHasError) {
+                        articoloViewModel.addArticolo(
+                            appwriteConfig,
+                            authViewModel,
+                            articoloState.titolo,
+                            articoloState.descrizione,
+                            articoloState.prezzo,
+                            articoloState.immagini,
+                        )
+                        openDialog.value = true
+                    } else {
+                        openErrorDialog.value = true
+                    }
                 }
             ) {
                 Text(text = "Vendi!")
@@ -186,4 +206,12 @@ fun AddProductActivity(
         }
     }
 
+    if (openErrorDialog.value) {
+        showAlert(
+            "Attenzione!",
+            "Controlla di aver inserito tutto il necessario prima di procedere!"
+        ) {
+            openErrorDialog.value = false
+        }
+    }
 }

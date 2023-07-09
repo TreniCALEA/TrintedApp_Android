@@ -47,6 +47,7 @@ class ArticoloViewModel : ViewModel() {
     val openExternal: MutableState<Boolean> = mutableStateOf(false)
     var openIndirizzo: MutableState<Boolean> = mutableStateOf(false)
     var articoloToBeBought: MutableState<ArticoloDto?> = mutableStateOf(null)
+    var loading: MutableState<Boolean> = mutableStateOf(false)
 
     fun addArticolo(
         appwriteConfig: AppwriteConfig,
@@ -104,11 +105,17 @@ class ArticoloViewModel : ViewModel() {
     }
 
     fun getAllArticolo() {
+        loading.value = true
         try {
-            if (articoloList.value.isEmpty()) articoloList.value = _articoloApi.all()
+            CoroutineScope(Dispatchers.IO).launch {
+                if (articoloList.value.isEmpty()) articoloList.value = _articoloApi.all()
+            }.invokeOnCompletion {
+                loading.value = false
+            }
         } catch (e: Exception) {
             e.printStackTrace()
             articoloList.value = arrayOf()
+            loading.value = false
         }
     }
 
