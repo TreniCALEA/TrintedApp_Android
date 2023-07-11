@@ -31,29 +31,20 @@ class OrderViewModel : ViewModel() {
     val ordineInfosState: StateFlow<OrdineInfos> = _ordineInfosState.asStateFlow()
 
     private val _orderApi: OrdineControllerApi = OrdineControllerApi()
-    var ordersGetByVenditore: MutableState<Array<OrdineDto>> = mutableStateOf(emptyArray())
-    var ordersGetByAcquirente: MutableState<Array<OrdineDto>> = mutableStateOf(emptyArray())
-
-    fun getByVenditore(id: Long, appwrite: AppwriteConfig) {
-        val client: Client = Client(appwrite.appContext)
-            .setEndpoint(appwrite.endpoint)
-            .setProject(appwrite.projectId)
-
-        val account = Account(client)
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val encodedString =
-                    Base64.getEncoder().encodeToString(account.createJWT().jwt.toByteArray())
-                println(encodedString)
-                ordersGetByVenditore.value = _orderApi.getByVenditore(id, encodedString)
-            } catch (e: Exception) {
-                e.printStackTrace()
-                println("[D] Unable to retrieve sold items!")
-            }
-        }
-    }
+    var ordersGetByVenditore: MutableState<Array<OrdineDto>> = mutableStateOf(arrayOf())
+    var ordersGetByAcquirente: MutableState<Array<OrdineDto>> = mutableStateOf(arrayOf())
+    var loading: MutableState<Boolean> = mutableStateOf(false)
 
     fun getByAcquirente(id: Long, appwrite: AppwriteConfig) {
+        genericGetBy(id, appwrite, true)
+    }
+
+    fun getByVenditore(id: Long, appwrite: AppwriteConfig) {
+        genericGetBy(id, appwrite, false)
+    }
+
+    fun genericGetBy(id: Long, appwrite: AppwriteConfig, acquirenteOrVenditore: Boolean) {
+        loading.value = true
         val client: Client = Client(appwrite.appContext)
             .setEndpoint(appwrite.endpoint)
             .setProject(appwrite.projectId)
@@ -63,11 +54,19 @@ class OrderViewModel : ViewModel() {
             try {
                 val encodedString =
                     Base64.getEncoder().encodeToString(account.createJWT().jwt.toByteArray())
-                ordersGetByAcquirente.value = _orderApi.getByAcquirente(id, encodedString)
+                if (acquirenteOrVenditore && ordersGetByAcquirente.value.isEmpty()) {
+                    ordersGetByAcquirente.value = _orderApi.getByAcquirente(id, encodedString)
+                    println("OrdersGetByAcquirente size: " + ordersGetByAcquirente.value.size)
+                } else if (!acquirenteOrVenditore && ordersGetByVenditore.value.isEmpty()) {
+                    ordersGetByVenditore.value = _orderApi.getByVenditore(id, encodedString)
+                    println("OrdersGetByVenditore size: " + ordersGetByVenditore.value.size)
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
-                println("[D] Unable to retrieve bought items")
+                println("[D] Unable to retrieve " + if (acquirenteOrVenditore) "bought items" else "sold items")
             }
+        }.invokeOnCompletion {
+            loading.value = false
         }
     }
 

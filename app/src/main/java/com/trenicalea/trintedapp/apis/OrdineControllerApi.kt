@@ -21,12 +21,9 @@ import kotlinx.coroutines.runBlocking
 class OrdineControllerApi(basePath: String = Config.ip) : ApiClient(basePath) {
 
     /**
-     *
-     *
      * @param acquirente
      * @param articoloDto
      * @param indirizzo
-     * @return OrdineDto
      */
     fun add(acquirente: Long, articoloId: Long, body: Indirizzo, param: String): String =
         runBlocking(Dispatchers.IO) {
@@ -55,8 +52,6 @@ class OrdineControllerApi(basePath: String = Config.ip) : ApiClient(basePath) {
         }
 
     /**
-     *
-     *
      * @return kotlin.Array<OrdineDto>
      */
     @Suppress("UNCHECKED_CAST")
@@ -85,12 +80,9 @@ class OrdineControllerApi(basePath: String = Config.ip) : ApiClient(basePath) {
     }
 
     /**
-     *
-     *
      * @param orderId
      * @return kotlin.String
      */
-    @Suppress("UNCHECKED_CAST")
     fun delete(orderId: Long): String = runBlocking(Dispatchers.IO) {
         val localVariableConfig = RequestConfig(
             RequestMethod.DELETE,
@@ -115,8 +107,6 @@ class OrdineControllerApi(basePath: String = Config.ip) : ApiClient(basePath) {
     }
 
     /**
-     *
-     *
      * @param id
      * @return kotlin.Array<OrdineDto>
      */
@@ -150,12 +140,9 @@ class OrdineControllerApi(basePath: String = Config.ip) : ApiClient(basePath) {
     }
 
     /**
-     *
-     *
      * @param orderId
      * @return OrdineDto
      */
-    @Suppress("UNCHECKED_CAST")
     fun getById(orderId: Long): OrdineDto = runBlocking(Dispatchers.IO) {
         val localVariableConfig = RequestConfig(
             RequestMethod.GET,
@@ -180,8 +167,6 @@ class OrdineControllerApi(basePath: String = Config.ip) : ApiClient(basePath) {
     }
 
     /**
-     *
-     *
      * @param id
      * @return kotlin.Array<OrdineDto>
      */

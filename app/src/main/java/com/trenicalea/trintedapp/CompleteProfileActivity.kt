@@ -17,13 +17,14 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
@@ -44,6 +45,7 @@ import com.trenicalea.trintedapp.models.Indirizzo
 import com.trenicalea.trintedapp.viewmodels.AuthViewModel
 import com.trenicalea.trintedapp.viewmodels.UtenteViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CompleteProfile(
     appwriteConfig: AppwriteConfig,
@@ -52,6 +54,7 @@ fun CompleteProfile(
     selectedIndex: MutableState<Int>,
     onClose: () -> Unit
 ) {
+    val sheetState = rememberModalBottomSheetState()
 
     val userUpdateState by utenteViewModel.userUpdateState.collectAsState()
     val immagine = rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) {
@@ -59,9 +62,7 @@ fun CompleteProfile(
     }
 
     val openDialog = remember { mutableStateOf(false) }
-
     val openErrorDialog = remember { mutableStateOf(false) }
-
     val imageEmpty = remember { mutableStateOf(true) }
 
     val addressError by remember {
@@ -79,91 +80,40 @@ fun CompleteProfile(
         }
     }
 
-    Column {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                Icons.Filled.Close,
-
-                contentDescription = "Close",
-                modifier = Modifier
-                    .clickable { onClose() } // Chiude la card
-                    .padding(8.dp)
-            )
-        }
-        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-            userUpdateState.immagine?.let {
-                imageEmpty.value = false
-                Image(
-                    bitmap = it.asImageBitmap(),
-                    contentDescription = stringResource(R.string.accountImage),
-                    contentScale = ContentScale.Crop,
+    ModalBottomSheet(
+        onDismissRequest = onClose,
+        sheetState = sheetState
+    ) {
+        Column {
+            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                userUpdateState.immagine?.let {
+                    imageEmpty.value = false
+                    Image(
+                        bitmap = it.asImageBitmap(),
+                        contentDescription = stringResource(R.string.accountImage),
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(128.dp)
+                            .clip(CircleShape)
+                            .padding(5.dp)
+                    )
+                } ?: Icon(
+                    Icons.Filled.AccountCircle,
+                    contentDescription = stringResource(R.string.defaultImage),
                     modifier = Modifier
                         .size(128.dp)
-                        .clip(CircleShape)
                         .padding(5.dp)
                 )
-            } ?: Icon(
-                Icons.Filled.AccountCircle,
-                contentDescription = stringResource(R.string.defaultImage),
-                modifier = Modifier
-                    .size(128.dp)
-                    .padding(5.dp)
-            )
-            Card(modifier = Modifier.align(Alignment.BottomCenter)) {
-                Icon(
-                    Icons.Filled.Add,
-                    contentDescription = stringResource(R.string.accountImage),
-                    modifier = Modifier
-                        .size(40.dp)
-                        .padding(5.dp)
-                        .clickable { immagine.launch() }
-                )
-            }
-        }
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
-            OutlinedTextField(
-                value = userUpdateState.nome,
-                onValueChange = { utenteViewModel.updateNome(it) },
-                label = { Text("Nome") }
-            )
-        }
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
-            OutlinedTextField(value = userUpdateState.cognome,
-                onValueChange = { utenteViewModel.updateCognome(it) },
-                label = { Text("Cognome") })
-        }
-
-        Column {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                OutlinedTextField(value = userUpdateState.citta,
-                    onValueChange = { utenteViewModel.updateCitta(it) },
-                    label = { Text("Citta") })
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                OutlinedTextField(value = userUpdateState.via,
-                    onValueChange = { utenteViewModel.updateVia(it) },
-                    label = { Text("Via") })
+                Card(modifier = Modifier.align(Alignment.BottomCenter)) {
+                    Icon(
+                        Icons.Filled.Add,
+                        contentDescription = stringResource(R.string.accountImage),
+                        modifier = Modifier
+                            .size(40.dp)
+                            .padding(5.dp)
+                            .clickable { immagine.launch() }
+                    )
+                }
             }
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -171,52 +121,96 @@ fun CompleteProfile(
                 horizontalArrangement = Arrangement.Center
             ) {
                 OutlinedTextField(
-                    value = userUpdateState.civico.toString(),
-                    onValueChange = { civicoString: String ->
-                        if (civicoString == "") utenteViewModel.updateCivico(0)
-                        else utenteViewModel.updateCivico(civicoString.toInt())
-                    },
-                    label = { Text("Civico") },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                    value = userUpdateState.nome,
+                    onValueChange = { utenteViewModel.updateNome(it) },
+                    label = { Text("Nome") }
                 )
-
             }
-        }
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
-            OutlinedButton(onClick = {
-                if (fullNameError && addressError && imageEmpty.value) {
-                    openErrorDialog.value = true
-                } else if (fullNameError) {
-                    utenteViewModel.updateUser(
-                        appwriteConfig,
-                        authViewModel,
-                        userUpdateState.nome,
-                        userUpdateState.cognome,
-                        userUpdateState.immagine,
-                        Indirizzo(
-                            userUpdateState.via,
-                            userUpdateState.civico,
-                            userUpdateState.citta
-                        )
-                    )
-                    openDialog.value = true
-                } else if (addressError) {
-                    utenteViewModel.updateUser(
-                        appwriteConfig,
-                        authViewModel,
-                        userUpdateState.nome,
-                        userUpdateState.cognome,
-                        userUpdateState.immagine,
-                        null
-                    )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                OutlinedTextField(value = userUpdateState.cognome,
+                    onValueChange = { utenteViewModel.updateCognome(it) },
+                    label = { Text("Cognome") })
+            }
+
+            Column {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    OutlinedTextField(value = userUpdateState.citta,
+                        onValueChange = { utenteViewModel.updateCitta(it) },
+                        label = { Text("Citta") })
                 }
-            }) {
-                Text("Aggiorna il profilo")
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    OutlinedTextField(value = userUpdateState.via,
+                        onValueChange = { utenteViewModel.updateVia(it) },
+                        label = { Text("Via") })
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    OutlinedTextField(
+                        value = userUpdateState.civico.toString(),
+                        onValueChange = { civicoString: String ->
+                            if (civicoString == "") utenteViewModel.updateCivico(0)
+                            else utenteViewModel.updateCivico(civicoString.toInt())
+                        },
+                        label = { Text("Civico") },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                    )
+
+                }
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                OutlinedButton(onClick = {
+                    if (fullNameError && addressError && imageEmpty.value) {
+                        openErrorDialog.value = true
+                    } else if (fullNameError) {
+                        utenteViewModel.updateUser(
+                            appwriteConfig,
+                            authViewModel,
+                            userUpdateState.nome,
+                            userUpdateState.cognome,
+                            userUpdateState.immagine,
+                            Indirizzo(
+                                userUpdateState.via,
+                                userUpdateState.civico,
+                                userUpdateState.citta
+                            )
+                        )
+                        openDialog.value = true
+                    } else if (addressError) {
+                        utenteViewModel.updateUser(
+                            appwriteConfig,
+                            authViewModel,
+                            userUpdateState.nome,
+                            userUpdateState.cognome,
+                            userUpdateState.immagine,
+                            null
+                        )
+                    }
+                }) {
+                    Text("Aggiorna il profilo")
+                }
             }
         }
     }

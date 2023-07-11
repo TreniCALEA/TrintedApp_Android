@@ -13,6 +13,6 @@ class LocalDateAdapter {
 
     @FromJson
     fun fromJson(value: String): LocalDate {
-        return LocalDate.parse(value, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+        return LocalDate.parse(value, DateTimeFormatter.ISO_LOCAL_DATE)
     }
 }

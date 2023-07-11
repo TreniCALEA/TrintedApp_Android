@@ -242,7 +242,9 @@ fun HomePage(
                     authViewModel = authViewModel,
                     articoloViewModel = articoloViewModel,
                     selectedIndex = selectedIndex
-                )
+                ) {
+                    selectedIndex.value = 0
+                }
             }
             if (selectedIndex.value == 3) {
                 authViewModel.checkLogin(appwrite, utenteViewModel, banned)

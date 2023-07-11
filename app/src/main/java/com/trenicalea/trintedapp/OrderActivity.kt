@@ -21,6 +21,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,6 +52,9 @@ fun OrderFormActivity(
     val acquirente = authViewModel.loggedInUser.value!!
     val usePreExistentAddress = remember { mutableStateOf(false) }
     val showCompleteDialog = remember { mutableStateOf(false) }
+    val showErrorDialog = remember { mutableStateOf(false) }
+
+    val addressError by remember { derivedStateOf { orderState.viaHasError || orderState.civicoHasError || orderState.paeseHasError } }
 
     // Modal bottom sheet
     ModalBottomSheet(
@@ -120,16 +124,21 @@ fun OrderFormActivity(
             Button(
                 modifier = Modifier.padding(10.dp),
                 onClick = {
-                    val indirizzo =
-                        Indirizzo(orderState.via, orderState.civico.toInt(), orderState.paese)
-                    orderViewModel.confirmOrder(
-                        acquirente.id,
-                        articoloDto.id!!,
-                        indirizzo,
-                        appwriteConfig
-                    )
+                    if (!addressError) {
+                        val indirizzo =
+                            Indirizzo(orderState.via, orderState.civico.toInt(), orderState.paese)
+                        orderViewModel.confirmOrder(
+                            acquirente.id,
+                            articoloDto.id!!,
+                            indirizzo,
+                            appwriteConfig
+                        )
 
-                    showCompleteDialog.value = true
+                        showCompleteDialog.value = true
+                    } else {
+                        showErrorDialog.value = true
+                    }
+
                 },
             ) {
                 Text(text = "Effettua l'ordine!")
@@ -156,8 +165,16 @@ fun OrderFormActivity(
     if (showCompleteDialog.value) {
         showAlert("Evviva!", "Hai acquistato quest'oggetto!") {
             showCompleteDialog.value = false
-
             showForm!!.value = false
+        }
+    }
+
+    if (showErrorDialog.value) {
+        showAlert(
+            "Attenzione!",
+            "Controlla di aver inserito tutto il necessario prima di procedere!"
+        ) {
+            showErrorDialog.value = false
         }
     }
 }

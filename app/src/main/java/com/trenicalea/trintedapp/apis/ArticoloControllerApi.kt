@@ -25,7 +25,6 @@ class ArticoloControllerApi(basePath: String = Config.ip) : ApiClient(basePath) 
      * @param body
      * @return ArticoloDto
      */
-    @Suppress("UNCHECKED_CAST")
     fun add(body: ArticoloDto, param: String): ArticoloDto = runBlocking(Dispatchers.IO) {
         val localVariableBody: Any = body
         val localVariableConfig = RequestConfig(
@@ -84,9 +83,7 @@ class ArticoloControllerApi(basePath: String = Config.ip) : ApiClient(basePath) 
      *
      *
      * @param idItem
-     * @return kotlin.String
      */
-    @Suppress("UNCHECKED_CAST")
     fun delete(idItem: Long, param: String): String = runBlocking(Dispatchers.IO) {
         val localVariableConfig = RequestConfig(
             RequestMethod.DELETE,
@@ -117,7 +114,6 @@ class ArticoloControllerApi(basePath: String = Config.ip) : ApiClient(basePath) 
      * @param idItem
      * @return ArticoloDto
      */
-    @Suppress("UNCHECKED_CAST")
     fun getById(idItem: Long): ArticoloDto = runBlocking(Dispatchers.IO) {
         val localVariableConfig = RequestConfig(
             RequestMethod.GET,

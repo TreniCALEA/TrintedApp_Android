@@ -5,20 +5,19 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,19 +32,24 @@ import com.trenicalea.trintedapp.appwrite.AppwriteConfig
 import com.trenicalea.trintedapp.viewmodels.ArticoloViewModel
 import com.trenicalea.trintedapp.viewmodels.AuthViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddProductActivity(
     appwriteConfig: AppwriteConfig,
     authViewModel: AuthViewModel,
     articoloViewModel: ArticoloViewModel,
-    selectedIndex: MutableState<Int>
+    selectedIndex: MutableState<Int>,
+    onDismissRequest: () -> Unit
 ) {
     val articoloState by articoloViewModel.addArticoloState.collectAsState()
     val pattern = remember { Regex("^\\d*\\.?\\d*\$") }
+    val sheetState = rememberModalBottomSheetState()
+
     val uris: MutableState<List<Uri>> = remember { mutableStateOf(listOf()) }
     val convertImages: MutableState<Boolean> = remember { mutableStateOf(false) }
     val openDialog = remember { mutableStateOf(false) }
     val openErrorDialog = remember { mutableStateOf(false) }
+    val fieldsError by remember { derivedStateOf { articoloState.descrizioneHasError || articoloState.titoloHasError || articoloState.prezzoHasError || articoloState.immagini.isEmpty() } }
 
     val filePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetMultipleContents()
@@ -54,11 +58,9 @@ fun AddProductActivity(
         convertImages.value = true
     }
 
-    Card(
-        elevation = CardDefaults.cardElevation(defaultElevation = 5.dp), modifier = Modifier
-            .fillMaxSize()
-            .padding(12.dp)
-            .verticalScroll(rememberScrollState())
+    ModalBottomSheet(
+        onDismissRequest = onDismissRequest,
+        sheetState = sheetState
     ) {
         // Headline text
         Row(
@@ -81,7 +83,6 @@ fun AddProductActivity(
             modifier = Modifier.fillMaxWidth()
         ) {
             OutlinedTextField(
-                isError = articoloState.titoloHasError,
                 value = articoloState.titolo,
                 label = { Text(text = "Titolo dell'articolo") },
                 onValueChange = { articoloViewModel.updateTitolo(it) }
@@ -95,7 +96,6 @@ fun AddProductActivity(
             modifier = Modifier.fillMaxWidth()
         ) {
             OutlinedTextField(
-                isError = articoloState.descrizioneHasError,
                 value = articoloState.descrizione,
                 label = { Text(text = "Descrizione dell'articolo") },
                 onValueChange = { articoloViewModel.updateDescrizione(it) }
@@ -109,7 +109,6 @@ fun AddProductActivity(
             modifier = Modifier.fillMaxWidth()
         ) {
             OutlinedTextField(
-                isError = articoloState.prezzoHasError,
                 value = "${articoloState.prezzo}",
                 label = { Text(text = "Prezzo dell'articolo") },
                 onValueChange = {
@@ -171,7 +170,7 @@ fun AddProductActivity(
         ) {
             Button(
                 onClick = {
-                    if (articoloState.immagini.isNotEmpty() && !articoloState.descrizioneHasError && !articoloState.prezzoHasError && !articoloState.titoloHasError) {
+                    if (!fieldsError) {
                         articoloViewModel.addArticolo(
                             appwriteConfig,
                             authViewModel,

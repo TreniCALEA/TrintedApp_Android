@@ -10,18 +10,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Mail
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.ProductionQuantityLimits
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -46,11 +39,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.graphics.toColorInt
 import com.trenicalea.trintedapp.appwrite.AppwriteConfig
-import com.trenicalea.trintedapp.models.OrdineDto
 import com.trenicalea.trintedapp.models.UtenteDto
 import com.trenicalea.trintedapp.viewmodels.AuthViewModel
-import com.trenicalea.trintedapp.viewmodels.OrderViewModel
 import com.trenicalea.trintedapp.viewmodels.ReviewViewModel
 import com.trenicalea.trintedapp.viewmodels.UtenteViewModel
 
@@ -64,10 +56,6 @@ fun UserProfileActivity(
     isRedirected: MutableState<Boolean>,
     selectedIndex: MutableState<Int>,
 ) {
-    val orderViewModel = OrderViewModel()
-    orderViewModel.getByAcquirente(user.id, appwriteConfig)
-    orderViewModel.getByVenditore(user.id, appwriteConfig)
-
     var showReview by remember { mutableStateOf(false) }
     var showCompleteProfile by remember { mutableStateOf(false) }
     val eraseProfile = remember { mutableStateOf(false) }
@@ -77,9 +65,9 @@ fun UserProfileActivity(
     val isUserBanned = remember { mutableStateOf(false) }
     val confirmationEmailDialog = remember { mutableStateOf(false) }
     val completedDialog = remember { mutableStateOf(false) }
+    val showModalBottomSheet = remember { mutableStateOf(false) }
+    val showAcquisti = remember { mutableStateOf(false) }
 
-    val purchasesList = orderViewModel.ordersGetByAcquirente
-    val salesList = orderViewModel.ordersGetByVenditore
     if (!showReview) {
         if (showCompleteProfile) CompleteProfile(
             appwriteConfig = appwriteConfig,
@@ -166,7 +154,8 @@ fun UserProfileActivity(
                             Button(
                                 onClick = {
                                     makeAdmin.value = true
-                                }, colors = ButtonDefaults.buttonColors(Color.Green)
+                                },
+                                colors = ButtonDefaults.buttonColors(Color("#04AF70".toColorInt()))
                             ) {
                                 Text(text = "Rendi Admin!", color = Color.White)
                             }
@@ -221,10 +210,22 @@ fun UserProfileActivity(
                                 style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold)
                             )
                         }
-                        if (salesList.value.isNotEmpty()) Carousel(
-                            list = salesList.value, title = stringResource(R.string.recentSales)
-                        )
-                        else ArrayEmpty()
+
+                        Row(
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(10.dp)
+                        ) {
+                            Button(onClick = {
+                                showModalBottomSheet.value = true
+                                showAcquisti.value = false
+                            }) {
+                                Text("Mostra gli articoli venduti")
+                            }
+                        }
+
                     }
 
                     Divider()
@@ -240,13 +241,26 @@ fun UserProfileActivity(
                                 style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold)
                             )
                         }
-                        if (purchasesList.value.isNotEmpty()) Carousel(
-                            list = purchasesList.value,
-                            title = stringResource(R.string.recentPurchases)
-                        )
-                        else ArrayEmpty()
+
+                        Row(
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(10.dp)
+                        ) {
+                            Button(onClick = {
+                                showModalBottomSheet.value = true
+                                showAcquisti.value = true
+                            }) {
+                                Text("Mostra gli articoli acquistati")
+                            }
+                        }
                     }
                 }
+
+                Divider()
+
                 if (!isRedirected.value) {
                     if (!authViewModel.isVerified.value) {
                         Column(
@@ -259,8 +273,8 @@ fun UserProfileActivity(
                                     confirmationEmailDialog.value = true
                                     authViewModel.verifyEmail(appwriteConfig)
                                 },
-                                colors = ButtonDefaults.buttonColors(Color.Green),
-                                modifier = Modifier.padding(start = 13.dp)
+                                colors = ButtonDefaults.buttonColors(Color("#04AF70".toColorInt())),
+                                modifier = Modifier.padding(top = 10.dp)
                             ) {
                                 Text(text = "Verifica la tua e-mail!", color = Color.White)
                             }
@@ -273,11 +287,12 @@ fun UserProfileActivity(
                     ) {
                         Button(
                             onClick = { showCompleteProfile = true },
-                            modifier = Modifier.padding(start = 13.dp),
+                            modifier = Modifier.padding(10.dp),
                             colors = ButtonDefaults.buttonColors(Color.Blue),
                         ) {
                             Text(text = "Completa o modifica il tuo profilo", color = Color.White)
                         }
+
                         Button(onClick = {
                             eraseProfile.value = true
                         }) {
@@ -291,7 +306,7 @@ fun UserProfileActivity(
                     ) {
                         Button(
                             onClick = { authViewModel.logout(appwriteConfig) },
-                            modifier = Modifier.width(150.dp),
+                            modifier = Modifier.padding(10.dp),
                             colors = ButtonDefaults.buttonColors(Color.Red)
                         ) {
                             Text(text = "Logout", color = Color.White)
@@ -400,86 +415,23 @@ fun UserProfileActivity(
             }
         }
 
+        if (showModalBottomSheet.value) {
+
+            ShowOrdersActivity(
+                showAcquisti,
+                user.id,
+                appwriteConfig
+            ) {
+                showModalBottomSheet.value = false
+            }
+        }
+
     } else ReviewActivity(
         appwriteConfig = appwriteConfig,
         authViewModel = authViewModel,
         reviewViewModel = ReviewViewModel(),
         utenteDto = user
     )
-}
-
-@Composable
-fun ArrayEmpty() {
-    Row(
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(10.dp)
-    ) {
-        Icon(
-            imageVector = Icons.Filled.ProductionQuantityLimits,
-            contentDescription = stringResource(id = R.string.noItems),
-            modifier = Modifier.size(40.dp)
-        )
-    }
-    Row(
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(10.dp)
-    ) {
-        Text(text = stringResource(id = R.string.noItems), fontSize = 20.sp)
-    }
-}
-
-@Composable
-fun Carousel(list: Array<OrdineDto>, title: String) {
-    Row(
-        horizontalArrangement = Arrangement.Start,
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(10.dp)
-    ) {
-        Text(
-            text = title, fontWeight = FontWeight.Bold, fontSize = 20.sp
-        )
-    }
-    Row(
-        horizontalArrangement = Arrangement.Start,
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(10.dp)
-    ) {
-        LazyRow {
-            items(list) { order ->
-                Card(
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .wrapContentHeight()
-                        .wrapContentWidth()
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Row {
-                            Icon(
-                                imageVector = Icons.Filled.CalendarToday,
-                                contentDescription = null,
-                                modifier = Modifier.size(20.dp)
-                            )
-                            Text(text = "${order.dataAcquisto}")
-                        }
-                    }
-
-                }
-            }
-        }
-    }
 }
 
 

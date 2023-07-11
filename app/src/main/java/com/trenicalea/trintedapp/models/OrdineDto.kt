@@ -29,15 +29,15 @@ data class OrdineDto(
 ) {
     companion object {
         fun validateVia(via: String): Boolean {
-            return via.isEmpty() && via.length > 5
+            return via.isNotEmpty() && via.length > 5
         }
 
         fun validateCivico(civico: String): Boolean {
-            return civico.isEmpty()
+            return civico.isNotEmpty()
         }
 
         fun validatePaese(paese: String): Boolean {
-            return paese.isEmpty()
+            return paese.isNotEmpty() && paese.length > 3
         }
     }
 }
