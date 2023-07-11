@@ -351,14 +351,14 @@ fun UserProfileActivity(
                     }
                 },
                 dismissButton = {
-                    Button(onClick = { eraseProfile.value = false }) {
+                    Button(onClick = { makeAdmin.value = false }) {
                         Text(text = "No")
                     }
                 })
         }
 
         if (revokeAdmin.value) {
-            AlertDialog(onDismissRequest = { makeAdmin.value = false },
+            AlertDialog(onDismissRequest = { revokeAdmin.value = false },
                 title = { Text(text = "Sei sicuro?") },
                 text = { Text(text = "Cliccando su 'Sì' si accetta che a questo utente vengano tolti i diritti di admin") },
                 confirmButton = {
@@ -371,7 +371,7 @@ fun UserProfileActivity(
                     }
                 },
                 dismissButton = {
-                    Button(onClick = { eraseProfile.value = false }) {
+                    Button(onClick = { revokeAdmin.value = false }) {
                         Text(text = "No")
                     }
                 })

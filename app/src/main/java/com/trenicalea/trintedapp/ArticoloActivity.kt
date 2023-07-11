@@ -162,21 +162,33 @@ fun ArticoloActivity(
                 }
 
                 // "Acquista" button
-                Button(
-                    onClick = {
-                        if (!authViewModel.isLogged.value) {
-                            showErrDialog.value = true
-                        } else {
-                            showOrderForm.value = true
-                        }
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .width(150.dp),
-                    shape = RectangleShape,
+                if (articolo.acquistabile && authViewModel.loggedInUser.value!!.id != articoloOwner.id) {
+                    Button(
+                        onClick = {
+                            if (!authViewModel.isLogged.value) {
+                                showErrDialog.value = true
+                            } else {
+                                showOrderForm.value = true
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .width(150.dp),
+                        shape = RectangleShape,
 
+                        ) {
+                        Text("Acquista!")
+                    }
+                } else {
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(10.dp)
                     ) {
-                    Text("Acquista!")
+                        Text("L'oggetto non è acquistabile.")
+                    }
                 }
             }
 
@@ -186,7 +198,7 @@ fun ArticoloActivity(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 50.dp)
+                    .padding(top = 30.dp)
             ) {
                 Text(
                     text = "Descrizione",

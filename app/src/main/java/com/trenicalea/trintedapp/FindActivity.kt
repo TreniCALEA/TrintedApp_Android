@@ -5,13 +5,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ShoppingBag
@@ -98,7 +98,7 @@ fun FindActivity(
                     OutlinedTextField(value = searchValue, onValueChange = {
                         searchValue = it
                         userViewModel.prefix.value = searchValue
-                    }, isError = searchValue == "", leadingIcon = {
+                    }, leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.Search,
                             contentDescription = stringResource(R.string.search)
@@ -108,10 +108,13 @@ fun FindActivity(
                 Row(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .fillMaxWidth()
                 ) {
                     Button(onClick = {
                         if (searchValue != "") userViewModel.getUserByUsernameLike()
-                    }, modifier = Modifier.padding(horizontal = 150.dp)) {
+                    }) {
                         Text(text = stringResource(R.string.search))
                     }
                 }
@@ -134,20 +137,23 @@ fun FindActivity(
                     OutlinedTextField(value = searchValue, onValueChange = {
                         searchValue = it
                         articoloViewModel.prefix.value = searchValue
-                    }, isError = searchValue == "", leadingIcon = {
+                    }, leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.Search,
                             contentDescription = stringResource(R.string.search)
                         )
-                    }, label = { Text(stringResource(R.string.cercaUtenti)) })
+                    }, label = { Text(stringResource(R.string.cercaArticoli)) })
                 }
                 Row(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .fillMaxWidth()
                 ) {
                     Button(onClick = {
                         if (searchValue != "") articoloViewModel.searchArticolo()
-                    }, modifier = Modifier.padding(horizontal = 150.dp)) {
+                    }) {
                         Text(text = stringResource(R.string.search))
                     }
                 }
@@ -275,21 +281,19 @@ fun ListItems(
                         colors = ButtonDefaults.buttonColors(
                             contentColor = Color.Black.copy(0.20f),
                             containerColor = Color.Transparent
-                        )
+                        ),
+                        modifier = Modifier.height(70.dp)
                     ) {
-                        Icon(
-                            imageVector = Icons.Filled.Image,
-                            contentDescription = stringResource(id = R.string.defaultImage),
-                            modifier = Modifier.size(60.dp),
-                            tint = Color.Black
-                        )
                         Text(
                             text = articolo.titolo,
                             modifier = Modifier.weight(1f),
                             color = Color.Black
                         )
                         Row(modifier = Modifier.padding(horizontal = 10.dp)) {
-                            Text(text = "${articolo.prezzo}€")
+                            Text(
+                                text = "${articolo.prezzo}€",
+                                color = Color.Black
+                            )
                         }
                     }
                 }

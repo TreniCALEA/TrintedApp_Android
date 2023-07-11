@@ -29,7 +29,9 @@ data class OrdineDto(
 ) {
     companion object {
         fun validateVia(via: String): Boolean {
-            return via.isNotEmpty() && via.length > 5
+            println("Via is not empty: " + via.isNotEmpty())
+            println("Via length: " + via.length)
+            return via.isNotEmpty()
         }
 
         fun validateCivico(civico: String): Boolean {

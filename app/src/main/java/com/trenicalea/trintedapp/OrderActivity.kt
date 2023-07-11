@@ -133,9 +133,14 @@ fun OrderFormActivity(
                             indirizzo,
                             appwriteConfig
                         )
-
                         showCompleteDialog.value = true
                     } else {
+                        println(orderState.via)
+                        println(orderState.civico)
+                        println(orderState.paese)
+                        println(orderState.viaHasError)
+                        println(orderState.civicoHasError)
+                        println(orderState.paeseHasError)
                         showErrorDialog.value = true
                     }
 

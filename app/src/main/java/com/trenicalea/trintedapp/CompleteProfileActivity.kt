@@ -184,6 +184,20 @@ fun CompleteProfile(
                 OutlinedButton(onClick = {
                     if (fullNameError && addressError && imageEmpty.value) {
                         openErrorDialog.value = true
+                    } else if (!fullNameError && !addressError) {
+                        utenteViewModel.updateUser(
+                            appwriteConfig,
+                            authViewModel,
+                            userUpdateState.nome,
+                            userUpdateState.cognome,
+                            userUpdateState.immagine,
+                            Indirizzo(
+                                userUpdateState.via,
+                                userUpdateState.civico,
+                                userUpdateState.citta
+                            )
+                        )
+                        openDialog.value = true
                     } else if (fullNameError) {
                         utenteViewModel.updateUser(
                             appwriteConfig,
@@ -207,6 +221,7 @@ fun CompleteProfile(
                             userUpdateState.immagine,
                             null
                         )
+                        openDialog.value = true
                     }
                 }) {
                     Text("Aggiorna il profilo")

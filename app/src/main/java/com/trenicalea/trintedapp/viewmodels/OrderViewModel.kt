@@ -104,7 +104,7 @@ class OrderViewModel : ViewModel() {
         val hasError = !OrdineDto.validateCivico(civico)
         _ordineInfosState.value = _ordineInfosState.value.copy(
             civico = civico,
-            viaHasError = hasError
+            civicoHasError = hasError
         )
     }
 
@@ -112,7 +112,7 @@ class OrderViewModel : ViewModel() {
         val hasError = !OrdineDto.validatePaese(paese)
         _ordineInfosState.value = _ordineInfosState.value.copy(
             paese = paese,
-            viaHasError = hasError
+            paeseHasError = hasError
         )
     }
 }

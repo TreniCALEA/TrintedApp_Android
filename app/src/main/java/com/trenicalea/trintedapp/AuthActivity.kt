@@ -60,7 +60,6 @@ fun AuthActivity(
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
-
         var usernameProvider by remember { mutableStateOf("") }
         var passwordVisible by remember { mutableStateOf(false) }
 
@@ -68,6 +67,7 @@ fun AuthActivity(
         val registrationError by remember { derivedStateOf { authState.emailHasError || authState.usernameHasError || authState.passwordHasError } }
         val loginError by remember { derivedStateOf { authState.emailHasError || authState.passwordHasError } }
         val userBanned = remember { mutableStateOf(false) }
+        val missingFieldsDialog = remember { mutableStateOf(false) }
 
         Column {
 
@@ -93,7 +93,6 @@ fun AuthActivity(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     OutlinedTextField(
-                        isError = authState.usernameHasError,
                         value = authState.username,
                         onValueChange = { authViewModel.updateUsername(it) },
                         label = { Text(stringResource(R.string.usernameLabel)) },
@@ -114,7 +113,6 @@ fun AuthActivity(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 OutlinedTextField(
-                    isError = authState.emailHasError,
                     value = authState.email,
                     onValueChange = { authViewModel.updateEmail(it) },
                     label = { Text(stringResource(R.string.emailLabel)) },
@@ -136,7 +134,6 @@ fun AuthActivity(
                 OutlinedTextField(
                     value = authState.password,
                     onValueChange = { authViewModel.updatePassword(it) },
-                    isError = authState.passwordHasError,
                     label = { Text(stringResource(R.string.passwordLabel)) },
                     leadingIcon = {
                         Icon(
@@ -172,7 +169,7 @@ fun AuthActivity(
                     if (!authViewModel.login.value) {
                         if (!registrationError) authViewModel.registerWithCredentials(
                             authState.username, authState.email, authState.password, userBanned
-                        )
+                        ) else missingFieldsDialog.value = true
                     } else {
                         if (!loginError) authViewModel.emailLogin(
                             authState.email,
@@ -180,7 +177,7 @@ fun AuthActivity(
                             appwrite,
                             utenteViewModel,
                             userBanned
-                        )
+                        ) else missingFieldsDialog.value = true
                     }
                 }) {
                     Text(text = if (!authViewModel.login.value) "Registrati" else "Login")
@@ -235,7 +232,6 @@ fun AuthActivity(
                         .padding(bottom = 10.dp)
                 ) {
                     OutlinedTextField(
-                        isError = authState.usernameProviderHasError,
                         value = authState.usernameProvider,
                         onValueChange = { authViewModel.updateUsernameProvider(it) },
                         label = { Text(stringResource(R.string.usernameLabel)) },
@@ -257,22 +253,25 @@ fun AuthActivity(
             ) {
                 Button(colors = ButtonDefaults.buttonColors(containerColor = Color(59, 89, 152)),
                     onClick = {
-                        if (!authState.usernameProviderHasError) {
-                            if (!authViewModel.login.value) {
-                                authViewModel.providerLogin(
-                                    appwrite,
-                                    activity,
-                                    "facebook",
-                                    utenteViewModel,
-                                    authState.usernameProvider,
-                                    userBanned
-                                )
-                            }
-                        }
                         if (authViewModel.login.value) {
                             authViewModel.providerLogin(
                                 appwrite, activity, "facebook", utenteViewModel, banned = userBanned
                             )
+                        } else {
+                            if (!authState.usernameProviderHasError) {
+                                if (!authViewModel.login.value) {
+                                    authViewModel.providerLogin(
+                                        appwrite,
+                                        activity,
+                                        "facebook",
+                                        utenteViewModel,
+                                        authState.usernameProvider,
+                                        userBanned
+                                    )
+                                }
+                            } else {
+                                missingFieldsDialog.value = true
+                            }
                         }
                     }) {
                     Text(
@@ -289,22 +288,25 @@ fun AuthActivity(
             ) {
                 Button(colors = ButtonDefaults.buttonColors(containerColor = Color(219, 68, 55)),
                     onClick = {
-                        if (!authState.usernameProviderHasError) {
-                            if (!authViewModel.login.value) {
-                                authViewModel.providerLogin(
-                                    appwrite,
-                                    activity,
-                                    "google",
-                                    utenteViewModel,
-                                    authState.usernameProvider,
-                                    userBanned
-                                )
-                            }
-                        }
                         if (authViewModel.login.value) {
                             authViewModel.providerLogin(
                                 appwrite, activity, "google", utenteViewModel, banned = userBanned
                             )
+                        } else {
+                            if (!authState.usernameProviderHasError) {
+                                if (!authViewModel.login.value) {
+                                    authViewModel.providerLogin(
+                                        appwrite,
+                                        activity,
+                                        "google",
+                                        utenteViewModel,
+                                        authState.usernameProvider,
+                                        userBanned
+                                    )
+                                }
+                            } else {
+                                missingFieldsDialog.value = true
+                            }
                         }
                     }) {
                     Text(
@@ -323,5 +325,15 @@ fun AuthActivity(
                 userBanned.value = false
             }
         }
+
+        if (missingFieldsDialog.value) {
+            showAlert(
+                "Attenzione!",
+                "Controlla di aver inserito tutto il necessario prima di procedere!"
+            ) {
+                missingFieldsDialog.value = false
+            }
+        }
+
     }
 }
